@@ -67,6 +67,7 @@ export default class DrawGame {
                 this.arr[i][j] = this.num.slice(i * this.row + j, i * this.row + j + 1)
                 let x = this.x + i * (this.iWidth + this.gab) + this.gab, y = this.y + j * (this.iWidth + this.gab) + this.gab;
                 // console.log(x, y);
+                let color = this.arr[i][j] == 0 ? '#efb7dd' : '#666'
                 DRAW.drawRoundedRectangle(spItem, x, y, this.iWidth, this.iWidth, 15, '#efb7dd')
             }
         }
@@ -114,9 +115,7 @@ export default class DrawGame {
     }
 
 
-    // 事件处理
-
-
-
-
+    /**
+     * 逻辑处理
+     */
 }

@@ -33,7 +33,16 @@ import DrawGame from './draw/drawPlace'
     // 加载文件以及滚动条
     function downLoadMedia() {
         //加载静态文件资源
-        var assets = ['../laya/assets/comp/btn_close.png', '../laya/assets/music/troughts.mp3'];
+        var assets = ['assets/comp/btn_close.png', 'assets/music/troughts.mp3'];
+        // 加载images下的文件
+        let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'item-1-lock.png', 'item-1.png'];
+        imgNames.map(item => {
+            assets.push({
+                url: 'assets/images/' + item,
+                type: Loader.IMAGE  // type类型一定要加！！
+            });
+        })
+        // console.log(assets)
         //加载
         Laya.loader.load(assets, Handler.create(this, init), Handler.create(this, onLoading, null, false), Loader.TEXT);
         // 侦听加载失败
@@ -74,10 +83,6 @@ import DrawGame from './draw/drawPlace'
         console.log('初始化游戏');
         console.log(DrawGame);
         new DrawGame();
-
-        console.log(Event)
-        console.log(Laya.stage)
-
         // Laya.stage.on(Event.KEY_DOWN, this, function(){
         //     console.log('按下了')
         // });

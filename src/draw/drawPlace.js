@@ -26,8 +26,8 @@ export default class DrawGame {
         this.itemsSprite = [];//存放宫格的Sprite
 
         // 游戏数据
-        this.num = '011010011001101010001010';
-        this.numData = getNum('011010011001101010001010');
+        this.num = '0110100110011010100010101101010101010';
+        this.numData = getNum('011010011001101010001010110101010100001010101001010010101010100101010101010101010101010101');
         this.arr = [];
         this.pNow = [0, 0];
 
@@ -60,7 +60,7 @@ export default class DrawGame {
     drawPlace() {
         console.log('执行draw');
         var bg = new Laya.Sprite();
-        bg.size(this.tWidth, this.tHeight*2);//一定要设置size才能监控事件 
+        bg.size(this.tWidth, this.tHeight * 2);//一定要设置size才能监控事件 
         Laya.stage.addChild(bg);
         // 画圆角矩形
         bg.graphics.alpha(0.8)
@@ -71,7 +71,7 @@ export default class DrawGame {
         bg.on(Event.MOUSE_DOWN, this, this.onMouseDown);
         bg.on(Event.MOUSE_UP, this, this.onMouseUp);
         //添加键盘抬起事件
-        Laya.stage.on(Event.KEY_UP, this, this.onKeyUp);9
+        Laya.stage.on(Event.KEY_UP, this, this.onKeyUp); 9
     }
 
     // 画初始宫格
@@ -85,7 +85,7 @@ export default class DrawGame {
                     url = this.arr[i][j].num == '0' ? 'assets/images/item-0-active.png' : 'assets/images/item-1-active.png';
                 } else if (this.arr[i][j].isUsed) {
                     url = 'assets/images/item-1-lock.png'
-                } else  {
+                } else {
                     url = this.arr[i][j].num == '0' ? 'assets/images/item-0.png' : 'assets/images/item-1.png';
                 }
                 this.itemsSprite[i][j].graphics.clear();
@@ -96,6 +96,9 @@ export default class DrawGame {
             }
         }
         console.log(this.arr)
+        setTimeout(() => {
+            this.judgeSuccess();
+        }, 100)
     }
 
     /**
@@ -112,7 +115,8 @@ export default class DrawGame {
             case 40: direction = 'down'; break;
         }
         console.log('direction is ' + direction)
-        this.moveBlock(direction)
+        if (direction) this.moveBlock(direction)
+
     }
 
     /**
@@ -127,12 +131,12 @@ export default class DrawGame {
         let moveX = endP[0] - this.startP[0];
         let moveY = endP[1] - this.startP[1];
         if (Math.abs(moveX) > Math.abs(moveY)) {
-            direction = Math.abs(moveX) > 50 && moveX > 0 ? 'right' : 'left';
+            if (Math.abs(moveX) > 80) direction = moveX > 0 ? 'right' : 'left';
         } else {
-            direction = Math.abs(moveY) > 50 && moveY > 0 ? 'down' : 'top';
+            if (Math.abs(moveY) > 80) direction = moveY > 0 ? 'down' : 'top';
         }
         console.log(direction, moveX, moveY)
-        this.moveBlock(direction)
+        if (direction) this.moveBlock(direction)
     }
     onMouseMove(e) {
         // console.log(e)
@@ -186,7 +190,41 @@ export default class DrawGame {
         // let temp = this.arr;
         // this.arr = [];
         // this.arr = temp;
-        // this.judgeSuccess();
         this.drawTable();
+    }
+    judgeSuccess() {
+        let isWin = true;
+        // 判断是否赢了的逻辑
+        for (let i = 0; i < this.col; i++) {
+            for (let j = 0; j < this.row; j++) {
+                if (this.arr[i][j].num == 0) {
+                    isWin = false;
+                    break;
+                }
+            }
+            if (!isWin) break;
+        }
+        if (isWin) {
+            alert('你赢了！');
+        } else {
+            // 验证是否失败
+            let j = this.pNow[0],
+                i = this.pNow[1];
+            console.log(this.pNow)
+            console.log(i + 1 < this.row && !this.arr[i + 1][j].isUsed)
+            console.log(j + 1 < this.col && !this.arr[i][j + 1].isUsed)
+            console.log(i - 1 >= 0 && !this.arr[i - 1][j].isUsed)
+            console.log(j - 1 >= 0 && !this.arr[i][j - 1].isUsed)
+
+            if ((i + 1 < this.row && !this.arr[i + 1][j].isUsed) ||
+                (j + 1 < this.col && !this.arr[i][j + 1].isUsed) ||
+                (i - 1 >= 0 && !this.arr[i - 1][j].isUsed) ||
+                (j - 1 >= 0 && !this.arr[i][j - 1].isUsed)) {
+                return;
+            } else {
+                alert('你输了！');
+            }
+        }
+
     }
 }

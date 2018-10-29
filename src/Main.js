@@ -33,7 +33,7 @@ import DrawGame from './draw/drawPlace'
     // 加载文件以及滚动条
     function downLoadMedia() {
         //加载静态文件资源
-        var assets = ['assets/comp/btn_close.png', 'assets/music/troughts.mp3'];
+        var assets = ['assets/comp/btn_close.png'];
         // 加载images下的文件
         let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'item-1-lock.png', 'item-1.png'];
         imgNames.map(item => {

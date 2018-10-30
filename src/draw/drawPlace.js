@@ -15,7 +15,7 @@ export default class DrawGame {
     constructor() {
         // 绘图相关的属性
         this.x = 40;
-        this.y = 200;
+        this.y = 300;
         this.col = 4;
         this.row = 4;
         this.gab = 20;
@@ -39,7 +39,6 @@ export default class DrawGame {
     init() {
         console.log('执行init');
         this.drawPlace()
-
         for (var i = 0; i < this.row; i++) {
             this.arr[i] = [];
             this.itemsSprite[i] = [];
@@ -52,10 +51,13 @@ export default class DrawGame {
             }
         }
 
-        // this.spItem = new Laya.Sprite();
-        // Laya.stage.addChild(this.spItem);
         this.drawTable()
+        this.drawTopButton()
     }
+    /**
+     * 绘制画布
+     */
+
     // 画背景图
     drawPlace() {
         console.log('执行draw');
@@ -72,6 +74,30 @@ export default class DrawGame {
         bg.on(Event.MOUSE_UP, this, this.onMouseUp);
         //添加键盘抬起事件
         Laya.stage.on(Event.KEY_UP, this, this.onKeyUp); 9
+    }
+
+    // 画顶部按钮
+    drawTopButton() {
+        let topSp = new Sprite();
+        Laya.stage.addChild(topSp);
+        topSp.graphics.drawRect(0, 0, 750, 120, "#4d2f8a");
+        // 绘制刷新按钮
+        let refreshSp = new Sprite();
+        Laya.stage.addChild(refreshSp);
+        this.refresh
+        refreshSp.loadImage('assets/images/refresh_btn.png');
+        refreshSp.pos(645, 15);
+        refreshSp.size(90, 90);
+        refreshSp.on('click', this, this.refresh)
+
+        let returnSp = new Sprite();
+        Laya.stage.addChild(returnSp);
+        returnSp.loadImage('assets/images/return_btn.png');
+        returnSp.pos(15, 15);
+        returnSp.size(90, 90);
+        returnSp.on('click', this, function () {
+            console.log('点我！aa')
+        })
     }
 
     // 画初始宫格
@@ -116,7 +142,6 @@ export default class DrawGame {
         }
         console.log('direction is ' + direction)
         if (direction) this.moveBlock(direction)
-
     }
 
     /**
@@ -185,13 +210,9 @@ export default class DrawGame {
         this.arr[i][j].num = this.arr[i][j].num == "1" ? "0" : "1";
         this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
         console.log(this.arr[i][j]);
-        // this.arr[1][0] = "1";
-        // 为了视图更新
-        // let temp = this.arr;
-        // this.arr = [];
-        // this.arr = temp;
         this.drawTable();
     }
+    // 判断是否失败以及成功
     judgeSuccess() {
         let isWin = true;
         // 判断是否赢了的逻辑
@@ -226,5 +247,19 @@ export default class DrawGame {
             }
         }
 
+    }
+
+    // 重置游戏
+    refresh() {
+        this.pNow = [0, 0];
+        this.numData = getNum('011010011001101010001010110101010100001010101001010010101010100101010101010101010101010101');
+        for (var i = 0; i < this.row; i++) {
+            this.arr[i] = [];
+            for (var j = 0; j < this.col; j++) {
+                // this.arr[i][j] = this.num.slice(i * this.row + j, i * this.row + j + 1);
+                this.arr[i][j] = this.numData[i * this.row + j];
+            }
+        }
+        this.drawTable()
     }
 }

@@ -10,6 +10,8 @@ var Handler = Laya.Handler;
 var WebGL = Laya.WebGL;
 var Event = Laya.Event;
 var Loader = Laya.Loader;
+var Tween = Laya.Tween;
+var Ease = Laya.Ease;
 
 export default class DrawGame {
     constructor() {
@@ -21,13 +23,14 @@ export default class DrawGame {
         this.gab = 20;
         this.tWidth = 750 - 2 * this.x;//桌面宽度
         this.iWidth = (this.tWidth - (this.row + 1) * this.gab) / this.row;//单个的高度
-        this.tHeight = this.tWidth;
+        this.tHeight = this.iWidth * this.col + (this.col + 1) * this.gab;
         // this.spItem;
         this.itemsSprite = [];//存放宫格的Sprite
 
         // 游戏数据
-        this.num = '0110100110011010100010101101010101010';
-        this.numData = getNum('011010011001101010001010110101010100001010101001010010101010100101010101010101010101010101');
+        this.num = '011010011001101010001010110101010100001010101001010010101010100101010101010101010101010101';
+        this.numData = getNum(this.num);
+
         this.arr = [];
         this.pNow = [0, 0];
 
@@ -39,19 +42,18 @@ export default class DrawGame {
     init() {
         console.log('执行init');
         this.drawPlace()
-        for (var i = 0; i < this.row; i++) {
+        for (var i = 0; i < this.col; i++) {
             this.arr[i] = [];
             this.itemsSprite[i] = [];
-            for (var j = 0; j < this.col; j++) {
-                // this.arr[i][j] = this.num.slice(i * this.row + j, i * this.row + j + 1);
+            for (var j = 0; j < this.row; j++) {
                 this.arr[i][j] = this.numData[i * this.row + j];
                 // 创建宫格舞台
                 this.itemsSprite[i][j] = new Sprite();
                 Laya.stage.addChild(this.itemsSprite[i][j]);
             }
         }
-
-        this.drawTable()
+        // console.log(this.arr)
+        this.drawTable(true)
         this.drawTopButton()
     }
     /**
@@ -100,11 +102,10 @@ export default class DrawGame {
         })
     }
 
-    // 画初始宫格
-    drawTable() {
-        // this.spItem.graphics.clear();
-        for (var i = 0; i < this.row; i++) {
-            for (var j = 0; j < this.col; j++) {
+    // 画宫格
+    drawTable(first = false) {
+        for (var i = 0; i < this.col; i++) {
+            for (var j = 0; j < this.row; j++) {
                 let x = this.x + j * (this.iWidth + this.gab) + this.gab, y = this.y + i * (this.iWidth + this.gab) + this.gab;
                 let url = "";
                 if (j == this.pNow[0] && i == this.pNow[1]) {
@@ -119,9 +120,31 @@ export default class DrawGame {
                 this.itemsSprite[i][j].loadImage(url);
                 this.itemsSprite[i][j].pos(x, y);
                 this.itemsSprite[i][j].size(this.iWidth, this.iWidth);
+
+
+                // 动画
+                // target:*, props:Object, duration:int, ease:Function = null, complete:Handler = null, delay:int = 0, coverBefore:Boolean = false
+                if (first) {
+                    this.itemsSprite[i][j].alpha = 0
+                    Tween.from(this.itemsSprite[i][j], {
+                        // scale: (0.5,0.5,200,200)
+                        // y:10
+                        scaleY: 0,
+                        scaleX: 0,
+                        pivotX: this.iWidth * 0.5,
+                        pivotY: this.iWidth * 0.5,
+                        alpha: 0
+                    }, 250, Ease.expoOut, null, i * 100 * this.row + j * 100)
+
+                    Tween.to(this.itemsSprite[i][j], {
+                        scaleY: 1,
+                        scaleX: 1,
+                        alpha: 1
+                    }, 250, Ease.expoOut, null, i * 100 * this.row + j * 100)
+                }
+
             }
         }
-        console.log(this.arr)
         setTimeout(() => {
             this.judgeSuccess();
         }, 100)
@@ -168,13 +191,12 @@ export default class DrawGame {
         // console.log(Laya.stage.mouseX)
     }
 
-
     /**
      * 逻辑处理
      */
 
     moveBlock(direction) {
-        console.log("移动");
+
         let b = this.pNow[0],
             a = this.pNow[1];
         // this.arr[a][b] = this.arr[a][b] == "1" ? "0" : "1";
@@ -199,46 +221,34 @@ export default class DrawGame {
             }
             this.pNow[0]--;
         }
+
         let j = this.pNow[0],
             i = this.pNow[1];
-        // console.log(this.arr)
         if (this.arr[i][j].isUsed) {
             this.pNow[0] = b;
             this.pNow[1] = a;
             return;
         }
+
         this.arr[i][j].num = this.arr[i][j].num == "1" ? "0" : "1";
         this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
-        console.log(this.arr[i][j]);
         this.drawTable();
     }
     // 判断是否失败以及成功
     judgeSuccess() {
-        let isWin = true;
         // 判断是否赢了的逻辑
-        for (let i = 0; i < this.col; i++) {
-            for (let j = 0; j < this.row; j++) {
-                if (this.arr[i][j].num == 0) {
-                    isWin = false;
-                    break;
-                }
-            }
-            if (!isWin) break;
-        }
+        let isWin = this.arr.every(items => {
+            return items.every(item => item.num == '1')
+        })
         if (isWin) {
             alert('你赢了！');
+            this.refresh();
         } else {
             // 验证是否失败
             let j = this.pNow[0],
                 i = this.pNow[1];
-            console.log(this.pNow)
-            console.log(i + 1 < this.row && !this.arr[i + 1][j].isUsed)
-            console.log(j + 1 < this.col && !this.arr[i][j + 1].isUsed)
-            console.log(i - 1 >= 0 && !this.arr[i - 1][j].isUsed)
-            console.log(j - 1 >= 0 && !this.arr[i][j - 1].isUsed)
-
-            if ((i + 1 < this.row && !this.arr[i + 1][j].isUsed) ||
-                (j + 1 < this.col && !this.arr[i][j + 1].isUsed) ||
+            if ((i + 1 < this.col && !this.arr[i + 1][j].isUsed) ||
+                (j + 1 < this.row && !this.arr[i][j + 1].isUsed) ||
                 (i - 1 >= 0 && !this.arr[i - 1][j].isUsed) ||
                 (j - 1 >= 0 && !this.arr[i][j - 1].isUsed)) {
                 return;
@@ -252,14 +262,14 @@ export default class DrawGame {
     // 重置游戏
     refresh() {
         this.pNow = [0, 0];
-        this.numData = getNum('011010011001101010001010110101010100001010101001010010101010100101010101010101010101010101');
-        for (var i = 0; i < this.row; i++) {
+        this.numData = getNum(this.num);
+        for (var i = 0; i < this.col; i++) {
             this.arr[i] = [];
-            for (var j = 0; j < this.col; j++) {
+            for (var j = 0; j < this.row; j++) {
                 // this.arr[i][j] = this.num.slice(i * this.row + j, i * this.row + j + 1);
                 this.arr[i][j] = this.numData[i * this.row + j];
             }
         }
-        this.drawTable()
+        this.drawTable(true)
     }
 }

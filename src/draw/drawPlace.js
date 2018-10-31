@@ -12,6 +12,7 @@ var Event = Laya.Event;
 var Loader = Laya.Loader;
 var Tween = Laya.Tween;
 var Ease = Laya.Ease;
+var SoundManager = Laya.SoundManager;
 
 export default class DrawGame {
     constructor() {
@@ -64,8 +65,8 @@ export default class DrawGame {
     drawPlace() {
         console.log('执行draw');
         // 画游戏的背景布
-        var game_bg=new Laya.Sprite();
-        game_bg.size(750,1334);
+        var game_bg = new Laya.Sprite();
+        game_bg.size(750, 1334);
         Laya.stage.addChild(game_bg);
         game_bg.loadImage('assets/images/game-bg.png')
         // 画中心的背景布
@@ -81,28 +82,28 @@ export default class DrawGame {
         bg.on(Event.MOUSE_DOWN, this, this.onMouseDown);
         bg.on(Event.MOUSE_UP, this, this.onMouseUp);
         //添加键盘抬起事件
-        Laya.stage.on(Event.KEY_UP, this, this.onKeyUp); 9
+        Laya.stage.on(Event.KEY_UP, this, this.onKeyUp);
     }
 
     // 画顶部按钮
     drawTopButton() {
         let topSp = new Sprite();
         Laya.stage.addChild(topSp);
-        topSp.graphics.drawRect(0, 0, 750, 120, "#4d2f8a");
+        // topSp.graphics.drawRect(0, 0, 142, 106, "#4d2f8a");
         // 绘制刷新按钮
         let refreshSp = new Sprite();
         Laya.stage.addChild(refreshSp);
         this.refresh
         refreshSp.loadImage('assets/images/refresh_btn.png');
-        refreshSp.pos(645, 15);
-        refreshSp.size(90, 90);
+        refreshSp.pos(578, 30);
+        refreshSp.size(142, 106);
         refreshSp.on('click', this, this.refresh)
 
         let returnSp = new Sprite();
         Laya.stage.addChild(returnSp);
         returnSp.loadImage('assets/images/return_btn.png');
-        returnSp.pos(15, 15);
-        returnSp.size(90, 90);
+        returnSp.pos(30, 30);
+        returnSp.size(142, 106);
         returnSp.on('click', this, function () {
             console.log('点我！aa')
         })
@@ -237,6 +238,10 @@ export default class DrawGame {
         this.arr[i][j].num = this.arr[i][j].num == "1" ? "0" : "1";
         this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
         this.drawTable();
+        // 播放滑动音效
+        
+        SoundManager.setSoundVolume(0.5);
+        SoundManager.playSound("assets/music/shua.mp3", 1,null,null,13);
     }
     // 判断是否失败以及成功
     judgeSuccess() {
@@ -258,6 +263,7 @@ export default class DrawGame {
                 return;
             } else {
                 alert('你输了！');
+                this.refresh();
             }
         }
 

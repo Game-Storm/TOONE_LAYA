@@ -19,8 +19,8 @@ export default class DrawGame {
         // 绘图相关的属性
         this.x = 40;
         this.y = 300;
-        this.col = 4;
-        this.row = 4;
+        this.col = 6;
+        this.row = 6;
         this.gab = 20;
         this.tWidth = 750 - 2 * this.x;//桌面宽度
         this.iWidth = (this.tWidth - (this.row + 1) * this.gab) / this.row;//单个的高度
@@ -98,7 +98,14 @@ export default class DrawGame {
         refreshSp.pos(578, 30);
         refreshSp.size(142, 106);
         refreshSp.on('click', this, this.refresh)
+        // 绘制数字显示屏
+        let numScreenSp=new Sprite();
+        Laya.stage.addChild(numScreenSp);
+        numScreenSp.loadImage('assets/images/top_num_screen.png');
+        numScreenSp.size(330,130);
+        numScreenSp.pos(210,20)
 
+        // 绘制返回按钮
         let returnSp = new Sprite();
         Laya.stage.addChild(returnSp);
         returnSp.loadImage('assets/images/return_btn.png');
@@ -137,16 +144,16 @@ export default class DrawGame {
                         // scale: (0.5,0.5,200,200)
                         // y:10
                         scaleY: 0,
-                        scaleX: 0,
+                        // scaleX: 0,
                         pivotX: this.iWidth * 0.5,
                         pivotY: this.iWidth * 0.5,
                         alpha: 0
-                    }, 250, Ease.expoOut, null, i * 100 * this.row + j * 100)
+                    }, 250, Ease.expoOut, null, i * 300 )
                     Tween.to(this.itemsSprite[i][j], {
                         scaleY: 1,
-                        scaleX: 1,
+                        // scaleX: 1,
                         alpha: 1
-                    }, 250, Ease.expoOut, null, i * 100 * this.row + j * 100)
+                    }, 250, Ease.expoOut, null, i * 300)
                 }
             }
         }
@@ -241,7 +248,7 @@ export default class DrawGame {
         // 播放滑动音效
         
         SoundManager.setSoundVolume(0.5);
-        SoundManager.playSound("assets/music/shua.mp3", 1,null,null,13);
+        SoundManager.playSound("assets/music/dong.mp3", 1,null,null,13);
     }
     // 判断是否失败以及成功
     judgeSuccess() {

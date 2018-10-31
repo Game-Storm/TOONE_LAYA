@@ -35,7 +35,7 @@ import DrawGame from './draw/drawPlace'
         //加载静态文件资源
         var assets = ['assets/comp/btn_close.png'];
         // 加载images下的文件
-        let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'item-1-lock.png', 'item-1.png','refresh_btn.png','return_btn.png'];
+        let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'item-1-lock.png', 'item-1.png','refresh_btn.png','return_btn.png','game-bg.png'];
         imgNames.map(item => {
             assets.push({
                 url: 'assets/images/' + item,

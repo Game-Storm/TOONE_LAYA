@@ -63,6 +63,12 @@ export default class DrawGame {
     // 画背景图
     drawPlace() {
         console.log('执行draw');
+        // 画游戏的背景布
+        var game_bg=new Laya.Sprite();
+        game_bg.size(750,1334);
+        Laya.stage.addChild(game_bg);
+        game_bg.loadImage('assets/images/game-bg.png')
+        // 画中心的背景布
         var bg = new Laya.Sprite();
         bg.size(this.tWidth, this.tHeight * 2);//一定要设置size才能监控事件 
         Laya.stage.addChild(bg);
@@ -104,6 +110,7 @@ export default class DrawGame {
 
     // 画宫格
     drawTable(first = false) {
+        Tween.clearAll(this.itemsSprite)
         for (var i = 0; i < this.col; i++) {
             for (var j = 0; j < this.row; j++) {
                 let x = this.x + j * (this.iWidth + this.gab) + this.gab, y = this.y + i * (this.iWidth + this.gab) + this.gab;
@@ -121,7 +128,6 @@ export default class DrawGame {
                 this.itemsSprite[i][j].pos(x, y);
                 this.itemsSprite[i][j].size(this.iWidth, this.iWidth);
 
-
                 // 动画
                 // target:*, props:Object, duration:int, ease:Function = null, complete:Handler = null, delay:int = 0, coverBefore:Boolean = false
                 if (first) {
@@ -135,14 +141,12 @@ export default class DrawGame {
                         pivotY: this.iWidth * 0.5,
                         alpha: 0
                     }, 250, Ease.expoOut, null, i * 100 * this.row + j * 100)
-
                     Tween.to(this.itemsSprite[i][j], {
                         scaleY: 1,
                         scaleX: 1,
                         alpha: 1
                     }, 250, Ease.expoOut, null, i * 100 * this.row + j * 100)
                 }
-
             }
         }
         setTimeout(() => {

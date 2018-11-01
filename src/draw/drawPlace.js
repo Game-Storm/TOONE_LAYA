@@ -18,9 +18,9 @@ export default class DrawGame {
     constructor() {
         // 绘图相关的属性
         this.x = 40;
-        this.y = 300;
-        this.col = 6;
-        this.row = 6;
+        this.y = 250;
+        this.col = 5;
+        this.row = 5;
         this.gab = 20;
         this.tWidth = 750 - 2 * this.x;//桌面宽度
         this.iWidth = (this.tWidth - (this.row + 1) * this.gab) / this.row;//单个的高度
@@ -29,7 +29,9 @@ export default class DrawGame {
         this.itemsSprite = [];//存放宫格的Sprite
 
         // 游戏数据
-        this.num = '011010011001101010001010110101010100001010101001010010101010100101010101010101010101010101';
+        // this.num = '011010011001101010001010110101010100001010101001010010101010100101010101010101010101010101';
+        // this.num = '001100110011001100110011001100110011001100110011001101'
+        this.num = 0.2
         this.numData = getNum(this.num);
 
         this.arr = [];
@@ -99,11 +101,11 @@ export default class DrawGame {
         refreshSp.size(142, 106);
         refreshSp.on('click', this, this.refresh)
         // 绘制数字显示屏
-        let numScreenSp=new Sprite();
+        let numScreenSp = new Sprite();
         Laya.stage.addChild(numScreenSp);
         numScreenSp.loadImage('assets/images/top_num_screen.png');
-        numScreenSp.size(330,130);
-        numScreenSp.pos(210,20)
+        numScreenSp.size(330, 130);
+        numScreenSp.pos(210, 20)
 
         // 绘制返回按钮
         let returnSp = new Sprite();
@@ -148,7 +150,7 @@ export default class DrawGame {
                         pivotX: this.iWidth * 0.5,
                         pivotY: this.iWidth * 0.5,
                         alpha: 0
-                    }, 250, Ease.expoOut, null, i * 300 )
+                    }, 250, Ease.expoOut, null, i * 300)
                     Tween.to(this.itemsSprite[i][j], {
                         scaleY: 1,
                         // scaleX: 1,
@@ -243,12 +245,12 @@ export default class DrawGame {
         }
 
         this.arr[i][j].num = this.arr[i][j].num == "1" ? "0" : "1";
-        this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
+        // this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
         this.drawTable();
         // 播放滑动音效
-        
+
         SoundManager.setSoundVolume(0.5);
-        SoundManager.playSound("assets/music/dong.mp3", 1,null,null,13);
+        SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
     }
     // 判断是否失败以及成功
     judgeSuccess() {

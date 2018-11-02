@@ -49,6 +49,7 @@ export default class DrawHome {
         card_bg.pos(80, 200)
         Laya.stage.addChild(card_bg);
         card_bg.loadImage('assets/images/card-bg.png');
+        card_bg.on(Event.CLICK, this, this.startGame);
 
         // 绘制文字
         // this.realLevel = Laya.LocalStorage.getItem("realLevel");
@@ -61,12 +62,9 @@ export default class DrawHome {
         num.x = 80;
         num.y = 670;
         num.align = "center";
-        num.alpha=0.8;
+        num.alpha = 0.8;
         Laya.stage.addChild(num);
         num.text = this.realLevel = Laya.LocalStorage.getItem("realLevel");
-
-
-
 
         // var card_animate=new Laya.Animation();
         // card_animate.loadAnimation('cardscale.ani');
@@ -82,4 +80,8 @@ export default class DrawHome {
     /**
      * 逻辑处理
      */
+    // 进入关卡
+    startGame(params) {
+        let GAME = new DrawGame();
+    }
 }

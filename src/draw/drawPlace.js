@@ -3,6 +3,8 @@ import DRAW from '../lib/graphics';
 import GameConfig from "../GameConfig";
 import { getNum } from "../lib/gameData";
 
+import DrawHome from "./drawHome"
+
 var Sprite = Laya.Sprite;
 var Stage = Laya.Stage;
 var Browser = Laya.Browser;
@@ -25,15 +27,18 @@ export default class DrawGame {
         this.tWidth = 750 - 2 * this.x;//桌面宽度
         this.iWidth = (this.tWidth - (this.row + 1) * this.gab) / this.row;//单个的高度
         this.tHeight = this.iWidth * this.col + (this.col + 1) * this.gab;
-        // this.spItem;
         this.itemsSprite = [];//存放宫格的Sprite
+        // 画布
+        this.game_bg = ""
+        this.table_bg = ""
+        this.topSp = ""
+        this.refreshSp = ""
+        this.returnSp = ""
+
 
         // 游戏数据
-        // this.num = '011010011001101010001010110101010100001010101001010010101010100101010101010101010101010101';
-        // this.num = '001100110011001100110011001100110011001100110011001101'
         this.num = 0.2
         this.numData = getNum(this.num);
-
         this.arr = [];
         this.pNow = [0, 0];
 
@@ -67,39 +72,37 @@ export default class DrawGame {
     drawPlace() {
         console.log('执行draw');
         // 画游戏的背景布
-        var game_bg = new Laya.Sprite();
-        game_bg.size(750, 1334);
-        Laya.stage.addChild(game_bg);
-        game_bg.loadImage('assets/images/game-bg.png')
-        // 画中心的背景布
-        var bg = new Laya.Sprite();
-        bg.size(this.tWidth, this.tHeight * 2);//一定要设置size才能监控事件 
-        Laya.stage.addChild(bg);
-        // 画圆角矩形
-        bg.graphics.alpha(0.8)
-        DRAW.drawRoundedRectangle(bg, this.x, this.y, this.tWidth, this.tHeight, this.gab, '#412873');
+        this.game_bg = new Laya.Sprite();
+        this.game_bg.size(750, 1334);
+        Laya.stage.addChild(this.game_bg);
+        this.game_bg.loadImage('assets/images/game-bg.png')
+        // 画中心的方块组背景
+        this.table_bg = new Laya.Sprite();
+        this.table_bg.size(this.tWidth, this.tHeight * 2);//一定要设置size才能监控事件 
+        Laya.stage.addChild(this.table_bg);
+        this.table_bg.graphics.alpha(0.8)
+        DRAW.drawRoundedRectangle(this.table_bg, this.x, this.y, this.tWidth, this.tHeight, this.gab, '#412873');
         // 绑定事件
-        // bg.on()
-        bg.on(Event.MOUSE_MOVE, this, this.onMouseMove);
-        bg.on(Event.MOUSE_DOWN, this, this.onMouseDown);
-        bg.on(Event.MOUSE_UP, this, this.onMouseUp);
+        this.table_bg.on(Event.MOUSE_MOVE, this, this.onMouseMove);
+        this.table_bg.on(Event.MOUSE_DOWN, this, this.onMouseDown);
+        this.table_bg.on(Event.MOUSE_UP, this, this.onMouseUp);
         //添加键盘抬起事件
         Laya.stage.on(Event.KEY_UP, this, this.onKeyUp);
     }
-
     // 画顶部按钮
     drawTopButton() {
-        let topSp = new Sprite();
-        Laya.stage.addChild(topSp);
-        // topSp.graphics.drawRect(0, 0, 142, 106, "#4d2f8a");
+        this.topSp = new Sprite();
+        Laya.stage.addChild(this.topSp);
+        // this.topSp.graphics.drawRect(0, 0, 142, 106, "#4d2f8a");
         // 绘制刷新按钮
-        let refreshSp = new Sprite();
-        Laya.stage.addChild(refreshSp);
+        this.refreshSp = new Sprite();
+        Laya.stage.addChild(this.refreshSp);
         this.refresh
-        refreshSp.loadImage('assets/images/refresh_btn.png');
-        refreshSp.pos(578, 30);
-        refreshSp.size(142, 106);
-        refreshSp.on('click', this, this.refresh)
+        this.refreshSp.loadImage('assets/images/refresh_btn.png');
+        this.refreshSp.pos(578, 30);
+        this.refreshSp.size(142, 106);
+        this.refreshSp.on('click', this, this.refresh)
+        // this.refreshSp.graphics.destroy()
         // 绘制数字显示屏
         let numScreenSp = new Sprite();
         Laya.stage.addChild(numScreenSp);
@@ -108,16 +111,13 @@ export default class DrawGame {
         numScreenSp.pos(210, 20)
 
         // 绘制返回按钮
-        let returnSp = new Sprite();
-        Laya.stage.addChild(returnSp);
-        returnSp.loadImage('assets/images/return_btn.png');
-        returnSp.pos(30, 30);
-        returnSp.size(142, 106);
-        returnSp.on('click', this, function () {
-            console.log('点我！aa')
-        })
+        this.returnSp = new Sprite();
+        Laya.stage.addChild(this.returnSp);
+        this.returnSp.loadImage('assets/images/return_btn.png');
+        this.returnSp.pos(30, 30);
+        this.returnSp.size(142, 106);
+        this.returnSp.on('click', this, this.returnHome)
     }
-
     // 画宫格
     drawTable(first = false) {
         Tween.clearAll(this.itemsSprite)
@@ -143,7 +143,6 @@ export default class DrawGame {
                 if (first) {
                     this.itemsSprite[i][j].alpha = 0
                     Tween.from(this.itemsSprite[i][j], {
-                        // scale: (0.5,0.5,200,200)
                         // y:10
                         scaleY: 0,
                         // scaleX: 0,
@@ -163,7 +162,6 @@ export default class DrawGame {
             this.judgeSuccess();
         }, 100)
     }
-
     /**
      * 键盘事件
      */
@@ -277,7 +275,6 @@ export default class DrawGame {
         }
 
     }
-
     // 重置游戏
     refresh() {
         this.pNow = [0, 0];
@@ -290,5 +287,19 @@ export default class DrawGame {
             }
         }
         this.drawTable(true)
+    }
+    // 返回 Home
+    returnHome() {
+        this.clearPlaceAll()
+        // new DrawHome()
+    }
+    // 清除所有画布的东西
+    clearPlaceAll() {
+        this.game_bg.graphics.destroy()
+        this.table_bg.graphics.destroy()
+        this.topSp.graphics.destroy()
+        this.refreshSp.graphics.destroy()
+        this.returnSp.graphics.destroy()
+
     }
 }

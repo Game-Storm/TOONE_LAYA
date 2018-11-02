@@ -1,4 +1,5 @@
 import DrawGame from './draw/drawPlace'
+import DrawHome from './draw/drawHome'
 
 (function () {
     var Sprite = Laya.Sprite;
@@ -35,15 +36,24 @@ import DrawGame from './draw/drawPlace'
         //加载静态文件资源
         var assets = ['assets/comp/btn_close.png'];
         // 加载images下的文件
-        let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', 'game-bg.png','top_num_screen.png'];
+        let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', 'game-bg.png', 'top_num_screen.png', 'card.png'];
         imgNames.map(item => {
             assets.push({
                 url: 'assets/images/' + item,
                 type: Loader.IMAGE  // type类型一定要加！！
             });
         })
+        // 加载动画库里的素材
+        let imgAniNames = ['card.png'];
+        imgAniNames.map(item => {
+            assets.push({
+                url: 'images/' + item,
+                type: Loader.IMAGE  // type类型一定要加！！
+            });
+        })
+
         // 添加音效
-        let soundNames = ['shua.mp3','dong.mp3']
+        let soundNames = ['shua.mp3', 'dong.mp3']
         soundNames.map(item => {
             assets.push({
                 url: 'assets/music/' + item,
@@ -91,7 +101,8 @@ import DrawGame from './draw/drawPlace'
         clearLoading()
         console.log('初始化游戏');
         console.log(DrawGame);
-        new DrawGame();
+        // new DrawGame();
+        new DrawHome();
         // Laya.stage.on(Event.KEY_DOWN, this, function(){
         //     console.log('按下了')
         // });

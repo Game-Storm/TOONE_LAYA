@@ -245,7 +245,7 @@ export default class DrawGame {
         }
 
         this.arr[i][j].num = this.arr[i][j].num == "1" ? "0" : "1";
-        // this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
+        this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
         this.drawTable();
         // 播放滑动音效
 

@@ -15,25 +15,28 @@ var Tween = Laya.Tween;
 var Ease = Laya.Ease;
 var SoundManager = Laya.SoundManager;
 var Text = Laya.Text;
+var HSlider = Laya.HSlider;
+var GlowFilter = Laya.GlowFilter;
 
 export default class DrawHome {
     constructor() {
 
         this.realLevel = "";
         this.gameLevel = "";
+        this.GAME = ""
+
+        // 绘制有关的属性
+        this.game_bg = ""
+        this.title = ""
 
         // 运行
         Laya.stage.bgColor = "#ded6df"
         this.init();
     }
     init() {
-        // this.drawCard();
-        // 读取数据缓存
-        // var data = { "index": 0, "index1": 1 };
-        // var str = JSON.stringify(data);
         // Laya.LocalStorage.setItem("item", str);
-        Laya.LocalStorage.setItem("realLevel", 0.12);
-        // Laya.loader.load("res/atlas/assets/images.atlas", Laya.Handler.create(this, this.drawCard));
+        Laya.LocalStorage.setItem("realLevel", 0.02);
+        this.drawBg();
         this.drawCard();
     }
 
@@ -41,22 +44,44 @@ export default class DrawHome {
      * 绘制画布
      */
 
+    // 绘制背景
+    drawBg() {
+        this.game_bg = new Laya.Sprite();
+        this.game_bg.size(750, 1334);
+        Laya.stage.addChild(this.game_bg);
+        this.game_bg.loadImage('assets/images/game_bg.png');
+        // 绘制标题
+        this.title_sp = new Laya.Sprite();
+        this.title_sp.size(344, 110);
+        this.title_sp.pos(200, 86);
+        Laya.stage.addChild(this.title_sp);
+        this.title_sp.loadImage('assets/images/logo_title.png');
+
+    }
     // 绘制中心卡片
     drawCard() {
         // 绘制背景
         var card_bg = new Laya.Sprite();
-        card_bg.size(590, 820);
-        card_bg.pos(80, 200)
+        card_bg.size(615, 817);
+        card_bg.pos(68, 200);
         Laya.stage.addChild(card_bg);
         card_bg.loadImage('assets/images/card-bg.png');
         card_bg.on(Event.CLICK, this, this.startGame);
+        //创建一个发光滤镜
+        console.log(Laya)
+        // var glowFilter = new GlowFilter("#8a68b3", 50, 10, 0);
+        // var glowFilter1 = new GlowFilter("#8a68b3", 50, 0, 10);
+        // var glowFilter2 = new GlowFilter("#8a68b3", 50, -10, 0);
+        // var glowFilter3 = new GlowFilter("#8a68b3", 50, 0, -10);
+        // //设置滤镜集合为发光滤镜
+        // card_bg.filters = [glowFilter,glowFilter1,glowFilter2,glowFilter3];
 
         // 绘制文字
         // this.realLevel = Laya.LocalStorage.getItem("realLevel");
         var num = new Text();
         num.color = "#f9dfc7";
         num.font = "Impact";
-        num.fontSize = 180;
+        num.fontSize = 150;
         num.width = 590;
         // num.borderColor = "#FFFF00";
         num.x = 80;
@@ -82,6 +107,6 @@ export default class DrawHome {
      */
     // 进入关卡
     startGame(params) {
-        let GAME = new DrawGame();
+        this.GAME ? this.GAME.startGame() : this.GAME = new DrawGame();
     }
 }

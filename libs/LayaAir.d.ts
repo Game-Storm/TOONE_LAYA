@@ -237,6 +237,12 @@ declare module laya.wx.mini {
         static minClearSize: number;
         /**本地资源列表**/
         static nativefiles: Array<any>;
+        /**本地分包资源表**/
+        static subNativeFiles: any;
+        /**本地分包文件目录数组**/
+        static subNativeheads: Array<any>;
+        /**本地分包文件目录映射表**/
+        static subMaps: Array<any>;
         static AutoCacheDownFile: boolean;
         static getJson(data: string): any;
         /**激活微信小游戏适配器*/
@@ -293,6 +299,21 @@ declare module laya.wx.mini {
         static pixelRatio(): number;
         static createElement(type: string): any;
         static createShaderCondition(conditionScript: string): Function;
+        /**
+         * 传递图集url地址到
+         * @param url 为绝对地址
+         */
+        static sendAtlasToOpenDataContext(url: string): void;
+        /**
+         * 发送单张图片到开放数据域
+         * @param url
+         */
+        static sendSinglePicToOpenDataContext(url: string): void;
+        /**
+         * 传递json配置数据到开放数据域
+         * @param url 为绝对地址
+         */
+        static sendJsonDataToDataContext(url: string): void;
     }
 }
 declare module laya.webgl {
@@ -640,10 +661,6 @@ declare module laya.webgl {
          * @private
          */
         static bindTexture(gl: WebGLContext, target: any, texture: any): void;
-        /**
-         * @private
-         */
-        static bindVertexArray(gl: WebGLContext, vertexArray: any): void;
         static useProgramForNative(gl: WebGLContext, program: any): boolean;
         static setDepthTestForNative(gl: WebGLContext, value: boolean): void;
         static setDepthMaskForNative(gl: WebGLContext, value: boolean): void;
@@ -1448,7 +1465,7 @@ declare module laya.webgl.resource {
          *  组合: 'ă'
          *  泰语: 'ฏ๎๎๎๎๎๎๎๎๎๎๎๎๎๎๎'
          *  天城文: 'कि'		 *
-        */
+         */
         filltext(ctx: WebGLContext2D, data: string, x: number, y: number, fontStr: string, color: string, strokeColor: string, lineWidth: number, textAlign: string, underLine?: number): void;
         filltext_native(ctx: WebGLContext2D, data: string, htmlchars: Array<HTMLChar>, x: number, y: number, fontStr: string, color: string, strokeColor: string, lineWidth: number, textAlign: string, underLine?: number): void;
         protected _drawResortedWords(ctx: WebGLContext2D, startx: number, samePagesData: Array<any>, startID: number, y: number): void;
@@ -1615,6 +1632,30 @@ declare module laya.webgl.canvas {
         static BlendLightTarget(gl: WebGLContext): void;
         static BlendMask(gl: WebGLContext): void;
         static BlendDestinationOut(gl: WebGLContext): void;
+    }
+}
+declare module laya.webgl {
+    import Buffer = laya.webgl.utils.Buffer;
+    /**
+     * ...
+     * @author ...
+     */
+    class BufferStateBase {
+        static _curBindedBufferState: BufferStateBase;
+        _bindedIndexBuffer: Buffer;
+        constructor();
+        /**
+         * @private
+         */
+        bind(): void;
+        /**
+         * @private
+         */
+        unBind(): void;
+        /**
+         * @private
+         */
+        destroy(): void;
     }
 }
 declare module laya.utils {
@@ -3521,6 +3562,12 @@ declare module laya.utils {
          * @param	length		从 Arraybuffer 对象写入到 Byte 对象的长度（以字节为单位）
          */
         writeArrayBuffer(arraybuffer: any, offset?: number, length?: number): void;
+        /**
+         * 读取ArrayBuffer数据
+         * @param	length
+         * @return
+         */
+        readArrayBuffer(length: number): ArrayBuffer;
     }
 }
 declare module laya.utils {
@@ -4724,6 +4771,7 @@ declare module laya.media {
          * @param channel <code>SoundChannel</code> 对象。
          */
         static removeChannel(channel: SoundChannel): void;
+        static disposeSoundLater(url: string): void;
         static disposeSoundIfNotUsed(url: string): void;
         /**
          * 失去焦点后是否自动停止背景音乐。
@@ -5947,6 +5995,8 @@ declare module laya.layagl {
         endRT(): void;
         drawCanvas(canvas: HTMLCanvas, x: number, y: number): void;
         drawTarget(commandEncoder: any, texture: RenderTexture2D, x: number, y: number, width: number, height: number): void;
+        getImageData(x: number, y: number, width: number, height: number, callBack: Function): void;
+        toBase64(type: string, encoderOptions: number, callBack: Function): void;
     }
 }
 declare module laya.layagl {
@@ -9630,7 +9680,7 @@ declare module laya.d3.utils {
         /**
          * @private
          */
-        static _addComponentByJsonForMaker(nodeData: any, outBatchSprites: Array<RenderableSprite3D>): void;
+        static _addComponentByJsonForMaker(nodeData: any, outBatchSprites: Array<RenderableSprite3D>, initTool?: any): void;
         /**
          * @private
          */
@@ -10983,6 +11033,7 @@ declare module laya.d3.math {
          * @param	vector 输出三维向量。
          */
         project(source: Vector3, matrix: Matrix4x4, out: Vector3): void;
+        project1(source: Vector3, matrix: Matrix4x4, out: Vector3): void;
         /**
          * 反变换一个三维向量。
          * @param	source 源三维向量。
@@ -12479,7 +12530,7 @@ declare module laya.d3 {
          * @private
          * @param flag 0:add、1:remove、2:change
          */
-        _changeTouches(changedTouches: Array<any>, pixelRatio: number, flag: number): void;
+        _changeTouches(changedTouches: Array<any>, flag: number): void;
         /**
          * @private
          */
@@ -14506,47 +14557,6 @@ declare module laya.d3.core {
         destroy(): void;
     }
 }
-declare module laya.d3.core {
-    import IndexBuffer3D = laya.d3.graphics.IndexBuffer3D;
-    import VertexBuffer3D = laya.d3.graphics.VertexBuffer3D;
-    /**
-     * @private
-     * <code>BufferState</code> 类用于实现渲染所需的Buffer状态集合。
-     */
-    class BufferState {
-        _vertexArrayObject: any;
-        /**
-         * 创建一个 <code>BufferState</code> 实例。
-         */
-        constructor();
-        /**
-         * @private
-         */
-        bindBufferState(): void;
-        /**
-         * @private
-         * vertexBuffer的vertexDeclaration不能为空,该函数比较消耗性能，建议初始化时使用。
-         */
-        applyVertexBuffer(vertexBuffer: VertexBuffer3D): void;
-        /**
-         * @private
-         * vertexBuffers中的vertexDeclaration不能为空,该函数比较消耗性能，建议初始化时使用。
-         */
-        applyVertexBuffers(vertexBuffers: Array<VertexBuffer3D>): void;
-        /**
-         * @private
-         */
-        applyIndexBuffer(indexBuffer: IndexBuffer3D): void;
-        /**
-         * @private
-         */
-        unBindBufferState(): void;
-        /**
-         * @private
-         */
-        destroy(): void;
-    }
-}
 declare module laya.d3.component {
     import ISingletonElement = laya.resource.ISingletonElement;
     /**
@@ -14872,11 +14882,11 @@ declare module laya.d3.animation {
         /**
          * 动画状态更新时执行。
          */
-        OnStateUpdate(): void;
+        onStateUpdate(): void;
         /**
          * 动画状态退出时执行。
          */
-        OnStateExit(): void;
+        onStateExit(): void;
     }
 }
 declare module laya.d3.animation {
@@ -15009,6 +15019,7 @@ declare module laya.components {
      * <code>Component</code> 类用于创建组件的基类。
      */
     class Component implements ISingletonElement, IDestroy {
+        _destroyed: boolean;
         _id: number;
         _enabled: boolean;
         /**
@@ -16118,6 +16129,15 @@ declare module laya.webgl.canvas {
         make(): ContextParams;
     }
 }
+declare module laya.webgl {
+    /**
+     * ...
+     * @author ...
+     */
+    class BufferState2D extends BufferStateBase {
+        constructor();
+    }
+}
 declare module laya.utils {
     import EventDispatcher = laya.events.EventDispatcher;
     /**
@@ -16649,7 +16669,6 @@ declare module laya.resource {
 }
 declare module laya.physics {
     import Component = laya.components.Component;
-    import Point = laya.maths.Point;
     /**
      * 2D刚体，显示对象通过RigidBody和物理世界进行绑定，保持物理和显示对象之间的位置同步
      * 物理世界的位置变化会自动同步到显示对象，显示对象本身的位移，旋转（父对象位移无效）也会自动同步到物理世界
@@ -16686,13 +16705,14 @@ declare module laya.physics {
         mask: number;
         /**[只读]自定义标签*/
         label: string;
-        /**[只读]原始刚体*/
-        body: any;
+        protected _body: any;
         protected _onAwake(): void;
         protected _onEnable(): void;
         protected _onDisable(): void;
         /**获得原始body对象 */
         getBody(): any;
+        /**[只读]获得原始body对象 */
+        readonly body: any;
         /**
          * 对刚体施加力
          * @param	position 施加力的点，如
@@ -16733,9 +16753,13 @@ declare module laya.physics {
         /**获得刚体质量*/
         getMass(): number;
         /**
-         * 质心的相对节点0,0点的位置偏移
+         * 获得质心的相对节点0,0点的位置偏移
          */
-        getCenter(): Point;
+        getCenter(): any;
+        /**
+         * 获得质心的世界坐标，相对于Physics.I.worldRoot节点
+         */
+        getWorldCenter(): any;
         /**
          * 刚体类型，支持三种类型static，dynamic和kinematic类型
          * static为静态类型，静止不动，不受重力影响，质量无限大，可以通过节点移动，旋转，缩放进行控制
@@ -16817,7 +16841,11 @@ declare module laya.physics {
          */
         gravity: any;
         /**获得刚体总数量*/
-        readonly bodyCount: number;
+        getBodyCount(): number;
+        /**获得碰撞总数量*/
+        getContactCount(): number;
+        /**获得关节总数量*/
+        getJointCount(): number;
         /**物理世界根容器，将根据此容器作为物理世界坐标世界，进行坐标变换，默认值为stage
          * 设置特定容器后，就可整体位移物理对象，保持物理世界不变*/
         worldRoot: Sprite;
@@ -16831,269 +16859,41 @@ declare module laya.physics {
 }
 declare module laya.physics.joint {
     import Component = laya.components.Component;
-    import RigidBody = laya.physics.RigidBody;
     /**
-     * 轮子关节：围绕节点旋转，包含弹性属性，使得刚体在节点位置发生弹性偏移
+     * 关节基类
      */
-    class WheelJoint extends Component {
-        /**[首次设置有效]关节的自身刚体*/
-        selfBody: RigidBody;
-        /**[首次设置有效]关节的连接刚体*/
-        otherBody: RigidBody;
-        /**[首次设置有效]关节的链接点，是相对于自身刚体的左上角位置偏移*/
-        anchor: Array<any>;
-        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
-        collideConnected: boolean;
+    class JointBase extends Component {
+        protected _joint: any;
         /**[只读]原生关节对象*/
-        joint: any;
-        /**[首次设置有效]一个向量值，描述运动方向，比如1,0是沿X轴向右*/
-        axis: Array<any>;
+        readonly joint: any;
         protected _onEnable(): void;
         protected _onAwake(): void;
-        protected _onDisable(): void;
-        /**弹簧系统的震动频率，可以视为弹簧的弹性系数*/
-        frequency: number;
-        /**刚体在回归到节点过程中受到的阻尼，取值0~1*/
-        damping: number;
-        /**是否开启马达，开启马达可使目标刚体运动*/
-        enableMotor: boolean;
-        /**启用马达后，可以达到的最大旋转速度*/
-        motorSpeed: number;
-        /**启用马达后，可以施加的最大扭距，如果最大扭矩太小，会导致不旋转*/
-        maxMotorTorque: number;
-    }
-}
-declare module laya.physics.joint {
-    import Component = laya.components.Component;
-    import RigidBody = laya.physics.RigidBody;
-    /**
-     * 焊接关节：焊接关节的用途是使两个物体不能相对运动，受到关节的限制，两个刚体的相对位置和角度都保持不变，看上去像一个整体
-     */
-    class WeldJoint extends Component {
-        /**[首次设置有效]关节的自身刚体*/
-        selfBody: RigidBody;
-        /**[首次设置有效]关节的连接刚体*/
-        otherBody: RigidBody;
-        /**[首次设置有效]关节的链接点，是相对于自身刚体的左上角位置偏移*/
-        anchor: Array<any>;
-        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
-        collideConnected: boolean;
-        /**[只读]原生关节对象*/
-        joint: any;
-        protected _onEnable(): void;
-        protected _onAwake(): void;
-        protected _onDisable(): void;
-        /**弹簧系统的震动频率，可以视为弹簧的弹性系数*/
-        frequency: number;
-        /**刚体在回归到节点过程中受到的阻尼，建议取值0~1*/
-        damping: number;
-    }
-}
-declare module laya.physics.joint {
-    import Component = laya.components.Component;
-    import RigidBody = laya.physics.RigidBody;
-    /**
-     * 绳索关节：限制了两个点之间的最大距离。它能够阻止连接的物体之间的拉伸，即使在很大的负载下
-     */
-    class RopeJoint extends Component {
-        /**[首次设置有效]关节的自身刚体*/
-        selfBody: RigidBody;
-        /**[首次设置有效]关节的连接刚体，可不设置，默认为左上角空刚体*/
-        otherBody: RigidBody;
-        /**[首次设置有效]自身刚体链接点，是相对于自身刚体的左上角位置偏移*/
-        selfAnchor: Array<any>;
-        /**[首次设置有效]链接刚体链接点，是相对于otherBody的左上角位置偏移*/
-        otherAnchor: Array<any>;
-        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
-        collideConnected: boolean;
-        /**[只读]原生关节对象*/
-        joint: any;
-        protected _onEnable(): void;
-        protected _onAwake(): void;
-        protected _onDisable(): void;
-        /**selfAnchor和otherAnchor之间的最大距离*/
-        maxLength: number;
-    }
-}
-declare module laya.physics.joint {
-    import Component = laya.components.Component;
-    import RigidBody = laya.physics.RigidBody;
-    /**
-     * 旋转关节强制两个物体共享一个锚点，两个物体相对旋转
-     */
-    class RevoluteJoint extends Component {
-        /**[首次设置有效]关节的自身刚体*/
-        selfBody: RigidBody;
-        /**[首次设置有效]关节的连接刚体，可不设置*/
-        otherBody: RigidBody;
-        /**[首次设置有效]关节的链接点，是相对于自身刚体的左上角位置偏移*/
-        anchor: Array<any>;
-        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
-        collideConnected: boolean;
-        /**[只读]原生关节对象*/
-        joint: any;
-        protected _onEnable(): void;
-        protected _onAwake(): void;
-        protected _onDisable(): void;
-        /**是否开启马达，开启马达可使目标刚体运动*/
-        enableMotor: boolean;
-        /**启用马达后，可以达到的最大旋转速度*/
-        motorSpeed: number;
-        /**启用马达后，可以施加的最大扭距，如果最大扭矩太小，会导致不旋转*/
-        maxMotorTorque: number;
-        /**是否对刚体的旋转范围加以约束*/
-        enableLimit: boolean;
-        /**启用约束后，刚体旋转范围的下限弧度*/
-        lowerAngle: number;
-        /**启用约束后，刚体旋转范围的上限弧度*/
-        upperAngle: number;
-    }
-}
-declare module laya.physics.joint {
-    import Component = laya.components.Component;
-    import RigidBody = laya.physics.RigidBody;
-    /**
-     * 滑轮关节：它将两个物体接地(ground)并彼此连接，当一个物体上升，另一个物体就会下降
-     */
-    class PulleyJoint extends Component {
-        /**[首次设置有效]关节的自身刚体*/
-        selfBody: RigidBody;
-        /**[首次设置有效]关节的连接刚体*/
-        otherBody: RigidBody;
-        /**[首次设置有效]自身刚体链接点，是相对于自身刚体的左上角位置偏移*/
-        selfAnchor: Array<any>;
-        /**[首次设置有效]链接刚体链接点，是相对于otherBody的左上角位置偏移*/
-        otherAnchor: Array<any>;
-        /**[首次设置有效]滑轮上与节点selfAnchor相连接的节点，是相对于自身刚体的左上角位置偏移*/
-        selfGroundPoint: Array<any>;
-        /**[首次设置有效]滑轮上与节点otherAnchor相连接的节点，是相对于otherBody的左上角位置偏移*/
-        otherGroundPoint: Array<any>;
-        /**[首次设置有效]两刚体移动距离比率*/
-        ratio: number;
-        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
-        collideConnected: boolean;
-        /**[只读]原生关节对象*/
-        joint: any;
-        protected _onEnable(): void;
-        protected _onAwake(): void;
+        protected _createJoint(): void;
         protected _onDisable(): void;
     }
 }
 declare module laya.physics.joint {
-    import Component = laya.components.Component;
-    import RigidBody = laya.physics.RigidBody;
-    /**
-     * 平移关节：移动关节允许两个物体沿指定轴相对移动，它会阻止相对旋转
-     */
-    class PrismaticJoint extends Component {
-        /**[首次设置有效]关节的自身刚体*/
-        selfBody: RigidBody;
-        /**[首次设置有效]关节的连接刚体，可不设置，默认为左上角空刚体*/
-        otherBody: RigidBody;
-        /**[首次设置有效]关节的控制点，是相对于自身刚体的左上角位置偏移*/
-        anchor: Array<any>;
-        /**[首次设置有效]一个向量值，描述运动方向，比如1,0是沿X轴向右*/
-        axis: Array<any>;
-        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
-        collideConnected: boolean;
-        /**[只读]原生关节对象*/
-        joint: any;
-        protected _onEnable(): void;
-        protected _onAwake(): void;
-        protected _onDisable(): void;
-        /**是否开启马达，开启马达可使目标刚体运动*/
-        enableMotor: boolean;
-        /**启用马达后，在axis坐标轴上移动可以达到的最大速度*/
-        motorSpeed: number;
-        /**启用马达后，可以施加的最大作用力*/
-        maxMotorForce: number;
-        /**是否对刚体的移动范围加以约束*/
-        enableLimit: boolean;
-        /**启用约束后，刚体移动范围的下限，是距离anchor的偏移量*/
-        lowerTranslation: number;
-        /**启用约束后，刚体移动范围的上限，是距离anchor的偏移量*/
-        upperTranslation: number;
-    }
-}
-declare module laya.physics.joint {
-    import Component = laya.components.Component;
-    import RigidBody = laya.physics.RigidBody;
-    /**
-     * 鼠标关节：鼠标关节用于通过鼠标来操控物体。它试图将物体拖向当前鼠标光标的位置。而在旋转方面就没有限制。
-     */
-    class MouseJoint extends Component {
-        /**[首次设置有效]关节的自身刚体*/
-        selfBody: RigidBody;
-        /**[首次设置有效]关节的链接点，是相对于自身刚体的左上角位置偏移*/
-        anchor: Array<any>;
-        /**[只读]原生关节对象*/
-        joint: any;
-        protected _onEnable(): void;
-        protected _onDisable(): void;
-        /**鼠标关节在拖曳刚体bodyB时施加的最大作用力*/
-        maxForce: number;
-        /**弹簧系统的震动频率，可以视为弹簧的弹性系数*/
-        frequency: number;
-        /**刚体在回归到节点过程中受到的阻尼，取值0~1*/
-        damping: number;
-    }
-}
-declare module laya.physics.joint {
-    import Component = laya.components.Component;
-    import RigidBody = laya.physics.RigidBody;
-    /**
-     * 距离关节：两个物体上面各自有一点，两点之间的距离固定不变
-     */
-    class MotorJoint extends Component {
-        /**[首次设置有效]关节的自身刚体*/
-        selfBody: RigidBody;
-        /**[首次设置有效]关节的连接刚体*/
-        otherBody: RigidBody;
-        /**[首次设置有效]弹簧系统的震动频率，可以视为弹簧的弹性系数*/
-        collideConnected: boolean;
-        /**[只读]原生关节对象*/
-        joint: any;
-        protected _onEnable(): void;
-        protected _onAwake(): void;
-        protected _onDisable(): void;
-        /**基于otherBody坐标位置的偏移量，也是selfBody的目标位置*/
-        linearOffset: Array<any>;
-        /**基于otherBody的角度偏移量，也是selfBody的目标角度*/
-        angularOffset: number;
-        /**当selfBody偏离目标位置时，为使其恢复到目标位置，马达关节所施加的最大作用力*/
-        maxForce: number;
-        /**当selfBody角度与目标角度不同时，为使其达到目标角度，马达关节施加的最大扭力*/
-        maxTorque: number;
-        /**selfBody向目标位置移动时的缓动因子，取值0~1，值越大速度越快*/
-        correctionFactor: number;
-    }
-}
-declare module laya.physics.joint {
-    import Component = laya.components.Component;
     /**
      * 齿轮关节：用来模拟两个齿轮间的约束关系，齿轮旋转时，产生的动量有两种输出方式，一种是齿轮本身的角速度，另一种是齿轮表面的线速度
      */
-    class GearJoint extends Component {
+    class GearJoint extends JointBase {
         /**[首次设置有效]要绑定的第1个关节，类型可以是RevoluteJoint或者PrismaticJoint*/
         joint1: any;
         /**[首次设置有效]要绑定的第2个关节，类型可以是RevoluteJoint或者PrismaticJoint*/
         joint2: any;
-        /**[只读]原生关节对象*/
-        joint: any;
-        protected _onEnable(): void;
-        protected _onAwake(): void;
-        protected _onDisable(): void;
+        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
+        collideConnected: boolean;
+        protected _createJoint(): void;
         /**两个齿轮角速度比例，默认1*/
         ratio: number;
     }
 }
 declare module laya.physics.joint {
-    import Component = laya.components.Component;
     import RigidBody = laya.physics.RigidBody;
     /**
      * 距离关节：两个物体上面各自有一点，两点之间的距离固定不变
      */
-    class DistanceJoint extends Component {
+    class DistanceJoint extends JointBase {
         /**[首次设置有效]关节的自身刚体*/
         selfBody: RigidBody;
         /**[首次设置有效]关节的连接刚体，可不设置，默认为左上角空刚体*/
@@ -17104,11 +16904,7 @@ declare module laya.physics.joint {
         otherAnchor: Array<any>;
         /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
         collideConnected: boolean;
-        /**[只读]原生关节对象*/
-        joint: any;
-        protected _onEnable(): void;
-        protected _onAwake(): void;
-        protected _onDisable(): void;
+        protected _createJoint(): void;
         /**约束的目标静止长度*/
         length: number;
         /**弹簧系统的震动频率，可以视为弹簧的弹性系数*/
@@ -17319,6 +17115,7 @@ declare module laya.particle {
         y: number;
         protected _blendFn: Function;
         sv: ParticleShaderValue;
+        _key: any;
         constructor(parSetting: ParticleSetting);
         getRenderType(): number;
         releaseRender(): void;
@@ -19621,6 +19418,10 @@ declare module laya.d3.physics {
          * @param canCollideWith 可产生碰撞的碰撞组。
          */
         constructor(collisionGroup: number, canCollideWith: number);
+        /**
+         * @inheritDoc
+         */
+        _parse(data: any): void;
         protected _parseShape(shapesData: Array<any>): void;
         protected _onScaleChange(scale: Vector3): void;
         /**
@@ -19641,9 +19442,13 @@ declare module laya.d3.physics {
         _removeFromSimulation(): void;
         /**
          * 	@private
+         */
+        _derivePhysicsTransformation(force: boolean): void;
+        /**
+         * 	@private
          *	通过渲染矩阵更新物理矩阵。
          */
-        _derivePhysicsTransformation(physicTransformOut: any, force: boolean): void;
+        _innerDerivePhysicsTransformation(physicTransformOut: any, force: boolean): void;
         /**
          * @private
          * 通过物理矩阵更新渲染矩阵。
@@ -19664,11 +19469,6 @@ declare module laya.d3.physics {
          * @private
          */
         _onTransformChanged(flag: number): void;
-        /**
-         * 尝试激活。
-         * @param forceActivation 是否强制。
-         */
-        activate(forceActivation?: boolean): void;
         /**
          * @inheritDoc
          */
@@ -21001,9 +20801,10 @@ declare module laya.d3.core {
         static TRANSFORM_LOCALEULER: number;
         static TRANSFORM_LOCALMATRIX: number;
         static TRANSFORM_WORLDPOSITION: number;
-        static TRANSFORM_WORLDROTATION: number;
+        static TRANSFORM_WORLDQUATERNION: number;
         static TRANSFORM_WORLDSCALE: number;
         static TRANSFORM_WORLDMATRIX: number;
+        static TRANSFORM_WORLDEULER: number;
         _parent: Transform3D;
         _dummy: AnimationTransform3D;
         _transformFlag: number;
@@ -22984,6 +22785,35 @@ declare module laya.d3.core {
     }
 }
 declare module laya.d3.core {
+    import IndexBuffer3D = laya.d3.graphics.IndexBuffer3D;
+    import VertexBuffer3D = laya.d3.graphics.VertexBuffer3D;
+    import BufferStateBase = laya.webgl.BufferStateBase;
+    /**
+     * @private
+     * <code>BufferState</code> 类用于实现渲染所需的Buffer状态集合。
+     */
+    class BufferState extends BufferStateBase {
+        /**
+         * 创建一个 <code>BufferState</code> 实例。
+         */
+        constructor();
+        /**
+         * @private
+         * vertexBuffer的vertexDeclaration不能为空,该函数比较消耗性能，建议初始化时使用。
+         */
+        applyVertexBuffer(vertexBuffer: VertexBuffer3D): void;
+        /**
+         * @private
+         * vertexBuffers中的vertexDeclaration不能为空,该函数比较消耗性能，建议初始化时使用。
+         */
+        applyVertexBuffers(vertexBuffers: Array<VertexBuffer3D>): void;
+        /**
+         * @private
+         */
+        applyIndexBuffer(indexBuffer: IndexBuffer3D): void;
+    }
+}
+declare module laya.d3.core {
     import BaseMaterial = laya.d3.core.material.BaseMaterial;
     import Matrix4x4 = laya.d3.math.Matrix4x4;
     import Vector4 = laya.d3.math.Vector4;
@@ -23844,6 +23674,53 @@ declare module laya.components {
         onDestroy(): void;
     }
 }
+declare module laya.components {
+    /**
+     * <code>CommonScript</code> 类用于创建公共脚本类。
+     */
+    class CommonScript extends Component {
+        /**
+         * @inheritDoc
+         */
+        readonly isSingleton: boolean;
+        constructor();
+        /**
+         * 创建后只执行一次
+         * 此方法为虚方法，使用时重写覆盖即可
+         */
+        onAwake(): void;
+        /**
+         * 每次启动后执行
+         * 此方法为虚方法，使用时重写覆盖即可
+         */
+        onEnable(): void;
+        /**
+         * 第一次执行update之前执行，只会执行一次
+         * 此方法为虚方法，使用时重写覆盖即可
+         */
+        onStart(): void;
+        /**
+         * 每帧更新时执行
+         * 此方法为虚方法，使用时重写覆盖即可
+         */
+        onUpdate(): void;
+        /**
+         * 每帧更新时执行，在update之后执行
+         * 此方法为虚方法，使用时重写覆盖即可
+         */
+        onLateUpdate(): void;
+        /**
+         * 禁用时执行
+         * 此方法为虚方法，使用时重写覆盖即可
+         */
+        onDisable(): void;
+        /**
+         * 销毁时执行
+         * 此方法为虚方法，使用时重写覆盖即可
+         */
+        onDestroy(): void;
+    }
+}
 declare module laya.ani {
     import SkinMeshForGraphic = laya.ani.bone.canvasmesh.SkinMeshForGraphic;
     import Graphics = laya.display.Graphics;
@@ -24088,6 +23965,11 @@ declare module laya.wx.mini {
          * 播放
          */
         play(): void;
+        /**
+         * 设置开始时间
+         * @param time
+         */
+        startTime: number;
         /**
          * @private
          * 自动播放
@@ -24334,6 +24216,7 @@ declare module laya.resource {
      */
     class HTMLCanvas extends Bitmap {
         _source: any;
+        _texture: Texture;
         /**
          * @inheritDoc
          */
@@ -24375,6 +24258,17 @@ declare module laya.resource {
         getMemSize(): number;
         return: any;
         size(w: number, h: number): void;
+        /**
+         * 获取texture实例
+         */
+        getTexture(): Texture;
+        /**
+         * 把图片转换为base64信息
+         * @param	type "image/png"
+         * @param	encoderOptions	质量参数，取值范围为0-1
+         * @param	callBack	完成回调，返回base64数据
+         */
+        toBase64(type: string, encoderOptions: number, callBack: Function): void;
     }
 }
 declare module laya.physics {
@@ -24390,6 +24284,209 @@ declare module laya.physics {
         y: number;
         /**用逗号隔开的点的集合，格式：x,y,x,y ...*/
         points: string;
+    }
+}
+declare module laya.physics.joint {
+    import RigidBody = laya.physics.RigidBody;
+    /**
+     * 轮子关节：围绕节点旋转，包含弹性属性，使得刚体在节点位置发生弹性偏移
+     */
+    class WheelJoint extends JointBase {
+        /**[首次设置有效]关节的自身刚体*/
+        selfBody: RigidBody;
+        /**[首次设置有效]关节的连接刚体*/
+        otherBody: RigidBody;
+        /**[首次设置有效]关节的链接点，是相对于自身刚体的左上角位置偏移*/
+        anchor: Array<any>;
+        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
+        collideConnected: boolean;
+        /**[首次设置有效]一个向量值，描述运动方向，比如1,0是沿X轴向右*/
+        axis: Array<any>;
+        protected _createJoint(): void;
+        /**弹簧系统的震动频率，可以视为弹簧的弹性系数*/
+        frequency: number;
+        /**刚体在回归到节点过程中受到的阻尼，取值0~1*/
+        damping: number;
+        /**是否开启马达，开启马达可使目标刚体运动*/
+        enableMotor: boolean;
+        /**启用马达后，可以达到的最大旋转速度*/
+        motorSpeed: number;
+        /**启用马达后，可以施加的最大扭距，如果最大扭矩太小，会导致不旋转*/
+        maxMotorTorque: number;
+    }
+}
+declare module laya.physics.joint {
+    import RigidBody = laya.physics.RigidBody;
+    /**
+     * 焊接关节：焊接关节的用途是使两个物体不能相对运动，受到关节的限制，两个刚体的相对位置和角度都保持不变，看上去像一个整体
+     */
+    class WeldJoint extends JointBase {
+        /**[首次设置有效]关节的自身刚体*/
+        selfBody: RigidBody;
+        /**[首次设置有效]关节的连接刚体*/
+        otherBody: RigidBody;
+        /**[首次设置有效]关节的链接点，是相对于自身刚体的左上角位置偏移*/
+        anchor: Array<any>;
+        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
+        collideConnected: boolean;
+        protected _createJoint(): void;
+        /**弹簧系统的震动频率，可以视为弹簧的弹性系数*/
+        frequency: number;
+        /**刚体在回归到节点过程中受到的阻尼，建议取值0~1*/
+        damping: number;
+    }
+}
+declare module laya.physics.joint {
+    import RigidBody = laya.physics.RigidBody;
+    /**
+     * 绳索关节：限制了两个点之间的最大距离。它能够阻止连接的物体之间的拉伸，即使在很大的负载下
+     */
+    class RopeJoint extends JointBase {
+        /**[首次设置有效]关节的自身刚体*/
+        selfBody: RigidBody;
+        /**[首次设置有效]关节的连接刚体，可不设置，默认为左上角空刚体*/
+        otherBody: RigidBody;
+        /**[首次设置有效]自身刚体链接点，是相对于自身刚体的左上角位置偏移*/
+        selfAnchor: Array<any>;
+        /**[首次设置有效]链接刚体链接点，是相对于otherBody的左上角位置偏移*/
+        otherAnchor: Array<any>;
+        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
+        collideConnected: boolean;
+        protected _createJoint(): void;
+        /**selfAnchor和otherAnchor之间的最大距离*/
+        maxLength: number;
+    }
+}
+declare module laya.physics.joint {
+    import RigidBody = laya.physics.RigidBody;
+    /**
+     * 旋转关节强制两个物体共享一个锚点，两个物体相对旋转
+     */
+    class RevoluteJoint extends JointBase {
+        /**[首次设置有效]关节的自身刚体*/
+        selfBody: RigidBody;
+        /**[首次设置有效]关节的连接刚体，可不设置*/
+        otherBody: RigidBody;
+        /**[首次设置有效]关节的链接点，是相对于自身刚体的左上角位置偏移*/
+        anchor: Array<any>;
+        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
+        collideConnected: boolean;
+        protected _createJoint(): void;
+        /**是否开启马达，开启马达可使目标刚体运动*/
+        enableMotor: boolean;
+        /**启用马达后，可以达到的最大旋转速度*/
+        motorSpeed: number;
+        /**启用马达后，可以施加的最大扭距，如果最大扭矩太小，会导致不旋转*/
+        maxMotorTorque: number;
+        /**是否对刚体的旋转范围加以约束*/
+        enableLimit: boolean;
+        /**启用约束后，刚体旋转范围的下限弧度*/
+        lowerAngle: number;
+        /**启用约束后，刚体旋转范围的上限弧度*/
+        upperAngle: number;
+    }
+}
+declare module laya.physics.joint {
+    import RigidBody = laya.physics.RigidBody;
+    /**
+     * 滑轮关节：它将两个物体接地(ground)并彼此连接，当一个物体上升，另一个物体就会下降
+     */
+    class PulleyJoint extends JointBase {
+        /**[首次设置有效]关节的自身刚体*/
+        selfBody: RigidBody;
+        /**[首次设置有效]关节的连接刚体*/
+        otherBody: RigidBody;
+        /**[首次设置有效]自身刚体链接点，是相对于自身刚体的左上角位置偏移*/
+        selfAnchor: Array<any>;
+        /**[首次设置有效]链接刚体链接点，是相对于otherBody的左上角位置偏移*/
+        otherAnchor: Array<any>;
+        /**[首次设置有效]滑轮上与节点selfAnchor相连接的节点，是相对于自身刚体的左上角位置偏移*/
+        selfGroundPoint: Array<any>;
+        /**[首次设置有效]滑轮上与节点otherAnchor相连接的节点，是相对于otherBody的左上角位置偏移*/
+        otherGroundPoint: Array<any>;
+        /**[首次设置有效]两刚体移动距离比率*/
+        ratio: number;
+        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
+        collideConnected: boolean;
+        protected _createJoint(): void;
+    }
+}
+declare module laya.physics.joint {
+    import RigidBody = laya.physics.RigidBody;
+    /**
+     * 平移关节：移动关节允许两个物体沿指定轴相对移动，它会阻止相对旋转
+     */
+    class PrismaticJoint extends JointBase {
+        /**[首次设置有效]关节的自身刚体*/
+        selfBody: RigidBody;
+        /**[首次设置有效]关节的连接刚体，可不设置，默认为左上角空刚体*/
+        otherBody: RigidBody;
+        /**[首次设置有效]关节的控制点，是相对于自身刚体的左上角位置偏移*/
+        anchor: Array<any>;
+        /**[首次设置有效]一个向量值，描述运动方向，比如1,0是沿X轴向右*/
+        axis: Array<any>;
+        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
+        collideConnected: boolean;
+        protected _createJoint(): void;
+        /**是否开启马达，开启马达可使目标刚体运动*/
+        enableMotor: boolean;
+        /**启用马达后，在axis坐标轴上移动可以达到的最大速度*/
+        motorSpeed: number;
+        /**启用马达后，可以施加的最大作用力*/
+        maxMotorForce: number;
+        /**是否对刚体的移动范围加以约束*/
+        enableLimit: boolean;
+        /**启用约束后，刚体移动范围的下限，是距离anchor的偏移量*/
+        lowerTranslation: number;
+        /**启用约束后，刚体移动范围的上限，是距离anchor的偏移量*/
+        upperTranslation: number;
+    }
+}
+declare module laya.physics.joint {
+    import RigidBody = laya.physics.RigidBody;
+    /**
+     * 鼠标关节：鼠标关节用于通过鼠标来操控物体。它试图将物体拖向当前鼠标光标的位置。而在旋转方面就没有限制。
+     */
+    class MouseJoint extends JointBase {
+        /**[首次设置有效]关节的自身刚体*/
+        selfBody: RigidBody;
+        /**[首次设置有效]关节的链接点，是相对于自身刚体的左上角位置偏移，如果不设置，则根据鼠标点击点作为连接点*/
+        anchor: Array<any>;
+        protected _onEnable(): void;
+        protected _onAwake(): void;
+        protected _createJoint(): void;
+        protected _onDisable(): void;
+        /**鼠标关节在拖曳刚体bodyB时施加的最大作用力*/
+        maxForce: number;
+        /**弹簧系统的震动频率，可以视为弹簧的弹性系数*/
+        frequency: number;
+        /**刚体在回归到节点过程中受到的阻尼，取值0~1*/
+        damping: number;
+    }
+}
+declare module laya.physics.joint {
+    import RigidBody = laya.physics.RigidBody;
+    /**
+     * 马达关节：用来限制两个刚体，使其相对位置和角度保持不变
+     */
+    class MotorJoint extends JointBase {
+        /**[首次设置有效]关节的自身刚体*/
+        selfBody: RigidBody;
+        /**[首次设置有效]关节的连接刚体*/
+        otherBody: RigidBody;
+        /**[首次设置有效]两个刚体是否可以发生碰撞，默认为false*/
+        collideConnected: boolean;
+        protected _createJoint(): void;
+        /**基于otherBody坐标位置的偏移量，也是selfBody的目标位置*/
+        linearOffset: Array<any>;
+        /**基于otherBody的角度偏移量，也是selfBody的目标角度*/
+        angularOffset: number;
+        /**当selfBody偏离目标位置时，为使其恢复到目标位置，马达关节所施加的最大作用力*/
+        maxForce: number;
+        /**当selfBody角度与目标角度不同时，为使其达到目标角度，马达关节施加的最大扭力*/
+        maxTorque: number;
+        /**selfBody向目标位置移动时的缓动因子，取值0~1，值越大速度越快*/
+        correctionFactor: number;
     }
 }
 declare module laya.media.webaudio {
@@ -24492,6 +24589,7 @@ declare module laya.layagl {
         protected _adjustTransform(): Matrix;
         _setBlendMode(value: string): void;
         customRenderFromNative(): void;
+        static _tempFloatArrayMatrix: Float32Array;
         canvasBeginRenderFromNative(): void;
         setChildrenNativeVisible(visible: boolean): void;
         canvasEndRenderFromNative(): void;
@@ -24910,16 +25008,14 @@ declare module laya.display {
          * <p>绘制的结果可以当作图片源，再次绘制到其他Sprite里面，示例：</p>
          *
          * var htmlCanvas:HTMLCanvas = sprite.drawToCanvas(100, 100, 0, 0);//把精灵绘制到canvas上面
-         * var texture:Texture = new Texture(htmlCanvas);//使用htmlCanvas创建Texture
-         * var sp:Sprite = new Sprite().pos(0, 200);//创建精灵并把它放倒200位置
-         * sp.graphics.drawImage(texture);//把截图绘制到精灵上
+         * var sp:Sprite = new Sprite();//创建精灵
+         * sp.graphics.drawTexture(htmlCanvas.getTexture());//把截图绘制到精灵上
          * Laya.stage.addChild(sp);//把精灵显示到舞台
          *
          * <p>也可以获取原始图片数据，分享到网上，从而实现截图效果，示例：</p>
          *
          * var htmlCanvas:HTMLCanvas = sprite.drawToCanvas(100, 100, 0, 0);//把精灵绘制到canvas上面
-         * var canvas:* = htmlCanvas.getCanvas();//获取原生的canvas对象
-         * trace(canvas.toDataURL("image/png"));//打印图片base64信息，可以发给服务器或者保存为图片
+         * htmlCanvas.toBase64("image/png",0.9,callBack);//打印图片base64信息，可以发给服务器或者保存为图片
          *
          * @param	canvasWidth 画布宽度。
          * @param	canvasHeight 画布高度。
@@ -25146,10 +25242,11 @@ declare module laya.display {
         /**
          * 打开场景。【注意】被关闭的场景，如果没有设置autoDestroyAtRemoved=true，则资源可能不能被回收，需要自己手动回收
          * @param	closeOther	是否关闭其他场景，默认为true（可选）
+         * @param	param		打开页面的参数，会传递给onOpen方法（可选）
          */
-        open(closeOther?: boolean): void;
+        open(closeOther?: boolean, param?: any): void;
         /**场景打开完成后，调用此方法（如果有弹出动画，则在动画完成后执行）*/
-        onOpened(): void;
+        onOpened(param: any): void;
         /**
          * 关闭场景
          * 【注意】被关闭的场景，如果没有设置autoDestroyAtRemoved=true，则资源可能不能被回收，需要自己手动回收
@@ -25187,8 +25284,9 @@ declare module laya.display {
          * @param	url			场景地址
          * @param	closeOther	是否关闭其他场景，默认为true（可选），【注意】被关闭的场景，如果没有设置autoDestroyAtRemoved=true，则资源可能不能被回收，需要自己手动回收
          * @param	complete	打开完成回调，返回场景实例（可选）
+         * @param	param		打开页面的参数，会传递给onOpen方法（可选）
          */
-        static open(url: string, closeOther?: boolean, complete?: Handler): void;
+        static open(url: string, closeOther?: boolean, complete?: Handler, param?: any): void;
         /**
          * 根据地址，关闭场景（包括对话框）
          * @param	url		场景地址
@@ -26274,10 +26372,6 @@ declare module laya.d3.graphics {
          * @param	canRead 是否可读。
          */
         constructor(byteLength: number, bufferUsage: number, canRead?: boolean);
-        /**
-         * @inheritDoc
-         */
-        _bindForVAO(): void;
         /**
          * @inheritDoc
          */
@@ -30252,6 +30346,23 @@ declare module laya.webgl.resource {
          * @inheritDoc
          */
         readonly defaulteTexture: BaseTexture;
+        getIsReady(): boolean;
+        /**
+         * 获取宽度。
+         */
+        readonly sourceWidth: number;
+        /***
+         * 获取高度。
+         */
+        readonly sourceHeight: number;
+        /**
+         * 获取offsetX。
+         */
+        readonly offsetX: number;
+        /***
+         * 获取offsetY
+         */
+        readonly offsetY: number;
         /**
          * @param width  宽度。
          * @param height 高度。
@@ -31723,6 +31834,7 @@ declare module laya.ui {
         isPopupCenter: boolean;
         /**关闭类型，点击name为"close"，"cancel"，"sure"，"no"，"yes"，"no"的按钮时，会自动记录点击按钮的名称*/
         closeType: string;
+        _param: any;
         constructor();
         protected _dealDragArea(): void;
         /**
@@ -31734,7 +31846,7 @@ declare module laya.ui {
         dragArea: string;
         protected _onClick(e: Event): void;
         /**@inheritDoc */
-        open(closeOther?: boolean): void;
+        open(closeOther?: boolean, param?: any): void;
         /**
          * 关闭对话框。
          */
@@ -32628,6 +32740,17 @@ declare module laya.ui {
         dataSource: any;
     }
 }
+declare module laya.ui {
+    /**
+     * 广告插件
+     * @author 小松
+     * @date -2018-09-19
+     */
+    class AdvImage extends Image {
+        constructor(skin?: string);
+        destroy(destroyChild?: boolean): void;
+    }
+}
 declare module laya.physics {
     import Sprite = laya.display.Sprite;
     import Context = laya.resource.Context;
@@ -32958,6 +33081,7 @@ declare module laya.layagl {
     class ConchSprite extends Sprite {
         parentRepaintForNative(type?: number): void;
         renderToNative(context: Context, x: number, y: number): void;
+        writeBlockToNative(): void;
         repaintForNative(type?: number): void;
     }
 }
@@ -33901,6 +34025,29 @@ declare module laya.d3.physics {
          */
         detectCollisions: boolean;
         /**
+         * 获取是否处于睡眠状态。
+         * @return 是否处于睡眠状态。
+         */
+        readonly isSleeping: boolean;
+        /**
+         * 获取刚体睡眠的线速度阈值。
+         * @return 刚体睡眠的线速度阈值。
+         */
+        /**
+         * 设置刚体睡眠的线速度阈值。
+         * @param value 刚体睡眠的线速度阈值。
+         */
+        sleepLinearVelocity: number;
+        /**
+         * 获取刚体睡眠的角速度阈值。
+         * @return 刚体睡眠的角速度阈值。
+         */
+        /**
+         * 设置刚体睡眠的角速度阈值。
+         * @param value 刚体睡眠的角速度阈值。
+         */
+        sleepAngularVelocity: number;
+        /**
          * 创建一个 <code>RigidBody</code> 实例。
          * @param collisionGroup 所属碰撞组。
          * @param canCollideWith 可产生碰撞的碰撞组。
@@ -33958,6 +34105,10 @@ declare module laya.d3.physics {
          * @param	torqueImpulse
          */
         applyTorqueImpulse(torqueImpulse: Vector3): void;
+        /**
+         * 唤醒刚体。
+         */
+        wakeUp(): void;
         /**
          *清除应用到刚体上的所有力。
          */
@@ -34050,6 +34201,22 @@ declare module laya.utils {
         width: number;
         height: number;
         alpha: number;
+    }
+}
+declare module laya.ui {
+    /**
+     * 微信开放数据展示组件，直接实例本组件，即可根据组件宽高，位置，以最优的方式显示开放域数据
+     */
+    class WXOpenDataViewer extends UIComponent {
+        constructor();
+        onEnable(): void;
+        onDisable(): void;
+        width: number;
+        height: number;
+        x: number;
+        y: number;
+        /**向开放数据域发送消息*/
+        postMsg(msg: any): void;
     }
 }
 declare module laya.ui {
@@ -35100,6 +35267,18 @@ declare module laya.ui {
     }
 }
 declare module laya.ui {
+    import Box = laya.ui.Box;
+    /**
+     * 自适应缩放容器，容器设置大小后，容器大小始终保持stage大小，子内容按照原始最小宽高比缩放
+     */
+    class ScaleBox extends Box {
+        onEnable(): void;
+        onDisable(): void;
+        width: number;
+        height: number;
+    }
+}
+declare module laya.ui {
     import Sprite = laya.display.Sprite;
     /**
      * <code>RadioGroup</code> 控件定义一组 <code>Radio</code> 控件，这些控件相互排斥；
@@ -35571,6 +35750,11 @@ declare module laya.ui {
          */
         array: Array<any>;
         /**
+         * 更新数据源，不刷新list，只增加滚动长度
+         * @param	array 数据源
+         */
+        updateArray(array: Array<any>): void;
+        /**
          * 列表的当前页码。
          */
         page: number;
@@ -35961,6 +36145,8 @@ declare module Laya {
     class DrawStyle extends laya.webgl.canvas.DrawStyle {
     }
     class BlendMode extends laya.webgl.canvas.BlendMode {
+    }
+    class BufferStateBase extends laya.webgl.BufferStateBase {
     }
     class WordText extends laya.utils.WordText {
     }
@@ -36494,8 +36680,6 @@ declare module Laya {
     }
     class GeometryElement extends laya.d3.core.GeometryElement {
     }
-    class BufferState extends laya.d3.core.BufferState {
-    }
     class SingletonList extends laya.d3.component.SingletonList {
     }
     class KeyframeNodeOwner extends laya.d3.component.KeyframeNodeOwner {
@@ -36610,6 +36794,8 @@ declare module Laya {
     }
     class WebGLContext2D extends laya.webgl.canvas.WebGLContext2D {
     }
+    class BufferState2D extends laya.webgl.BufferState2D {
+    }
     class TimeLine extends laya.utils.TimeLine {
     }
     class Widget extends laya.ui.Widget {
@@ -36630,21 +36816,7 @@ declare module Laya {
     }
     class Physics extends laya.physics.Physics {
     }
-    class WheelJoint extends laya.physics.joint.WheelJoint {
-    }
-    class WeldJoint extends laya.physics.joint.WeldJoint {
-    }
-    class RopeJoint extends laya.physics.joint.RopeJoint {
-    }
-    class RevoluteJoint extends laya.physics.joint.RevoluteJoint {
-    }
-    class PulleyJoint extends laya.physics.joint.PulleyJoint {
-    }
-    class PrismaticJoint extends laya.physics.joint.PrismaticJoint {
-    }
-    class MouseJoint extends laya.physics.joint.MouseJoint {
-    }
-    class MotorJoint extends laya.physics.joint.MotorJoint {
+    class JointBase extends laya.physics.joint.JointBase {
     }
     class GearJoint extends laya.physics.joint.GearJoint {
     }
@@ -36874,6 +37046,8 @@ declare module Laya {
     }
     class FloatArrayKeyframe extends laya.d3.core.FloatArrayKeyframe {
     }
+    class BufferState extends laya.d3.core.BufferState {
+    }
     class BaseCamera extends laya.d3.core.BaseCamera {
     }
     class Avatar extends laya.d3.core.Avatar {
@@ -36893,6 +37067,8 @@ declare module Laya {
     class AnimationClip extends laya.d3.animation.AnimationClip {
     }
     class Script extends laya.components.Script {
+    }
+    class CommonScript extends laya.components.CommonScript {
     }
     class GraphicsAni extends laya.ani.GraphicsAni {
     }
@@ -36917,6 +37093,22 @@ declare module Laya {
     class HTMLCanvas extends laya.resource.HTMLCanvas {
     }
     class PolygonCollider extends laya.physics.PolygonCollider {
+    }
+    class WheelJoint extends laya.physics.joint.WheelJoint {
+    }
+    class WeldJoint extends laya.physics.joint.WeldJoint {
+    }
+    class RopeJoint extends laya.physics.joint.RopeJoint {
+    }
+    class RevoluteJoint extends laya.physics.joint.RevoluteJoint {
+    }
+    class PulleyJoint extends laya.physics.joint.PulleyJoint {
+    }
+    class PrismaticJoint extends laya.physics.joint.PrismaticJoint {
+    }
+    class MouseJoint extends laya.physics.joint.MouseJoint {
+    }
+    class MotorJoint extends laya.physics.joint.MotorJoint {
     }
     class WebAudioSoundChannel extends laya.media.webaudio.WebAudioSoundChannel {
     }
@@ -37062,6 +37254,8 @@ declare module Laya {
     }
     class Box extends laya.ui.Box {
     }
+    class AdvImage extends laya.ui.AdvImage {
+    }
     class PhysicsDebugDraw extends laya.physics.PhysicsDebugDraw {
     }
     class ParticleShader extends laya.particle.shader.ParticleShader {
@@ -37102,6 +37296,8 @@ declare module Laya {
     }
     class GraphicAnimation extends laya.utils.GraphicAnimation {
     }
+    class WXOpenDataViewer extends laya.ui.WXOpenDataViewer {
+    }
     class VSlider extends laya.ui.VSlider {
     }
     class VScrollBar extends laya.ui.VScrollBar {
@@ -37117,6 +37313,8 @@ declare module Laya {
     class TextArea extends laya.ui.TextArea {
     }
     class Tab extends laya.ui.Tab {
+    }
+    class ScaleBox extends laya.ui.ScaleBox {
     }
     class RadioGroup extends laya.ui.RadioGroup {
     }
@@ -37180,6 +37378,14 @@ declare class Laya {
      * 表示是否捕获全局错误并弹出提示。
      */
     static alertGlobalError: boolean;
+    /**
+     * 是否是微信小游戏子域，默认为false。
+     */
+    static isWXOpenDataContext: boolean;
+    /**
+     * 微信小游戏是否需要在主域中自动将加载的文本数据自动传递到子域，默认 false。
+     */
+    static isWXPosMsg: boolean;
         
     static class(functionRef:Function, fullQulifiedName:String, superClass:Function, miniName:String):void;
 

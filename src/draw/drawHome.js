@@ -15,8 +15,9 @@ var Tween = Laya.Tween;
 var Ease = Laya.Ease;
 var SoundManager = Laya.SoundManager;
 var Text = Laya.Text;
-var HSlider = Laya.HSlider;
 var GlowFilter = Laya.GlowFilter;
+var TimeLine = Laya.TimeLine;
+
 
 export default class DrawHome {
     constructor() {
@@ -28,6 +29,8 @@ export default class DrawHome {
         // 绘制有关的属性
         this.game_bg = ""
         this.title = ""
+        this.card_bg = ""
+        this.num = ""
 
         // 运行
         Laya.stage.bgColor = "#ded6df"
@@ -53,53 +56,46 @@ export default class DrawHome {
         // 绘制标题
         this.title_sp = new Laya.Sprite();
         this.title_sp.size(344, 110);
-        this.title_sp.pos(200, 86);
+        this.title_sp.pos(200, 66);
         Laya.stage.addChild(this.title_sp);
         this.title_sp.loadImage('assets/images/logo_title.png');
-
     }
     // 绘制中心卡片
     drawCard() {
         // 绘制背景
-        var card_bg = new Laya.Sprite();
-        card_bg.size(615, 817);
-        card_bg.pos(68, 200);
-        Laya.stage.addChild(card_bg);
-        card_bg.loadImage('assets/images/card-bg.png');
-        card_bg.on(Event.CLICK, this, this.startGame);
-        //创建一个发光滤镜
-        console.log(Laya)
-        // var glowFilter = new GlowFilter("#8a68b3", 50, 10, 0);
-        // var glowFilter1 = new GlowFilter("#8a68b3", 50, 0, 10);
-        // var glowFilter2 = new GlowFilter("#8a68b3", 50, -10, 0);
-        // var glowFilter3 = new GlowFilter("#8a68b3", 50, 0, -10);
-        // //设置滤镜集合为发光滤镜
-        // card_bg.filters = [glowFilter,glowFilter1,glowFilter2,glowFilter3];
+        this.card_bg = new Laya.Sprite();
+        this.card_bg.size(615, 817);
+        this.card_bg.pos(375, 608);
+        this.card_bg.pivot(307, 408);
+        Laya.stage.addChild(this.card_bg);
+        this.card_bg.loadImage('assets/images/card-bg.png');
+        this.card_bg.on(Event.CLICK, this, this.startGame);
 
         // 绘制文字
         // this.realLevel = Laya.LocalStorage.getItem("realLevel");
-        var num = new Text();
-        num.color = "#f9dfc7";
-        num.font = "Impact";
-        num.fontSize = 150;
-        num.width = 590;
-        // num.borderColor = "#FFFF00";
-        num.x = 80;
-        num.y = 670;
-        num.align = "center";
-        num.alpha = 0.8;
-        Laya.stage.addChild(num);
-        num.text = this.realLevel = Laya.LocalStorage.getItem("realLevel");
+        this.num = new Text();
+        this.num.color = "#f9dfc7";
+        this.num.font = "Impact";
+        this.num.fontSize = 150;
+        this.num.width = 590;
+        this.num.pivot(245, 0);
+        // this.num.borderColor = "#FFFF00";
+        this.num.x = 80+245;
+        this.num.y = 670;
+        this.num.align = "center";
+        this.num.alpha = 0.8;
+        Laya.stage.addChild(this.num);
+        this.num.text = this.realLevel = Laya.LocalStorage.getItem("realLevel");
+        // 动画
+        var timeLine = new TimeLine();
+        timeLine.addLabel("big", 0).to(this.card_bg, { scaleX: 1.05, scaleY: 1.05 }, 1500, null, 0)
+            .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1 }, 1500, null, 0)
+        timeLine.play(0, true);
 
-        // var card_animate=new Laya.Animation();
-        // card_animate.loadAnimation('cardscale.ani');
-        // // card_animate.pos(80,200);
-        // card_animate.x=80;
-        // card_animate.y=200;
-        // Laya.stage.addChild(card_bg);
-        // card_animate.play();
-
-        // 绘制数字 
+        var timeLine2 = new TimeLine();
+        timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.05, scaleY: 1.05 }, 1500, null, 0)
+            .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1 }, 1500, null, 0)
+        timeLine2.play(0, true);
     }
 
     /**

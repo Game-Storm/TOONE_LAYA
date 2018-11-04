@@ -35,6 +35,10 @@ export default class DrawGame {
         this.refreshSp = ""
         this.returnSp = ""
         this.numScreenSp = ""
+        this.failBgSp = ""
+        this.failMaskSp = ""
+        this.failRefresh = ""
+        this.failReturn = ""
 
         // 游戏数据
         this.num = ""
@@ -72,9 +76,12 @@ export default class DrawGame {
         this.refreshSp.zOrder = 2;
         this.returnSp.zOrder = 2;
         this.numScreenSp.zOrder = 2;
-
+        // this.failMaskSp = ""
+        // this.failRefresh = ""
+        // this.failReturn = ""
         // 开启比赛
         this.isGaming = true;
+        this.pNow = [0, 0]
         this.num = Laya.LocalStorage.getItem("realLevel");
         console.log(this.num)
         this.numData = getNum(this.num);
@@ -87,6 +94,8 @@ export default class DrawGame {
         }
         console.log(this.numData);
         this.drawTable(true);
+        // 调试
+        // this.showFail()
     }
 
     /**
@@ -160,7 +169,7 @@ export default class DrawGame {
                 this.itemsSprite[i][j].graphics.clear();
                 // DRAW.drawRoundedRectangle(this.spItem, x, y, this.iWidth, this.iWidth, 15, color)
                 this.itemsSprite[i][j].loadImage(url);
-                this.itemsSprite[i][j].pos(x+this.iWidth * 0.5, y+this.iWidth * 0.5);
+                this.itemsSprite[i][j].pos(x + this.iWidth * 0.5, y + this.iWidth * 0.5);
                 this.itemsSprite[i][j].size(this.iWidth, this.iWidth);
 
                 // 动画
@@ -172,7 +181,7 @@ export default class DrawGame {
                         scaleY: 0,
                         scaleX: 0,
                         pivotX: this.iWidth * 0.5,
-                        
+
                         pivotY: this.iWidth * 0.5,
                         alpha: 0
                     }, 250, Ease.circInOut, null, 200)
@@ -182,7 +191,7 @@ export default class DrawGame {
                         pivotX: this.iWidth * 0.5,
                         pivotY: this.iWidth * 0.5,
                         alpha: 1
-                    }, 250, Ease.circInOut, null,200)
+                    }, 250, Ease.circInOut, null, 200)
                 }
             }
         }
@@ -293,8 +302,9 @@ export default class DrawGame {
                 (j - 1 >= 0 && !this.arr[i][j - 1].isUsed)) {
                 return;
             } else {
-                alert('你输了！');
-                this.refresh();
+                // alert('你输了！');
+                this.showFail();
+                // this.refresh();
             }
         }
 
@@ -310,6 +320,7 @@ export default class DrawGame {
                 this.arr[i][j] = this.numData[i * this.row + j];
             }
         }
+        this.closeAlert()
         this.drawTable(true)
     }
     // 返回 Home
@@ -326,6 +337,11 @@ export default class DrawGame {
         this.refreshSp.zOrder = -2
         this.returnSp.zOrder = -2
         this.numScreenSp.zOrder = -2
+        this.failBgSp.zOrder = -2
+        this.failMaskSp.zOrder = -2
+        this.failRefresh.zOrder = -2
+        this.failReturn.zOrder = -2
+
         for (var i = 0; i < this.col; i++) {
             for (var j = 0; j < this.row; j++) {
                 this.itemsSprite[i][j].zOrder = -2
@@ -333,5 +349,51 @@ export default class DrawGame {
         }
         // 事件监听失效
         this.isGaming = false;
+    }
+    // 输了的逻辑
+    showFail() {
+        this.failMaskSp = new Sprite();
+        // this.failBgSp.pos(50, 200);
+        this.failMaskSp.size(750, Browser.height);
+        this.failMaskSp.loadImage('assets/images/alert_fail_mask.png')
+        this.failMaskSp.zOrder = 4;
+        Laya.stage.addChild(this.failMaskSp);
+        // 画卡片背景
+        this.failBgSp = new Sprite();
+        this.failBgSp.pos(50, 250);
+        this.failBgSp.size(655, 558);
+        this.failBgSp.zOrder = 5;
+        Laya.stage.addChild(this.failBgSp);
+        this.failBgSp.loadImage('assets/images/alert_fail_bg.png');
+
+        Tween.from(this.failBgSp, {
+            y:-100,
+            alpha:0
+        }, 550, Ease.bounceOut, null, 200)
+        
+
+        // 画返回按钮
+        this.failReturn = new Sprite()
+        this.failReturn.pos(500, 480)
+        this.failReturn.size(170, 126)
+        this.failReturn.zOrder = 6;
+        Laya.stage.addChild(this.failReturn)
+        this.failReturn.loadImage('assets/images/return_btn.png')
+        this.failReturn.on('click', this, this.returnHome)
+        // 画重新按钮
+        this.failRefresh = new Sprite()
+        this.failRefresh.pos(500, 650)
+        this.failRefresh.size(170, 126)
+        this.failRefresh.zOrder = 6;
+        Laya.stage.addChild(this.failRefresh)
+        this.failRefresh.loadImage('assets/images/refresh_btn.png')
+        this.failRefresh.on('click', this, this.refresh)
+    }
+    //关闭弹窗
+    closeAlert() {
+        this.failBgSp.zOrder = -2
+        this.failMaskSp.zOrder = -2
+        this.failRefresh.zOrder = -2
+        this.failReturn.zOrder = -2
     }
 }

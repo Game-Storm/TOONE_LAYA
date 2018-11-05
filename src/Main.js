@@ -38,7 +38,8 @@ import DrawHome from './draw/drawHome'
         // 加载images下的文件
         let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png','alert_fail_bg.png','sence-0_bg.png',
             'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png',"card.png",'alert_fail_mask.png',
-            'game_bg.png', 'top_num_screen.png', 'card-bg.png', 'logo_title.png','home_bg.png'];
+            'game_bg.png', 'top_num_screen.png', 'card-bg.png', 'logo_title.png','home_bg.png','card-bg-lock.png',
+        'home_right.png','home_right_more.png','home_left.png','home_left_more.png'];
         imgNames.map(item => {
             assets.push({
                 url: 'assets/images/' + item,

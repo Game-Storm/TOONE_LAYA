@@ -31,22 +31,36 @@ export default class DrawHome {
         this.title = ""
         this.card_bg = ""
         this.num = ""
-        this.left_card = ""
-        this.right_card = ""
-        this.slider_bg = ""
-        this.slider_bar = ""
-        this.slider_active = ""
+        this.left = ""
+        this.right = ""
+        this.left_more = ""
+        this.right_more = ""
+        this.level_text = ""
+        this.progress_bg = ""
+        this.progress_active = ""
+
+        // 动画
+        this.timeLine=""
+        this.timeLine2=""
 
         // 运行
         Laya.stage.bgColor = "#ded6df"
         this.init()
     }
     init() {
-        // Laya.LocalStorage.setItem("item", str);
+        // 
         Laya.LocalStorage.setItem("realLevel", 0);
+        if (!Laya.LocalStorage.getItem("realLevel")) {
+            Laya.LocalStorage.setItem("realLevel", 0);
+            this.realLevel = 0;
+        } else {
+            this.realLevel = Number(Laya.LocalStorage.getItem("realLevel"))
+        }
+
         this.drawBg();
         this.drawCard();
-        this.drawSliderBar()
+        this.drawBottomBtn();
+        this.drawTopProgress()
     }
 
     /**
@@ -60,25 +74,19 @@ export default class DrawHome {
         Laya.stage.addChild(this.game_bg);
         this.game_bg.loadImage('assets/images/home_bg.png');
         // 绘制标题
-        this.title_sp = new Laya.Sprite();
-        this.title_sp.size(344, 110);
-        this.title_sp.pos(200, 30);
-        Laya.stage.addChild(this.title_sp);
-        this.title_sp.loadImage('assets/images/logo_title.png');
     }
     // 绘制中心卡片
     drawCard() {
         // 绘制背景
         this.card_bg = new Laya.Sprite();
         this.card_bg.size(615, 817);
-        this.card_bg.pos(375, 558);
+        this.card_bg.pos(375, 540);
         this.card_bg.pivot(307, 408);
         Laya.stage.addChild(this.card_bg);
         this.card_bg.loadImage('assets/images/card-bg.png');
         this.card_bg.on(Event.CLICK, this, this.startGame);
 
         // 绘制文字
-        // this.realLevel = Laya.LocalStorage.getItem("realLevel");
         this.num = new Text();
         this.num.color = "#f9dfc7";
         this.num.font = "Impact";
@@ -86,99 +94,71 @@ export default class DrawHome {
         this.num.width = 590;
         this.num.pivot(245, 0);
         this.num.x = 325;
-        this.num.y = 620;
+        this.num.y = 595;
         this.num.align = "center";
         this.num.alpha = 0.8;
         // this.num.zOrder=1;
         Laya.stage.addChild(this.num);
-        this.num.text = this.realLevel = Laya.LocalStorage.getItem("realLevel");
+        this.gameLevel = this.gameLevel == '' ? this.realLevel : this.gameLevel
+        console.log(this.gameLevel, gameData[this.gameLevel])
+        this.num.text = gameData[this.gameLevel].num
         // 放大缩小动画
-        var timeLine = new TimeLine();
-        timeLine.addLabel("big", 0).to(this.card_bg, { scaleX: 1.08, scaleY: 1.05 }, 1500, null, 0)
+        this.timeLine = new TimeLine();
+        this.timeLine.addLabel("big", 0).to(this.card_bg, { scaleX: 1.07, scaleY: 1.05 }, 1500, null, 0)
             .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1 }, 1500, null, 0)
-        timeLine.play(0, true);
-        var timeLine2 = new TimeLine();
-        timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.08, scaleY: 1.05 }, 1500, null, 0)
+        this.timeLine.play(0, true);
+        this.timeLine2 = new TimeLine();
+        this.timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.07, scaleY: 1.05 }, 1500, null, 0)
             .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1 }, 1500, null, 0)
-        timeLine2.play(0, true);
-        this.drawSideCard();
+        this.timeLine2.play(0, true);
+        // this.drawSideCard();
     }
 
-    // 绘制旁边两侧的卡片
-    drawSideCard() {
-        setTimeout(() => {
-            this.cardAnimate()
-        }, 1000)
+    // 绘制顶部进度条
+    drawTopProgress() {
+        this.progress_bg = new Sprite();
+        this.progress_bg.graphics.drawRect(0, 0, 750, 30, '#a984ec');
+        this.progress_bg.alpha = 0.5
+        Laya.stage.addChild(this.progress_bg);
+
+        this.level_text = new Text();
+        this.level_text.color = "ddc8fe"
+        this.level_text.fontSize = 40;
+        this.level_text.width = 750;
+        this.level_text.x = 0
+        this.level_text.y = 80
+        this.level_text.align = "center"
+        this.level_text.text = `- ${this.gameLevel + 1}/${gameData.length} -`
+        Laya.stage.addChild(this.level_text);
     }
-    // 绘制底部滑块
-    drawSliderBar() {
-        this.slider_bg = new Sprite();
-        Laya.stage.addChild(this.slider_bg);
-        DRAW.drawRoundedRectangle(this.slider_bg, 0, 0, 550, 30, 15, '#2f0048,#ffffff,#00ffff,#ff00ff');
-        this.slider_bg.size(550, 30);
-        this.slider_bg.pos(100, 1050)
+    //绘制底部按钮
+    drawBottomBtn() {
+        this.left_more = new Sprite()
+        Laya.stage.addChild(this.left_more);
+        this.left_more.loadImage('assets/images/home_left_more.png');
+        this.left_more.size(122, 91);
+        this.left_more.pos(94, 975)
 
-        this.slider_bar = new Sprite();
-        DRAW.drawRoundedRectangle(this.slider_bar, 0, 0, 80, 60, 10, "#aaa");
-        this.slider_bar.pos(100, 1035);
-        this.slider_bar.size(80, 60);
-        Laya.stage.addChild(this.slider_bar);
-        this.slider_bar.on(Event.MOUSE_MOVE, this, this.mouseMoveBar)
-    }
-    // 滑动轨道的逻辑
-    mouseMoveBar(params) {
-        console.log(Laya.stage.mouseX)
-        if (Laya.stage.mouseX < 100 || Laya.stage.mouseX > 650) return;
-        this.slider_bar.x = Laya.stage.mouseX - 30;
-        let nowNum = this.realLevel = ((Laya.stage.mouseX - 100) / 550).toFixed(2);
-        // let gameData = getGameData()
+        this.left = new Sprite();
+        Laya.stage.addChild(this.left);
+        this.left.loadImage('assets/images/home_left.png');
+        this.left.size(122, 91);
+        this.left.pos(241, 975);
+        this.left.name = "left"
+        this.left.on(Event.CLICK, this, this.changeLevel);
 
-        // console.log(nowNum, this.judgeSplitNum(nowNum, gameData.length))
-        let index = this.judgeSplitNum(nowNum, gameData.length);
-        let showData = gameData[index];
-        if (index && this.num.text != showData.num) {
-            this.num.text = showData.num;
-            Laya.LocalStorage.setItem('realLevel', showData.num);
-            var timeLine = new TimeLine();
-            timeLine.addLabel("big", 0).to(this.card_bg, { scaleX: 1.1, scaleY: 1.1, rotation: Math.random() > 0.5 ? -1 : 1 }, 10, null, 0)
-                // .addLabel("rotation", 0).to(this.card_bg, { scaleX: 1.1, scaleY: 1.05, rotation: -1 }, 7, null, 0)
-                .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1, rotation: 0 }, 10, null, 0)
-            timeLine.play(0, false);
-            var timeLine2 = new TimeLine();
-            timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.1, scaleY: 1.1, alpha: 0.5 }, 10, null, 0)
-                // .addLabel("color", 0).to(this.num, { scaleX: 1.05, scaleY: 1.05 }, 10, null, 0)
-                .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, alpha: 1 }, 10, null, 0)
-            timeLine2.play(0, false);
-        }
+        this.right = new Sprite()
+        Laya.stage.addChild(this.right);
+        this.right.loadImage('assets/images/home_right.png');
+        this.right.size(122, 91);
+        this.right.pos(388, 975);
+        this.right.on(Event.CLICK, this, this.changeLevel);
 
-        // if (nowNum in gameData) {
-
-        // }
-    }
-    judgeSplitNum(nowNum, length) {
-        let split = 1 / length;
-        for (let i = 0; i < length; i++) {
-            let temp = i * split
-            if (Math.abs(nowNum - temp) < 0.05) {
-                return i;
-                break;
-            }
-        }
-        return null
-    }
-    // 卡片滑动时的效果
-    cardAnimate() {
-        // var timeLine = new TimeLine();
-        // timeLine.addLabel("big", 0).to(this.card_bg, { scaleX: 0.8, scaleY: 0.8, x: -190 }, 2000, null, 0)
-        // timeLine.play(0, true);
-
-        // var timeLine2 = new TimeLine();
-        // timeLine2.addLabel("big", 0).to(this.right_card, { scaleX: 1.1, scaleY: 1.1, x: 375 }, 2000, null, 0)
-        // timeLine2.play(0, true);
-
-        // var timeLine3 = new TimeLine();
-        // timeLine3.addLabel("big", 0).to(this.num, { scaleX: 0.8, scaleY: 0.8, x: -190 }, 2000, null, 0)
-        // timeLine3.play(0, true);
+        this.right_more = new Sprite()
+        Laya.stage.addChild(this.right_more);
+        this.right_more.loadImage('assets/images/home_right_more.png');
+        this.right_more.size(122, 91);
+        this.right_more.pos(535, 975);
     }
     /**
      * 逻辑处理
@@ -188,18 +168,56 @@ export default class DrawHome {
         if (!this.isHome) {
             return;
         }
-        if (this.realLevel == 0) {
+        if (this.gameLevel == 0) {
             // 0关 初始场景
             console.log('ok')
             new DrawStartSence()
-
-        } else if (this.realLevel == 1) {
+        } else if (this.gameLevel == gameData.length - 1) {
             // 1关 结束场景
         } else {
             // 正常关卡
+            Laya.LocalStorage.setItem('gameLevel', this.gameLevel);
             this.GAME ? this.GAME.startGame() : this.GAME = new DrawGame();
         }
         // this.isHome = false
-        // SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
+        SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
+    }
+    changeLevel(e) {
+        console.log(Laya.stage.mouseX)
+        let x = Laya.stage.mouseX
+        if (x < 240) {
+            // this.gameLevel--;
+            // this.num.text = gameData[this.gameLevel].num
+        } else if (x < 380) {
+            if (this.gameLevel - 1 < 0) return;
+            this.gameLevel--;
+            this.num.text = gameData[this.gameLevel].num
+        } else if (x < 530) {
+            if (this.gameLevel + 1 >= gameData.length) return;
+            this.gameLevel++;
+            this.num.text = gameData[this.gameLevel].num
+        } else {
+            // this.gameLevel++;
+            // this.num.text = gameData[this.gameLevel].num
+        }
+
+        this.level_text.text = `- ${this.gameLevel + 1}/${gameData.length} -`
+        if (this.gameLevel > this.realLevel) {
+            this.card_bg.loadImage('assets/images/card-bg-lock.png');
+            this.num.alpha=0.8;
+            this.timeLine.pause()
+            this.timeLine2.pause()
+        } else {
+            this.card_bg.loadImage('assets/images/card-bg.png')
+            this.num.alpha=1
+            this.timeLine.play(0,true)
+            this.timeLine2.play(0,true)
+        }
+        // 变换效果
+        var timeLine2 = new TimeLine();
+        timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, alpha: 0.5 }, 100, null, 0)
+            .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, alpha: 1 }, 100, null, 0)
+        timeLine2.play(0, false);
+
     }
 }

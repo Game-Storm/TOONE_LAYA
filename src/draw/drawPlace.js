@@ -1,7 +1,7 @@
 // 创建主游戏场景
 import DRAW from '../lib/graphics';
 import GameConfig from "../GameConfig";
-import { getNum,gameData } from "../lib/gameData";
+import { getNum, gameData } from "../lib/gameData";
 
 import DrawHome from "./drawHome"
 
@@ -41,7 +41,7 @@ export default class DrawGame {
         this.failReturn = ""
 
         // 游戏数据
-        this.num = ""
+        this.level = ""
         this.numData = "";
         this.arr = [];
         this.pNow = [0, 0];
@@ -82,9 +82,11 @@ export default class DrawGame {
         // 开启比赛
         this.isGaming = true;
         this.pNow = [0, 0]
-        this.num = Laya.LocalStorage.getItem("realLevel");
-        // console.log(this.num)
-        this.numData = getNum(this.num);
+        console.log()
+        this.level = Laya.LocalStorage.getItem("gameLevel");
+
+        // console.log(this.level)
+        this.numData = getNum(this.level);
         for (var i = 0; i < this.col; i++) {
             this.arr[i] = [];
             for (var j = 0; j < this.row; j++) {
@@ -312,7 +314,7 @@ export default class DrawGame {
     // 重置游戏
     refresh() {
         this.pNow = [0, 0];
-        this.numData = getNum(this.num);
+        this.numData = getNum(this.level);
         for (var i = 0; i < this.col; i++) {
             this.arr[i] = [];
             for (var j = 0; j < this.row; j++) {
@@ -360,7 +362,7 @@ export default class DrawGame {
         this.failMaskSp.size(750, Browser.height);
         this.failMaskSp.loadImage('assets/images/alert_fail_mask.png')
         this.failMaskSp.zOrder = 4;
-        this.failMaskSp.alpha=0;
+        this.failMaskSp.alpha = 0;
         Laya.stage.addChild(this.failMaskSp);
         Tween.to(this.failMaskSp, {
             alpha: 1

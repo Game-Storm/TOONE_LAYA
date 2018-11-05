@@ -40,7 +40,7 @@
                             }],
                         "x":[
                             {
-                                "value":0,
+                                "value":-296,
                                 "tweenMethod":"linearNone",
                                 "tween":true,
                                 "target":2,
@@ -122,6 +122,15 @@
                                 "key":"scaleX",
                                 "index":10
                             }],
+                        "rotation":[
+                            {
+                                "value":20,
+                                "tweenMethod":"linearNone",
+                                "tween":true,
+                                "target":2,
+                                "key":"rotation",
+                                "index":0
+                            }],
                         "pivotY":[
                             {
                                 "value":409,
@@ -138,6 +147,15 @@
                                 "tween":true,
                                 "target":2,
                                 "key":"pivotX",
+                                "index":0
+                            }],
+                        "anchorX":[
+                            {
+                                "value":0,
+                                "tweenMethod":"linearNone",
+                                "tween":true,
+                                "target":2,
+                                "key":"anchorX",
                                 "index":0
                             }],
                         "alpha":[

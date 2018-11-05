@@ -1,7 +1,7 @@
 // 创建主游戏场景
 import DRAW from '../lib/graphics';
 import GameConfig from "../GameConfig";
-import { getNum } from "../lib/gameData";
+import { getNum,gameData } from "../lib/gameData";
 
 import DrawHome from "./drawHome"
 
@@ -117,7 +117,7 @@ export default class DrawGame {
         // this.table_bg.graphics.alpha(0.5)
         // DRAW.drawRoundedRectangle(this.table_bg, this.x, this.y, this.tWidth, this.tHeight, this.gab, '#2f0048');
         // 绑定事件
-        this.table_bg.on(Event.MOUSE_MOVE, this, this.onMouseMove);
+        // this.table_bg.on(Event.MOUSE_MOVE, this, this.onMouseMove);
         this.table_bg.on(Event.MOUSE_DOWN, this, this.onMouseDown);
         this.table_bg.on(Event.MOUSE_UP, this, this.onMouseUp);
         //添加键盘抬起事件

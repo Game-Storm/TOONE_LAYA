@@ -55,7 +55,7 @@ import DrawHome from './draw/drawHome'
         })
 
         // 添加音效
-        let soundNames = ['shua.mp3', 'dong.mp3','troughts.mp3']
+        let soundNames = ['shua.mp3', 'dong.mp3']
         soundNames.map(item => {
             assets.push({
                 url: 'assets/music/' + item,

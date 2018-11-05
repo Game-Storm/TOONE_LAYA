@@ -52,7 +52,7 @@ export default class DrawHome {
     drawBg() {
         // 开始的场景
         this.sence_bg = new Laya.Sprite();
-        this.sence_bg.size(750, Browser.height);
+        this.sence_bg.size(750, 1334);
         Laya.stage.addChild(this.sence_bg);
         this.sence_bg.loadImage('assets/images/sence-0_bg.png');
         this.sence_bg.alpha = 0;
@@ -71,7 +71,7 @@ export default class DrawHome {
     drawText(textContent) {
         this.first_text = new Text()
         this.first_text.color = "#fff"
-        this.first_text.fontSize = 30
+        this.first_text.fontSize = 35
         this.first_text.width = 600;
         this.first_text.align = "center";
         this.first_text.leading = 20;
@@ -81,12 +81,11 @@ export default class DrawHome {
         // this.first_text.text = "18世纪\n德国数理哲学大师莱布尼兹发现了二进制"
         this.first_text.text = textContent;
         Laya.stage.addChild(this.first_text)
-
+        
         var timeLine = new TimeLine();
         timeLine.addLabel("show", 0).to(this.first_text, { alpha: 1 }, 1000, null, 1000)
             .addLabel("hidden", 0).to(this.first_text, { alpha: 0 }, 1000, null, 2000)
         timeLine.play(0, false);
-
     }
     /**
      * 逻辑处理

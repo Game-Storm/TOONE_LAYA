@@ -31,6 +31,8 @@ export default class DrawHome {
         this.num = ""
         this.left_card = ""
         this.right_card = ""
+        this.slider_bg = ""
+        this.slider_active = ""
 
         // 运行
         Laya.stage.bgColor = "#ded6df"
@@ -41,6 +43,7 @@ export default class DrawHome {
         Laya.LocalStorage.setItem("realLevel", 0.02);
         this.drawBg();
         this.drawCard();
+        this.drawSliderBar()
     }
 
     /**
@@ -119,6 +122,12 @@ export default class DrawHome {
         setTimeout(() => {
             this.cardAnimate()
         }, 1000)
+    }
+    // 绘制底部滑块
+    drawSliderBar() {
+        this.slider_bg = new Sprite();
+        Laya.stage.addChild(this.slider_bg)
+        DRAW.drawRoundedRectangle(this.slider_bg, 100, 1100, 550, 30, 15, '#2f0048,#ffffff,#00ffff,#ff00ff');
     }
     // 卡片滑动时的效果
     cardAnimate() {

@@ -105,17 +105,6 @@ import DrawHome from './draw/drawHome'
         console.log(DrawGame);
         // new DrawGame();
         new DrawHome();
-        // Laya.stage.on(Event.KEY_DOWN, this, function(){
-        //     console.log('按下了')
-        // });
-
-        // 播放bgm
-        // SoundManager.playMusic("http://p70gzm2sm.bkt.clouddn.com/troughts.mp3", 1, new Handler(this, onComplete));
-    }
-
-    // 
-    function onComplete() {
-        console.log("播放完成");
     }
 
     // 加载进度侦听器

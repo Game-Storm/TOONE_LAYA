@@ -54,7 +54,7 @@ export default class DrawGame {
     }
     // 首次注册
     init() {
-        console.log('执行init');
+        // console.log('执行init');
         this.drawPlace()
         this.drawTopButton()
         for (var i = 0; i < this.col; i++) {
@@ -83,7 +83,7 @@ export default class DrawGame {
         this.isGaming = true;
         this.pNow = [0, 0]
         this.num = Laya.LocalStorage.getItem("realLevel");
-        console.log(this.num)
+        // console.log(this.num)
         this.numData = getNum(this.num);
         for (var i = 0; i < this.col; i++) {
             this.arr[i] = [];
@@ -92,7 +92,7 @@ export default class DrawGame {
                 this.arr[i][j] = this.numData[i * this.row + j];
             }
         }
-        console.log(this.numData);
+        // console.log(this.numData);
         this.drawTable(true);
         // 调试
         // this.showFail()
@@ -104,7 +104,7 @@ export default class DrawGame {
 
     // 画背景图
     drawPlace() {
-        console.log('执行draw');
+        // console.log('执行draw');
         // 画游戏的背景布
         this.game_bg = new Laya.Sprite();
         this.game_bg.size(750, 1334);
@@ -274,7 +274,7 @@ export default class DrawGame {
             this.pNow[1] = a;
             return;
         }
-        console.log(this.arr)
+        // console.log(this.arr)
         this.arr[i][j].num = this.arr[i][j].num == "1" ? "0" : "1";
         this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
         this.drawTable();

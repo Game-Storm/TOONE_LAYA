@@ -3,6 +3,7 @@ import DRAW from '../lib/graphics';
 import GameConfig from "../GameConfig";
 import { getNum } from "../lib/gameData";
 import DrawGame from "./drawPlace";
+import DrawStartSence from './drawStartSence'
 
 var Sprite = Laya.Sprite;
 var Stage = Laya.Stage;
@@ -23,6 +24,7 @@ export default class DrawHome {
         this.realLevel = ""
         this.gameLevel = ""
         this.GAME = ""
+        this.isHome=true
 
         // 绘制有关的属性
         this.game_bg = ""
@@ -40,7 +42,7 @@ export default class DrawHome {
     }
     init() {
         // Laya.LocalStorage.setItem("item", str);
-        Laya.LocalStorage.setItem("realLevel", 0.02);
+        Laya.LocalStorage.setItem("realLevel", 0);
         this.drawBg();
         this.drawCard();
         this.drawSliderBar()
@@ -148,7 +150,21 @@ export default class DrawHome {
      */
     // 进入关卡
     startGame(params) {
-        this.GAME ? this.GAME.startGame() : this.GAME = new DrawGame();
+        if(!this.isHome){
+            return ;
+        }
+        if (this.realLevel == 0) {
+            // 0关 初始场景
+            console.log('ok')
+            new DrawStartSence()
+            
+        } else if (this.realLevel == 1) {
+            // 1关 结束场景
+        } else {
+            // 正常关卡
+            this.GAME ? this.GAME.startGame() : this.GAME = new DrawGame();
+        }
+        this.isHome=false
         SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
     }
 }

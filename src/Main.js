@@ -36,7 +36,7 @@ import DrawHome from './draw/drawHome'
         //加载静态文件资源
         var assets = ['assets/comp/btn_close.png'];
         // 加载images下的文件
-        let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png','alert_fail_bg.png',
+        let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png','alert_fail_bg.png','sence-0_bg.png',
             'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png',"card.png",'alert_fail_mask.png',
             'game_bg.png', 'top_num_screen.png', 'card-bg.png', 'logo_title.png','home_bg.png'];
         imgNames.map(item => {
@@ -55,7 +55,7 @@ import DrawHome from './draw/drawHome'
         })
 
         // 添加音效
-        let soundNames = ['shua.mp3', 'dong.mp3']
+        let soundNames = ['shua.mp3', 'dong.mp3','troughts.mp3']
         soundNames.map(item => {
             assets.push({
                 url: 'assets/music/' + item,

@@ -72,7 +72,7 @@ export default class DrawHome {
         this.game_bg = new Laya.Sprite();
         this.game_bg.size(750, 1334);
         Laya.stage.addChild(this.game_bg);
-        this.game_bg.loadImage('assets/images/home_bg.png');
+        this.game_bg.loadImage(GameConfig.host +'assets/images/home_bg.png');
         // 绘制标题
     }
     // 绘制中心卡片
@@ -83,7 +83,7 @@ export default class DrawHome {
         this.card_bg.pos(375, 540);
         this.card_bg.pivot(307, 408);
         Laya.stage.addChild(this.card_bg);
-        this.card_bg.loadImage('assets/images/card-bg.png');
+        this.card_bg.loadImage(GameConfig.host +'assets/images/card-bg.png');
         this.card_bg.on(Event.CLICK, this, this.startGame);
 
         // 绘制文字
@@ -135,13 +135,13 @@ export default class DrawHome {
     drawBottomBtn() {
         this.left_more = new Sprite()
         Laya.stage.addChild(this.left_more);
-        this.left_more.loadImage('assets/images/home_left_more.png');
+        this.left_more.loadImage(GameConfig.host +'assets/images/home_left_more.png');
         this.left_more.size(122, 91);
         this.left_more.pos(94, 975)
 
         this.left = new Sprite();
         Laya.stage.addChild(this.left);
-        this.left.loadImage('assets/images/home_left.png');
+        this.left.loadImage(GameConfig.host +'assets/images/home_left.png');
         this.left.size(122, 91);
         this.left.pos(241, 975);
         this.left.name = "left"
@@ -149,14 +149,14 @@ export default class DrawHome {
 
         this.right = new Sprite()
         Laya.stage.addChild(this.right);
-        this.right.loadImage('assets/images/home_right.png');
+        this.right.loadImage(GameConfig.host +'assets/images/home_right.png');
         this.right.size(122, 91);
         this.right.pos(388, 975);
         this.right.on(Event.CLICK, this, this.changeLevel);
 
         this.right_more = new Sprite()
         Laya.stage.addChild(this.right_more);
-        this.right_more.loadImage('assets/images/home_right_more.png');
+        this.right_more.loadImage(GameConfig.host +'assets/images/home_right_more.png');
         this.right_more.size(122, 91);
         this.right_more.pos(535, 975);
     }
@@ -180,7 +180,7 @@ export default class DrawHome {
             this.GAME ? this.GAME.startGame() : this.GAME = new DrawGame();
         }
         // this.isHome = false
-        SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
+        SoundManager.playSound(GameConfig.host +"assets/music/dong.mp3", 1, null, null, 13);
     }
     changeLevel(e) {
         console.log(Laya.stage.mouseX)
@@ -203,12 +203,12 @@ export default class DrawHome {
 
         this.level_text.text = `- ${this.gameLevel + 1}/${gameData.length} -`
         if (this.gameLevel > this.realLevel) {
-            this.card_bg.loadImage('assets/images/card-bg-lock.png');
+            this.card_bg.loadImage(GameConfig.host +'assets/images/card-bg-lock.png');
             this.num.alpha=0.8;
             this.timeLine.pause()
             this.timeLine2.pause()
         } else {
-            this.card_bg.loadImage('assets/images/card-bg.png')
+            this.card_bg.loadImage(GameConfig.host +'assets/images/card-bg.png')
             this.num.alpha=1
             this.timeLine.play(0,true)
             this.timeLine2.play(0,true)

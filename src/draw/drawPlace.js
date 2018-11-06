@@ -2,8 +2,9 @@
 import DRAW from '../lib/graphics';
 import GameConfig from "../GameConfig";
 import { getNum, gameData } from "../lib/gameData";
-
 import DrawHome from "./drawHome"
+
+console.log(GameConfig)
 
 var Sprite = Laya.Sprite;
 var Stage = Laya.Stage;
@@ -21,8 +22,8 @@ export default class DrawGame {
         // 绘图相关的属性
         this.x = 40;
         this.y = 250;
-        this.col = 5;
-        this.row = 5;
+        this.col = 3;
+        this.row = 3;
         this.gab = 20;
         this.tWidth = 750 - 2 * this.x;//桌面宽度
         this.iWidth = (this.tWidth - (this.row + 1) * this.gab) / this.row;//单个的高度
@@ -56,15 +57,9 @@ export default class DrawGame {
     init() {
         // console.log('执行init');
         this.drawPlace()
+        // this.drawTableBg()
+        this.refreshTable()
         this.drawTopButton()
-        for (var i = 0; i < this.col; i++) {
-            this.itemsSprite[i] = [];
-            for (var j = 0; j < this.row; j++) {
-                // 创建宫格舞台
-                this.itemsSprite[i][j] = new Sprite();
-                Laya.stage.addChild(this.itemsSprite[i][j]);
-            }
-        }
         this.startGame()
     }
 
@@ -72,29 +67,23 @@ export default class DrawGame {
     startGame() {
         this.game_bg.zOrder = 1;
         this.table_bg.zOrder = 2;
-        this.topSp.zOrder = 2;
-        this.refreshSp.zOrder = 2;
-        this.returnSp.zOrder = 2;
-        this.numScreenSp.zOrder = 2;
-        // this.failMaskSp = ""
-        // this.failRefresh = ""
-        // this.failReturn = ""
+        this.topSp.zOrder = 3;
+        this.refreshSp.zOrder = 3;
+        this.returnSp.zOrder = 3;
+        this.numScreenSp.zOrder = 3;
+
         // 开启比赛
         this.isGaming = true;
-        this.pNow = [0, 0]
-        console.log()
-        this.level = Laya.LocalStorage.getItem("gameLevel");
-
-        // console.log(this.level)
-        this.numData = getNum(this.level);
+        this.refreshTable();
         for (var i = 0; i < this.col; i++) {
-            this.arr[i] = [];
+            this.itemsSprite[i] = [];
             for (var j = 0; j < this.row; j++) {
-                this.itemsSprite[i][j].zOrder = 3
-                this.arr[i][j] = this.numData[i * this.row + j];
+                // 创建宫格舞台
+                this.itemsSprite[i][j] = new Sprite();
+                Laya.stage.addChild(this.itemsSprite[i][j]);
+                this.itemsSprite[i][j].zOrder = 3;
             }
         }
-        // console.log(this.numData);
         this.drawTable(true);
         // 调试
         // this.showFail()
@@ -106,24 +95,28 @@ export default class DrawGame {
 
     // 画背景图
     drawPlace() {
-        // console.log('执行draw');
         // 画游戏的背景布
         this.game_bg = new Laya.Sprite();
         this.game_bg.size(750, 1334);
         Laya.stage.addChild(this.game_bg);
-        this.game_bg.loadImage('assets/images/game_bg1.png')
-        // 画中心的方块组背景
-        this.table_bg = new Laya.Sprite();
-        this.table_bg.size(this.tWidth, this.tHeight * 2);//一定要设置size才能监控事件 
-        Laya.stage.addChild(this.table_bg);
-        // this.table_bg.graphics.alpha(0.5)
-        // DRAW.drawRoundedRectangle(this.table_bg, this.x, this.y, this.tWidth, this.tHeight, this.gab, '#2f0048');
-        // 绑定事件
-        // this.table_bg.on(Event.MOUSE_MOVE, this, this.onMouseMove);
-        this.table_bg.on(Event.MOUSE_DOWN, this, this.onMouseDown);
-        this.table_bg.on(Event.MOUSE_UP, this, this.onMouseUp);
+        this.game_bg.loadImage(GameConfig.host + 'assets/images/game_bg1.png')
         //添加键盘抬起事件
         Laya.stage.on(Event.KEY_UP, this, this.onKeyUp);
+    }
+    // 画背景色
+    drawTableBg() {
+        // 画中心的方块组背景
+        if (this.table_bg) {
+            this.table_bg.graphics.clear()
+        } else {
+            this.table_bg = new Laya.Sprite();
+            this.table_bg.size(this.tWidth, this.tHeight * 2);//一定要设置size才能监控事件 
+            Laya.stage.addChild(this.table_bg);
+            this.table_bg.alpha = 0.2
+            this.table_bg.on(Event.MOUSE_DOWN, this, this.onMouseDown);
+            this.table_bg.on(Event.MOUSE_UP, this, this.onMouseUp);
+        }
+        DRAW.drawRoundedRectangle(this.table_bg, this.x, this.y, this.tWidth, this.tHeight, this.gab, '#2f0048');
     }
     // 画顶部按钮
     drawTopButton() {
@@ -134,7 +127,7 @@ export default class DrawGame {
         this.refreshSp = new Sprite();
         Laya.stage.addChild(this.refreshSp);
         this.refresh
-        this.refreshSp.loadImage('assets/images/refresh_btn.png');
+        this.refreshSp.loadImage(GameConfig.host + 'assets/images/refresh_btn.png');
         this.refreshSp.pos(578, 30);
         this.refreshSp.size(142, 106);
         this.refreshSp.on('click', this, this.refresh)
@@ -142,31 +135,32 @@ export default class DrawGame {
         // 绘制数字显示屏
         this.numScreenSp = new Sprite();
         Laya.stage.addChild(this.numScreenSp);
-        this.numScreenSp.loadImage('assets/images/top_num_screen.png');
+        this.numScreenSp.loadImage(GameConfig.host + 'assets/images/top_num_screen.png');
         this.numScreenSp.size(330, 130);
         this.numScreenSp.pos(210, 20)
 
         // 绘制返回按钮
         this.returnSp = new Sprite();
         Laya.stage.addChild(this.returnSp);
-        this.returnSp.loadImage('assets/images/return_btn.png');
+        this.returnSp.loadImage(GameConfig.host + 'assets/images/return_btn.png');
         this.returnSp.pos(30, 30);
         this.returnSp.size(142, 106);
         this.returnSp.on('click', this, this.returnHome)
     }
     // 画宫格
     drawTable(first = false) {
+        // 格式化棋盘数据
         Tween.clearAll(this.itemsSprite)
         for (var i = 0; i < this.col; i++) {
             for (var j = 0; j < this.row; j++) {
                 let x = this.x + j * (this.iWidth + this.gab) + this.gab, y = this.y + i * (this.iWidth + this.gab) + this.gab;
                 let url = "";
                 if (j == this.pNow[0] && i == this.pNow[1]) {
-                    url = this.arr[i][j].num == '0' ? 'assets/images/item-0-active.png' : 'assets/images/item-1-active.png';
+                    url = this.arr[i][j].num == '0' ? GameConfig.host + 'assets/images/item-0-active.png' : GameConfig.host + 'assets/images/item-1-active.png';
                 } else if (this.arr[i][j].isUsed) {
-                    url = 'assets/images/item-1-lock.png'
+                    url = GameConfig.host + 'assets/images/item-1-lock.png'
                 } else {
-                    url = this.arr[i][j].num == '0' ? 'assets/images/item-0.png' : 'assets/images/item-1.png';
+                    url = this.arr[i][j].num == '0' ? GameConfig.host + 'assets/images/item-0.png' : GameConfig.host + 'assets/images/item-1.png';
                 }
                 this.itemsSprite[i][j].graphics.clear();
                 // DRAW.drawRoundedRectangle(this.spItem, x, y, this.iWidth, this.iWidth, 15, color)
@@ -241,6 +235,29 @@ export default class DrawGame {
      * 逻辑处理
      */
 
+    // 格式化棋盘
+    refreshTable() {
+        console.log('执行了！！！')
+        this.pNow = [0, 0];
+        this.level = Laya.LocalStorage.getItem('gameLevel');
+        this.numData = getNum(this.level).items;
+        this.col = getNum(this.level).col;
+        this.row = getNum(this.level).row;
+        this.gab = 20 + (4 - this.row) * 5
+        this.tWidth = 750 - 2 * this.x;//桌面宽度
+        this.iWidth = (this.tWidth - (this.row + 1) * this.gab) / this.row;//单个的高度
+        this.tHeight = this.iWidth * this.col - 1 + (this.col + 1) * this.gab;
+        // console.log(this.tWidth, this.tHeight)
+        for (var i = 0; i < this.col; i++) {
+            this.arr[i] = [];
+            for (var j = 0; j < this.row; j++) {
+                // this.arr[i][j] = this.num.slice(i * this.row + j, i * this.row + j + 1);
+                this.arr[i][j] = this.numData[i * this.row + j];
+            }
+        }
+        this.drawTableBg()
+    }
+
     moveBlock(direction) {
         if (!this.isGaming) return;
 
@@ -313,16 +330,8 @@ export default class DrawGame {
     }
     // 重置游戏
     refresh() {
-        this.pNow = [0, 0];
-        this.numData = getNum(this.level);
-        for (var i = 0; i < this.col; i++) {
-            this.arr[i] = [];
-            for (var j = 0; j < this.row; j++) {
-                // this.arr[i][j] = this.num.slice(i * this.row + j, i * this.row + j + 1);
-                this.arr[i][j] = this.numData[i * this.row + j];
-            }
-        }
         this.closeAlert()
+        this.refreshTable()
         this.drawTable(true)
     }
     // 返回 Home
@@ -334,7 +343,7 @@ export default class DrawGame {
     clearPlaceAll() {
         // 设置层级下沉
         this.game_bg.zOrder = -1;
-        this.table_bg.zOrder = -2;
+        this.table_bg.zOrder = -3;
         this.topSp.zOrder = -2
         this.refreshSp.zOrder = -2
         this.returnSp.zOrder = -2
@@ -345,7 +354,6 @@ export default class DrawGame {
             this.failRefresh.zOrder = -2
             this.failReturn.zOrder = -2
         }
-
 
         for (var i = 0; i < this.col; i++) {
             for (var j = 0; j < this.row; j++) {
@@ -360,7 +368,7 @@ export default class DrawGame {
         this.failMaskSp = new Sprite();
         // this.failBgSp.pos(50, 200);
         this.failMaskSp.size(750, Browser.height);
-        this.failMaskSp.loadImage('assets/images/alert_fail_mask.png')
+        this.failMaskSp.loadImage(GameConfig.host + 'assets/images/alert_fail_mask.png')
         this.failMaskSp.zOrder = 4;
         this.failMaskSp.alpha = 0;
         Laya.stage.addChild(this.failMaskSp);
@@ -374,7 +382,7 @@ export default class DrawGame {
         this.failBgSp.size(655, 558);
         this.failBgSp.zOrder = 5;
         Laya.stage.addChild(this.failBgSp);
-        this.failBgSp.loadImage('assets/images/alert_fail_bg.png');
+        this.failBgSp.loadImage(GameConfig.host + 'assets/images/alert_fail_bg.png');
         // 进入动画
         Tween.to(this.failBgSp, {
             y: 250,
@@ -386,7 +394,7 @@ export default class DrawGame {
         this.failReturn.size(170, 126)
         this.failReturn.zOrder = 6;
         Laya.stage.addChild(this.failReturn)
-        this.failReturn.loadImage('assets/images/return_btn.png')
+        this.failReturn.loadImage(GameConfig.host + 'assets/images/return_btn.png')
         this.failReturn.on('click', this, this.returnHome)
         Tween.to(this.failReturn, {
             x: 500,
@@ -397,7 +405,7 @@ export default class DrawGame {
         this.failRefresh.size(170, 126)
         this.failRefresh.zOrder = 6;
         Laya.stage.addChild(this.failRefresh)
-        this.failRefresh.loadImage('assets/images/refresh_btn.png')
+        this.failRefresh.loadImage(GameConfig.host + 'assets/images/refresh_btn.png')
         this.failRefresh.on('click', this, this.refresh)
         Tween.to(this.failRefresh, {
             x: 500,

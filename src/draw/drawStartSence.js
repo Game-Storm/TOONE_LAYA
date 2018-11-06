@@ -54,7 +54,7 @@ export default class DrawHome {
         this.sence_bg = new Laya.Sprite();
         this.sence_bg.size(750, 1334);
         Laya.stage.addChild(this.sence_bg);
-        this.sence_bg.loadImage('assets/images/sence-0_bg.png');
+        this.sence_bg.loadImage(GameConfig.host + 'assets/images/sence-0_bg.png');
         this.sence_bg.alpha = 0;
         Tween.to(this.sence_bg, {
             alpha: 1

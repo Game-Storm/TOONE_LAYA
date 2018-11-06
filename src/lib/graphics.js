@@ -10,6 +10,7 @@ export default {
      * @param options 配置项
      */
     drawRoundedRectangle: function (sp, x, y, width, height, r, fill) {
+        console.log(width, height)
         var relWidth = width - 2 * r;
         var relHeight = height - 2 * r;
         sp.graphics.drawPath(x, y, [
@@ -24,8 +25,8 @@ export default {
             ["arcTo", 0, 0, r, 0, r],
             ["closePath"]
         ], {
-            fillStyle:fill||'#ff0000'
-        },)
+                fillStyle: fill || '#ff0000'
+            }, )
     }
 }
 

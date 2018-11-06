@@ -1,5 +1,6 @@
 import DrawGame from './draw/drawPlace'
 import DrawHome from './draw/drawHome'
+import GameConfig from './GameConfig';
 
 (function () {
     var Sprite = Laya.Sprite;
@@ -33,33 +34,34 @@ import DrawHome from './draw/drawHome'
 
     // 加载文件以及滚动条
     function downLoadMedia() {
+        console.log(GameConfig.host)
         //加载静态文件资源
-        var assets = ['assets/comp/btn_close.png'];
+        var assets = [];
         // 加载images下的文件
-        let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png','alert_fail_bg.png','sence-0_bg.png',
-            'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png',"card.png",'alert_fail_mask.png',
-            'game_bg.png', 'top_num_screen.png', 'card-bg.png', 'logo_title.png','home_bg.png','card-bg-lock.png',
-        'home_right.png','home_right_more.png','home_left.png','home_left_more.png'];
+        let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'alert_fail_bg.png', 'sence-0_bg.png',
+            'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card.png", 'alert_fail_mask.png',
+            'game_bg.png', 'top_num_screen.png', 'card-bg.png', 'logo_title.png', 'home_bg.png', 'card-bg-lock.png',
+            'home_right.png', 'home_right_more.png', 'home_left.png', 'home_left_more.png'];
         imgNames.map(item => {
             assets.push({
-                url: 'assets/images/' + item,
+                url: GameConfig.host + 'assets/images/' + item,
                 type: Loader.IMAGE  // type类型一定要加！！
             });
         })
         // 加载动画库里的素材
-        let imgAniNames = ['card.png'];
-        imgAniNames.map(item => {
-            assets.push({
-                url: 'images/' + item,
-                type: Loader.IMAGE  // type类型一定要加！！
-            });
-        })
+        // let imgAniNames = ['card.png'];
+        // imgAniNames.map(item => {
+        //     assets.push({
+        //         url: 'images/' + item,
+        //         type: Loader.IMAGE  // type类型一定要加！！
+        //     });
+        // })
 
         // 添加音效
         let soundNames = ['shua.mp3', 'dong.mp3']
         soundNames.map(item => {
             assets.push({
-                url: 'assets/music/' + item,
+                url: GameConfig.host + 'assets/music/' + item,
                 type: Loader.SOUND
             });
         })

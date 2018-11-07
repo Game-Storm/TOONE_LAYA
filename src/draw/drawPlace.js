@@ -2,7 +2,7 @@
 import DRAW from '../lib/graphics';
 import GameConfig from "../GameConfig";
 import { getNum, gameData } from "../lib/gameData";
-import DrawHome from "./drawHome"
+import DrawHome from "./drawHome";
 
 console.log(GameConfig)
 
@@ -44,8 +44,9 @@ export default class DrawGame {
         // 游戏数据
         this.level = ""
         this.numData = "";
-        this.arr = [];
+        this.arr = [];//宫格的实时数据
         this.pNow = [0, 0];
+        this.frontPostion = [];
         this.isGaming = false;
 
         // 游戏交互
@@ -57,7 +58,6 @@ export default class DrawGame {
     init() {
         // console.log('执行init');
         this.drawPlace()
-        // this.drawTableBg()
         this.refreshTable()
         this.drawTopButton()
         this.startGame()
@@ -149,28 +149,15 @@ export default class DrawGame {
     }
     // 画宫格
     drawTable(first = false) {
-        // 格式化棋盘数据
-        Tween.clearAll(this.itemsSprite)
-        for (var i = 0; i < this.col; i++) {
-            for (var j = 0; j < this.row; j++) {
-                let x = this.x + j * (this.iWidth + this.gab) + this.gab, y = this.y + i * (this.iWidth + this.gab) + this.gab;
-                let url = "";
-                if (j == this.pNow[0] && i == this.pNow[1]) {
-                    url = this.arr[i][j].num == '0' ? GameConfig.host + 'assets/images/item-0-active.png' : GameConfig.host + 'assets/images/item-1-active.png';
-                } else if (this.arr[i][j].isUsed) {
-                    url = GameConfig.host + 'assets/images/item-1-lock.png'
-                } else {
-                    url = this.arr[i][j].num == '0' ? GameConfig.host + 'assets/images/item-0.png' : GameConfig.host + 'assets/images/item-1.png';
-                }
-                this.itemsSprite[i][j].graphics.clear();
-                // DRAW.drawRoundedRectangle(this.spItem, x, y, this.iWidth, this.iWidth, 15, color)
-                this.itemsSprite[i][j].loadImage(url);
-                this.itemsSprite[i][j].pos(x + this.iWidth * 0.5, y + this.iWidth * 0.5);
-                this.itemsSprite[i][j].size(this.iWidth, this.iWidth);
-
-                // 动画
-
-                if (first) {
+        // 如果是第一次画宫格
+        if (first) {
+            for (var i = 0; i < this.col; i++) {
+                for (var j = 0; j < this.row; j++) {
+                    let x = this.x + j * (this.iWidth + this.gab) + this.gab, y = this.y + i * (this.iWidth + this.gab) + this.gab;
+                    this.drawItemBlock(i, j);
+                    this.itemsSprite[i][j].pos(x + this.iWidth * 0.5, y + this.iWidth * 0.5);
+                    this.itemsSprite[i][j].size(this.iWidth, this.iWidth);
+                    // 动画
                     this.itemsSprite[i][j].alpha = 0
                     Tween.from(this.itemsSprite[i][j], {
                         // y:10
@@ -188,12 +175,32 @@ export default class DrawGame {
                         pivotY: this.iWidth * 0.5,
                         alpha: 1
                     }, 250, Ease.circInOut, null, 200)
+
                 }
             }
+        } else {
+            this.drawItemBlock(this.pNow[1], this.pNow[0])
+            this.drawItemBlock(this.frontPostion[1], this.frontPostion[0])
         }
+        // 格式化棋盘数据
+        Tween.clearAll(this.itemsSprite)
+
         setTimeout(() => {
             this.judgeSuccess();
         }, 100)
+    }
+    // 根据坐标绘制相应的色块
+    drawItemBlock(i, j) {
+        let url;
+        if (j == this.pNow[0] && i == this.pNow[1]) {
+            url = this.arr[i][j].num == '0' ? GameConfig.host + 'assets/images/item-0-active.png' : GameConfig.host + 'assets/images/item-1-active.png';
+        } else if (this.arr[i][j].isUsed) {
+            url = GameConfig.host + 'assets/images/item-1-lock.png'
+        } else {
+            url = this.arr[i][j].num == '0' ? GameConfig.host + 'assets/images/item-0.png' : GameConfig.host + 'assets/images/item-1.png';
+        }
+        this.itemsSprite[i][j].graphics.clear();
+        this.itemsSprite[i][j].loadImage(url);
     }
     /**
      * 键盘事件
@@ -237,9 +244,10 @@ export default class DrawGame {
 
     // 格式化棋盘
     refreshTable() {
-        console.log('执行了！！！')
+        // console.log('执行了！！！')
         this.pNow = [0, 0];
         this.level = Laya.LocalStorage.getItem('gameLevel');
+        // console.log(this.level)
         this.numData = getNum(this.level).items;
         this.col = getNum(this.level).col;
         this.row = getNum(this.level).row;
@@ -263,6 +271,7 @@ export default class DrawGame {
 
         let b = this.pNow[0],
             a = this.pNow[1];
+
         // this.arr[a][b] = this.arr[a][b] == "1" ? "0" : "1";
         if (direction == "down") {
             if (this.pNow[1] >= this.col - 1) {
@@ -293,9 +302,12 @@ export default class DrawGame {
             this.pNow[1] = a;
             return;
         }
-        // console.log(this.arr)
+        this.frontPostion[0] = b;
+        this.frontPostion[1] = a;
+
         this.arr[i][j].num = this.arr[i][j].num == "1" ? "0" : "1";
         this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
+
         this.drawTable();
         // 播放滑动音效
 
@@ -309,8 +321,9 @@ export default class DrawGame {
             return items.every(item => item.num == '1')
         })
         if (isWin) {
-            alert('你赢了！');
-            this.refresh();
+            $ob.emit('nextGame')
+            Laya.LocalStorage.setItem('realLevel',this.level++)
+            this.clearPlaceAll()
         } else {
             // 验证是否失败
             let j = this.pNow[0],

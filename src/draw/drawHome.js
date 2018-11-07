@@ -24,6 +24,7 @@ export default class DrawHome {
         this.realLevel = ""
         this.gameLevel = ""
         this.GAME = ""
+        this.StartSence = ""
         this.isHome = true
 
         // 绘制有关的属性
@@ -40,8 +41,8 @@ export default class DrawHome {
         this.progress_active = ""
 
         // 动画
-        this.timeLine=""
-        this.timeLine2=""
+        this.timeLine = ""
+        this.timeLine2 = ""
 
         // 运行
         Laya.stage.bgColor = "#ded6df"
@@ -56,13 +57,12 @@ export default class DrawHome {
         } else {
             this.realLevel = Number(Laya.LocalStorage.getItem("realLevel"))
         }
-
         this.drawBg();
         this.drawCard();
         this.drawBottomBtn();
-        this.drawTopProgress()
+        this.drawTopProgress();
+        $ob.on('nextGame', [this.goNextGame, this]);
     }
-
     /**
      * 绘制画布
      */
@@ -72,7 +72,7 @@ export default class DrawHome {
         this.game_bg = new Laya.Sprite();
         this.game_bg.size(750, 1334);
         Laya.stage.addChild(this.game_bg);
-        this.game_bg.loadImage(GameConfig.host +'assets/images/home_bg.png');
+        this.game_bg.loadImage(GameConfig.host + 'assets/images/home_bg.png');
         // 绘制标题
     }
     // 绘制中心卡片
@@ -83,7 +83,7 @@ export default class DrawHome {
         this.card_bg.pos(375, 540);
         this.card_bg.pivot(307, 408);
         Laya.stage.addChild(this.card_bg);
-        this.card_bg.loadImage(GameConfig.host +'assets/images/card-bg.png');
+        this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg.png');
         this.card_bg.on(Event.CLICK, this, this.startGame);
 
         // 绘制文字
@@ -100,7 +100,7 @@ export default class DrawHome {
         // this.num.zOrder=1;
         Laya.stage.addChild(this.num);
         this.gameLevel = this.gameLevel == '' ? this.realLevel : this.gameLevel
-        console.log(this.gameLevel, gameData[this.gameLevel])
+        // console.log(this.gameLevel, gameData[this.gameLevel])
         this.num.text = gameData[this.gameLevel].num
         // 放大缩小动画
         this.timeLine = new TimeLine();
@@ -113,7 +113,6 @@ export default class DrawHome {
         this.timeLine2.play(0, true);
         // this.drawSideCard();
     }
-
     // 绘制顶部进度条
     drawTopProgress() {
         this.progress_bg = new Sprite();
@@ -135,13 +134,13 @@ export default class DrawHome {
     drawBottomBtn() {
         this.left_more = new Sprite()
         Laya.stage.addChild(this.left_more);
-        this.left_more.loadImage(GameConfig.host +'assets/images/home_left_more.png');
+        this.left_more.loadImage(GameConfig.host + 'assets/images/home_left_more.png');
         this.left_more.size(122, 91);
         this.left_more.pos(94, 975)
 
         this.left = new Sprite();
         Laya.stage.addChild(this.left);
-        this.left.loadImage(GameConfig.host +'assets/images/home_left.png');
+        this.left.loadImage(GameConfig.host + 'assets/images/home_left.png');
         this.left.size(122, 91);
         this.left.pos(241, 975);
         this.left.name = "left"
@@ -149,14 +148,14 @@ export default class DrawHome {
 
         this.right = new Sprite()
         Laya.stage.addChild(this.right);
-        this.right.loadImage(GameConfig.host +'assets/images/home_right.png');
+        this.right.loadImage(GameConfig.host + 'assets/images/home_right.png');
         this.right.size(122, 91);
         this.right.pos(388, 975);
         this.right.on(Event.CLICK, this, this.changeLevel);
 
         this.right_more = new Sprite()
         Laya.stage.addChild(this.right_more);
-        this.right_more.loadImage(GameConfig.host +'assets/images/home_right_more.png');
+        this.right_more.loadImage(GameConfig.host + 'assets/images/home_right_more.png');
         this.right_more.size(122, 91);
         this.right_more.pos(535, 975);
     }
@@ -170,20 +169,28 @@ export default class DrawHome {
         }
         if (this.gameLevel == 0) {
             // 0关 初始场景
-            console.log('ok')
-            new DrawStartSence()
+            this.StartSence ? this.StartSence.showStartSence() : this.StartSence = new DrawStartSence()
+            // Object.defineProperty(this.StartSence,)
         } else if (this.gameLevel == gameData.length - 1) {
             // 1关 结束场景
         } else {
             // 正常关卡
             Laya.LocalStorage.setItem('gameLevel', this.gameLevel);
-            this.GAME ? this.GAME.startGame() : this.GAME = new DrawGame();
+            if (this.GAME) {
+                this.GAME.startGame()
+            } else {
+                this.GAME = new DrawGame();
+                console.log(this.GAME);
+                // this.GAME.level=6;
+                // console.log(this.GAME);
+            }
         }
         // this.isHome = false
-        SoundManager.playSound(GameConfig.host +"assets/music/dong.mp3", 1, null, null, 13);
+        SoundManager.playSound(GameConfig.host + "assets/music/dong.mp3", 1, null, null, 13);
     }
+    // 切换关卡
     changeLevel(e) {
-        console.log(Laya.stage.mouseX)
+        // console.log(Laya.stage.mouseX)
         let x = Laya.stage.mouseX
         if (x < 240) {
             // this.gameLevel--;
@@ -203,15 +210,15 @@ export default class DrawHome {
 
         this.level_text.text = `- ${this.gameLevel + 1}/${gameData.length} -`
         if (this.gameLevel > this.realLevel) {
-            this.card_bg.loadImage(GameConfig.host +'assets/images/card-bg-lock.png');
-            this.num.alpha=0.8;
-            this.timeLine.pause()
-            this.timeLine2.pause()
+            this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg-lock.png');
+            this.num.alpha = 0.8;
+            this.timeLine.pause();
+            this.timeLine2.pause();
         } else {
-            this.card_bg.loadImage(GameConfig.host +'assets/images/card-bg.png')
-            this.num.alpha=1
-            this.timeLine.play(0,true)
-            this.timeLine2.play(0,true)
+            this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg.png')
+            this.num.alpha = 1
+            this.timeLine.play(0, true)
+            this.timeLine2.play(0, true)
         }
         // 变换效果
         var timeLine2 = new TimeLine();
@@ -219,5 +226,35 @@ export default class DrawHome {
             .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, alpha: 1 }, 100, null, 0)
         timeLine2.play(0, false);
 
+    }
+    // 进入下一关
+    goNextGame() {
+        // changeLevel(530);
+        if (this.gameLevel + 1 >= gameData.length) return;
+        this.gameLevel++;
+
+
+        // 说明是刚解锁新的关卡需要一个转换的动画
+        if (this.gameLevel > this.realLevel) {
+            setTimeout(() => {
+                this.level_text.text = `- ${this.gameLevel + 1}/${gameData.length} -`
+                this.num.text = gameData[this.gameLevel].num
+                this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg.png');
+                this.num.alpha = 0.8;
+                this.timeLine.play(0, true);
+                this.timeLine2.play(0, true);
+            }, 500)
+
+        } else {
+            // this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg.png')
+            // this.num.alpha = 1
+            // this.timeLine.play(0, true)
+            // this.timeLine2.play(0, true)
+        }
+        // 变换效果
+        // var timeLine2 = new TimeLine();
+        // timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, alpha: 0.5 }, 100, null, 0)
+        //     .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, alpha: 1 }, 100, null, 0)
+        // timeLine2.play(0, false);
     }
 }

@@ -37,8 +37,8 @@ let gameData = [
 ]
 
 function getNum(level) {
-    console.log(level)
-    console.log(gameData[Number(level)])
+    // console.log(level)
+    // console.log(gameData[Number(level)])
     let num = gameData[Number(level)].num
     let arr = toBinaryLists(num)
     arr.row = getRow(num)
@@ -79,20 +79,9 @@ function toBinaryLists(num) {
     if (typeof (num) != 'number') {
         num = Number(num);
     }
-    console.log(num)
     let binary = num.toString(2).split('.')[1]
-    console.log(binary)
     return binary.split('');
 }
-
-// function getGameData() {
-//     let i = 0;
-//     for (let key in gameData) {
-//         if (key != 'length') i++;
-//     }
-//     gameData['length'] = i;
-//     return gameData;
-// }
 
 module.exports = {
     getNum: getNum,

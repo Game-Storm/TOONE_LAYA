@@ -30,6 +30,28 @@ import GameConfig from './GameConfig';
         Laya.stage.scaleMode = "fixedwidth";
         Laya.stage.bgColor = "#4c58ae";
         downLoadMedia()
+
+        // 创建一个发布订阅模式
+        function Observer2() {
+            //创建观察者数组
+            this.observerList = [];
+        }
+        Observer2.prototype.on = function (key, obj) {
+            if (!this.observerList[key]) {
+                this.observerList[key] = []
+            }
+            //将observerpush进对应的key内存中
+            this.observerList[key].push(obj);
+        }
+        Observer2.prototype.emit = function () {
+            //获取key值
+            var oKey = Array.prototype.shift.apply(arguments);
+            // 遍历数组所有的观察者并执行操作
+            this.observerList[oKey].forEach(obj => {
+                obj[0].apply(obj[1], arguments)
+            })
+        }
+        window.$ob = new Observer2();
     })();
 
     // 加载文件以及滚动条
@@ -41,7 +63,8 @@ import GameConfig from './GameConfig';
         let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'alert_fail_bg.png', 'sence-0_bg.png',
             'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card.png", 'alert_fail_mask.png',
             'game_bg.png', 'top_num_screen.png', 'card-bg.png', 'logo_title.png', 'home_bg.png', 'card-bg-lock.png',
-            'home_right.png', 'home_right_more.png', 'home_left.png', 'home_left_more.png'];
+            'home_right.png', 'home_right_more.png', 'home_left.png', 'home_left_more.png', 'next_btn.png'
+        ];
         imgNames.map(item => {
             assets.push({
                 url: GameConfig.host + 'assets/images/' + item,
@@ -105,7 +128,7 @@ import GameConfig from './GameConfig';
     function init() {
         clearLoading()
         console.log('初始化游戏');
-        console.log(DrawGame);
+        // console.log(DrawGame);
         // new DrawGame();
         new DrawHome();
     }

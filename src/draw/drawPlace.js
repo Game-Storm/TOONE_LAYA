@@ -384,8 +384,8 @@ export default class DrawGame {
         this.topSp.zOrder = -2
         this.refreshSp.zOrder = -2
         this.returnSp.zOrder = -2
-        this.numScreenSp.zOrder = -2
-        this.slideBlock.zOrder = -2;
+        this.numScreenSp.zOrder = -2;
+        if (this.slideBlock) this.slideBlock.zOrder = -2;
         if (this.failBgSp) {
             this.failBgSp.zOrder = -2
             this.failMaskSp.zOrder = -2
@@ -404,48 +404,57 @@ export default class DrawGame {
     }
     // 输了的逻辑
     showFail() {
-        this.failMaskSp = new Sprite();
-        // this.failBgSp.pos(50, 200);
-        this.failMaskSp.size(750, Browser.height);
-        this.failMaskSp.loadImage(GameConfig.host + 'assets/images/alert_fail_mask.png')
+        if (!this.failMaskSp) {
+            this.failMaskSp = new Sprite();
+            // this.failBgSp.pos(50, 200);
+            this.failMaskSp.size(750, Browser.height);
+            this.failMaskSp.loadImage(GameConfig.host + 'assets/images/alert_fail_mask.png')
+            Laya.stage.addChild(this.failMaskSp);
+        }
         this.failMaskSp.zOrder = 4;
         this.failMaskSp.alpha = 0;
-        Laya.stage.addChild(this.failMaskSp);
         Tween.to(this.failMaskSp, {
             alpha: 1
         }, 250, Ease.linearIn, null, 200)
 
         // 画卡片背景
-        this.failBgSp = new Sprite();
+        if (!this.failBgSp) {
+            this.failBgSp = new Sprite();
+            this.failBgSp.size(655, 558);
+            Laya.stage.addChild(this.failBgSp);
+            this.failBgSp.loadImage(GameConfig.host + 'assets/images/alert_fail_bg.png');
+        }
         this.failBgSp.pos(50, -550);
-        this.failBgSp.size(655, 558);
         this.failBgSp.zOrder = 5;
-        Laya.stage.addChild(this.failBgSp);
-        this.failBgSp.loadImage(GameConfig.host + 'assets/images/alert_fail_bg.png');
         // 进入动画
         Tween.to(this.failBgSp, {
             y: 250,
         }, 550, Ease.bounceOut, null, 200)
 
         // 画返回按钮
-        this.failReturn = new Sprite()
+        if (!this.failReturn) {
+            this.failReturn = new Sprite()
+
+            this.failReturn.size(170, 126)
+            Laya.stage.addChild(this.failReturn)
+            this.failReturn.loadImage(GameConfig.host + 'assets/images/return_btn.png')
+            this.failReturn.on('click', this, this.returnHome)
+        }
         this.failReturn.pos(900, 480)
-        this.failReturn.size(170, 126)
         this.failReturn.zOrder = 6;
-        Laya.stage.addChild(this.failReturn)
-        this.failReturn.loadImage(GameConfig.host + 'assets/images/return_btn.png')
-        this.failReturn.on('click', this, this.returnHome)
         Tween.to(this.failReturn, {
             x: 500,
         }, 550, Ease.bounceOut, null, 200)
         // 画重新按钮
-        this.failRefresh = new Sprite()
+        if (!this.failRefresh) {
+            this.failRefresh = new Sprite()
+            this.failRefresh.size(170, 126)
+            Laya.stage.addChild(this.failRefresh)
+            this.failRefresh.loadImage(GameConfig.host + 'assets/images/refresh_btn.png')
+            this.failRefresh.on('click', this, this.refresh)
+        }
         this.failRefresh.pos(900, 650)
-        this.failRefresh.size(170, 126)
-        this.failRefresh.zOrder = 6;
-        Laya.stage.addChild(this.failRefresh)
-        this.failRefresh.loadImage(GameConfig.host + 'assets/images/refresh_btn.png')
-        this.failRefresh.on('click', this, this.refresh)
+        this.failRefresh.zOrder = 6
         Tween.to(this.failRefresh, {
             x: 500,
         }, 550, Ease.strongInOut, null, 200)

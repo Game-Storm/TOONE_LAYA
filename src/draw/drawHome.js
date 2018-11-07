@@ -103,7 +103,7 @@ export default class DrawHome {
         this.gameLevel = this.gameLevel == '' ? this.realLevel + 1 : this.gameLevel
         // console.log(this.gameLevel, gameData[this.gameLevel])
         this.num.text = gameData[this.gameLevel].num
-        // 放大缩小动画
+        // 放大缩小动画 
         this.timeLine = new TimeLine();
         this.timeLine.addLabel("big", 0).to(this.card_bg, { scaleX: 1.07, scaleY: 1.05 }, 1500, null, 0)
             .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1 }, 1500, null, 0)

@@ -22,6 +22,7 @@ import GameConfig from './GameConfig';
     (function () {
         // 不支持WebGL时自动切换至Canvas
         Laya.init(pageWidth, pageHeight, WebGL);
+        Laya.Stat.show(0,0);
         //性能统计面板的调用
         //Laya.Stat.show(0,0);
         Laya.stage.alignV = Stage.ALIGN_MIDDLE;

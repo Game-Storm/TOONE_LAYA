@@ -16,6 +16,7 @@ var Loader = Laya.Loader;
 var Tween = Laya.Tween;
 var Ease = Laya.Ease;
 var SoundManager = Laya.SoundManager;
+var TimeLine = Laya.TimeLine;
 
 export default class DrawGame {
     constructor() {
@@ -40,6 +41,7 @@ export default class DrawGame {
         this.failMaskSp = ""
         this.failRefresh = ""
         this.failReturn = ""
+        this.slideBlock = ""
 
         // 游戏数据
         this.level = ""
@@ -175,10 +177,27 @@ export default class DrawGame {
                         pivotY: this.iWidth * 0.5,
                         alpha: 1
                     }, 250, Ease.circInOut, null, 200)
-
                 }
             }
         } else {
+            // 移动滑块
+            if (!this.slideBlock) {
+                this.slideBlock = new Sprite()
+                Laya.stage.addChild(this.slideBlock);
+                this.slideBlock.zOrder = 4;
+                this.slideBlock.loadImage(GameConfig.host + 'assets/images/item-1-active.png');
+                this.slideBlock.size(this.iWidth, this.iWidth);
+            }
+            let toX = this.x + this.pNow[0] * (this.iWidth + this.gab) + this.gab, toY = this.y + this.pNow[1] * (this.iWidth + this.gab) + this.gab;
+            let fromX = this.x + this.frontPostion[0] * (this.iWidth + this.gab) + this.gab, fromY = this.y + this.frontPostion[1] * (this.iWidth + this.gab) + this.gab;
+            this.slideBlock.pos(fromX, fromY);
+            this.slideBlock.alpha = 0.5;
+            var timeLine2 = new TimeLine();
+            timeLine2.addLabel("move", 0).to(this.slideBlock, { x: toX, y: toY }, 100, null, 0)
+                .addLabel("move", 0).to(this.slideBlock, { x: toX, y: toY, alpha: 0 }, 100, null, 0)
+
+            timeLine2.play(0, false);
+
             this.drawItemBlock(this.pNow[1], this.pNow[0])
             this.drawItemBlock(this.frontPostion[1], this.frontPostion[0])
         }
@@ -361,6 +380,7 @@ export default class DrawGame {
         this.refreshSp.zOrder = -2
         this.returnSp.zOrder = -2
         this.numScreenSp.zOrder = -2
+        this.slideBlock.zOrder = -2;
         if (this.failBgSp) {
             this.failBgSp.zOrder = -2
             this.failMaskSp.zOrder = -2

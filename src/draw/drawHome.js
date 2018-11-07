@@ -169,10 +169,10 @@ export default class DrawHome {
         if (!this.isHome) {
             return;
         }
+        if (this.gameLevel > this.realLevel + 1) return;
         if (this.gameLevel == 0) {
             // 0关 初始场景
             this.StartSence ? this.StartSence.showStartSence() : this.StartSence = new DrawStartSence()
-            // Object.defineProperty(this.StartSence,)
         } else if (this.gameLevel == gameData.length - 1) {
             // 1关 结束场景
         } else {

@@ -59,6 +59,14 @@ import GameConfig from './GameConfig';
         console.log(GameConfig.host)
         //加载静态文件资源
         var assets = [];
+        // 添加字体 
+        let fontNames = ['DIN.ttf', 'SFC.otf']
+        fontNames.map(item => {
+            assets.push({
+                url: GameConfig.host + 'font/' + item
+            });
+        })
+
         // 加载images下的文件
         let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'alert_fail_bg.png', 'sence-0_bg.png',
             'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card.png", 'alert_fail_mask.png',
@@ -71,14 +79,6 @@ import GameConfig from './GameConfig';
                 type: Loader.IMAGE  // type类型一定要加！！
             });
         })
-        // 加载动画库里的素材
-        // let imgAniNames = ['card.png'];
-        // imgAniNames.map(item => {
-        //     assets.push({
-        //         url: 'images/' + item,
-        //         type: Loader.IMAGE  // type类型一定要加！！
-        //     });
-        // })
 
         // 添加音效
         let soundNames = ['shua.mp3', 'dong.mp3']

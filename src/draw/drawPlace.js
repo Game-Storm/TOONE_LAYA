@@ -321,8 +321,8 @@ export default class DrawGame {
             return items.every(item => item.num == '1')
         })
         if (isWin) {
+            Laya.LocalStorage.setItem('realLevel', this.level++)
             $ob.emit('nextGame')
-            Laya.LocalStorage.setItem('realLevel',this.level++)
             this.clearPlaceAll()
         } else {
             // 验证是否失败

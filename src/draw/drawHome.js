@@ -50,7 +50,7 @@ export default class DrawHome {
     }
     init() {
         // 
-        Laya.LocalStorage.setItem("realLevel", 0);
+        // Laya.LocalStorage.setItem("realLevel", 0);
         if (!Laya.LocalStorage.getItem("realLevel")) {
             Laya.LocalStorage.setItem("realLevel", 0);
             this.realLevel = 0;
@@ -89,17 +89,18 @@ export default class DrawHome {
         // 绘制文字
         this.num = new Text();
         this.num.color = "#f9dfc7";
-        this.num.font = "Impact";
-        this.num.fontSize = 150;
+        this.num.font = "din";
+        this.num.bold = true;
+        this.num.fontSize = 170;
         this.num.width = 590;
         this.num.pivot(245, 0);
         this.num.x = 325;
-        this.num.y = 595;
+        this.num.y = 640;
         this.num.align = "center";
         this.num.alpha = 0.8;
         // this.num.zOrder=1;
         Laya.stage.addChild(this.num);
-        this.gameLevel = this.gameLevel == '' ? this.realLevel : this.gameLevel
+        this.gameLevel = this.gameLevel == '' ? this.realLevel + 1 : this.gameLevel
         // console.log(this.gameLevel, gameData[this.gameLevel])
         this.num.text = gameData[this.gameLevel].num
         // 放大缩小动画
@@ -122,12 +123,13 @@ export default class DrawHome {
 
         this.level_text = new Text();
         this.level_text.color = "ddc8fe"
+        this.level_text.font = "din"
         this.level_text.fontSize = 40;
         this.level_text.width = 750;
         this.level_text.x = 0
         this.level_text.y = 80
         this.level_text.align = "center"
-        this.level_text.text = `- ${this.gameLevel + 1}/${gameData.length} -`
+        this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`
         Laya.stage.addChild(this.level_text);
     }
     //绘制底部按钮
@@ -208,10 +210,11 @@ export default class DrawHome {
             // this.num.text = gameData[this.gameLevel].num
         }
 
-        this.level_text.text = `- ${this.gameLevel + 1}/${gameData.length} -`
-        if (this.gameLevel > this.realLevel) {
+        this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`
+        console.log(this.gameLevel, this.realLevel);
+        if (this.gameLevel - 1 > this.realLevel) {
             this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg-lock.png');
-            this.num.alpha = 0.8;
+            this.num.alpha = 0.5;
             this.timeLine.pause();
             this.timeLine2.pause();
         } else {
@@ -232,19 +235,17 @@ export default class DrawHome {
         // changeLevel(530);
         if (this.gameLevel + 1 >= gameData.length) return;
         this.gameLevel++;
-
-
+        this.realLevel = Number(Laya.LocalStorage.getItem('realLevel'))
         // 说明是刚解锁新的关卡需要一个转换的动画
         if (this.gameLevel > this.realLevel) {
             setTimeout(() => {
-                this.level_text.text = `- ${this.gameLevel + 1}/${gameData.length} -`
+                this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`
                 this.num.text = gameData[this.gameLevel].num
                 this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg.png');
                 this.num.alpha = 0.8;
                 this.timeLine.play(0, true);
                 this.timeLine2.play(0, true);
             }, 500)
-
         } else {
             // this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg.png')
             // this.num.alpha = 1

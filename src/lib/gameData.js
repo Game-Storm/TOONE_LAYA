@@ -33,6 +33,9 @@ let gameData = [
     },
     {
         num: 0.99
+    },
+    {
+        num: 1
     }
 ]
 
@@ -43,7 +46,7 @@ function getNum(level) {
     let arr = toBinaryLists(num)
     arr.row = getRow(num)
     arr.col = getCol(num)
-    arr.items= arr.map(item => {
+    arr.items = arr.map(item => {
         return {
             num: item,
             isUsed: false

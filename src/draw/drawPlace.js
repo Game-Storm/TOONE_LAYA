@@ -195,8 +195,13 @@ export default class DrawGame {
             var timeLine2 = new TimeLine();
             timeLine2.addLabel("move", 0).to(this.slideBlock, { x: toX, y: toY }, 100, null, 0)
                 .addLabel("move", 0).to(this.slideBlock, { x: toX, y: toY, alpha: 0 }, 100, null, 0)
-
             timeLine2.play(0, false);
+
+            let scaleSp = this.itemsSprite[this.pNow[1]][this.pNow[0]];
+            var timeLine = new TimeLine();
+            timeLine.addLabel("move", 0).to(scaleSp, { scaleX: 1.07, scaleY: 1.07 }, 100, null, 0)
+                .addLabel("move", 0).to(scaleSp, { scaleX: 1, scaleY: 1 }, 100, null, 0)
+            timeLine.play(0, false);
 
             this.drawItemBlock(this.pNow[1], this.pNow[0])
             this.drawItemBlock(this.frontPostion[1], this.frontPostion[0])
@@ -393,6 +398,7 @@ export default class DrawGame {
                 this.itemsSprite[i][j].zOrder = -2
             }
         }
+        this.slideBlock = ""
         // 事件监听失效
         this.isGaming = false;
     }

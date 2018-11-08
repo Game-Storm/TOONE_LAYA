@@ -346,6 +346,8 @@ export default class DrawHome {
             this.changeNum_timeline.pause();
             this.num_next.alpha = 0;
             this.card_bg_next.alpha = 0;
+            this.num.zOrder=0;
+            this.card_bg.zOrder=0;
             this.drawCard(next_url, text, color)
             this.isAnimating = false;
         }, 600)

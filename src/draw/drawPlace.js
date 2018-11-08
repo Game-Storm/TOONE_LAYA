@@ -101,7 +101,7 @@ export default class DrawGame {
         this.game_bg = new Laya.Sprite();
         this.game_bg.size(750, 1334);
         Laya.stage.addChild(this.game_bg);
-        this.game_bg.loadImage(GameConfig.host + 'assets/images/game_bg1.png')
+        this.game_bg.loadImage('assets/images/game_bg1.png')
         //添加键盘抬起事件
         Laya.stage.on(Event.KEY_UP, this, this.onKeyUp);
     }
@@ -129,7 +129,7 @@ export default class DrawGame {
         this.refreshSp = new Sprite();
         Laya.stage.addChild(this.refreshSp);
         this.refresh
-        this.refreshSp.loadImage(GameConfig.host + 'assets/images/refresh_btn.png');
+        this.refreshSp.loadImage('assets/images/refresh_btn.png');
         this.refreshSp.pos(578, 30);
         this.refreshSp.size(142, 106);
         this.refreshSp.on('click', this, this.refresh)
@@ -137,14 +137,14 @@ export default class DrawGame {
         // 绘制数字显示屏
         this.numScreenSp = new Sprite();
         Laya.stage.addChild(this.numScreenSp);
-        this.numScreenSp.loadImage(GameConfig.host + 'assets/images/top_num_screen.png');
+        this.numScreenSp.loadImage('assets/images/top_num_screen.png');
         this.numScreenSp.size(330, 130);
         this.numScreenSp.pos(210, 20)
 
         // 绘制返回按钮
         this.returnSp = new Sprite();
         Laya.stage.addChild(this.returnSp);
-        this.returnSp.loadImage(GameConfig.host + 'assets/images/return_btn.png');
+        this.returnSp.loadImage('assets/images/return_btn.png');
         this.returnSp.pos(30, 30);
         this.returnSp.size(142, 106);
         this.returnSp.on('click', this, this.returnHome)
@@ -185,7 +185,7 @@ export default class DrawGame {
                 this.slideBlock = new Sprite()
                 Laya.stage.addChild(this.slideBlock);
                 this.slideBlock.zOrder = 4;
-                this.slideBlock.loadImage(GameConfig.host + 'assets/images/item-1-active.png');
+                this.slideBlock.loadImage('assets/images/item-1-active.png');
                 this.slideBlock.size(this.iWidth, this.iWidth);
             }
             let toX = this.x + this.pNow[0] * (this.iWidth + this.gab) + this.gab, toY = this.y + this.pNow[1] * (this.iWidth + this.gab) + this.gab;
@@ -217,11 +217,11 @@ export default class DrawGame {
     drawItemBlock(i, j) {
         let url;
         if (j == this.pNow[0] && i == this.pNow[1]) {
-            url = this.arr[i][j].num == '0' ? GameConfig.host + 'assets/images/item-0-active.png' : GameConfig.host + 'assets/images/item-1-active.png';
+            url = this.arr[i][j].num == '0' ? 'assets/images/item-0-active.png' : 'assets/images/item-1-active.png';
         } else if (this.arr[i][j].isUsed) {
-            url = GameConfig.host + 'assets/images/item-1-lock.png'
+            url = 'assets/images/item-1-lock.png'
         } else {
-            url = this.arr[i][j].num == '0' ? GameConfig.host + 'assets/images/item-0.png' : GameConfig.host + 'assets/images/item-1.png';
+            url = this.arr[i][j].num == '0' ? 'assets/images/item-0.png' : 'assets/images/item-1.png';
         }
         this.itemsSprite[i][j].graphics.clear();
         this.itemsSprite[i][j].loadImage(url);
@@ -408,7 +408,7 @@ export default class DrawGame {
             this.failMaskSp = new Sprite();
             // this.failBgSp.pos(50, 200);
             this.failMaskSp.size(750, Browser.height);
-            this.failMaskSp.loadImage(GameConfig.host + 'assets/images/alert_fail_mask.png')
+            this.failMaskSp.loadImage('assets/images/alert_fail_mask.png')
             Laya.stage.addChild(this.failMaskSp);
         }
         this.failMaskSp.zOrder = 4;
@@ -422,7 +422,7 @@ export default class DrawGame {
             this.failBgSp = new Sprite();
             this.failBgSp.size(655, 558);
             Laya.stage.addChild(this.failBgSp);
-            this.failBgSp.loadImage(GameConfig.host + 'assets/images/alert_fail_bg.png');
+            this.failBgSp.loadImage('assets/images/alert_fail_bg.png');
         }
         this.failBgSp.pos(50, -550);
         this.failBgSp.zOrder = 5;
@@ -437,7 +437,7 @@ export default class DrawGame {
 
             this.failReturn.size(170, 126)
             Laya.stage.addChild(this.failReturn)
-            this.failReturn.loadImage(GameConfig.host + 'assets/images/return_btn.png')
+            this.failReturn.loadImage('assets/images/return_btn.png')
             this.failReturn.on('click', this, this.returnHome)
         }
         this.failReturn.pos(900, 480)
@@ -450,7 +450,7 @@ export default class DrawGame {
             this.failRefresh = new Sprite()
             this.failRefresh.size(170, 126)
             Laya.stage.addChild(this.failRefresh)
-            this.failRefresh.loadImage(GameConfig.host + 'assets/images/refresh_btn.png')
+            this.failRefresh.loadImage('assets/images/refresh_btn.png')
             this.failRefresh.on('click', this, this.refresh)
         }
         this.failRefresh.pos(900, 650)

@@ -32,6 +32,11 @@ export default class DrawHome {
         this.title = ""
         this.card_bg = ""
         this.num = ""
+        this.card_bg_next = ""
+        this.num_next = ""
+        this.card_bg_top = ""
+        this.num_top = ""
+
         this.left = ""
         this.right = ""
         this.left_more = ""
@@ -43,26 +48,44 @@ export default class DrawHome {
         // 动画
         this.timeLine = ""
         this.timeLine2 = ""
+        this.changeCard_timeline = ""
+        this.changeNum_timeline = ""
+
+        this.isAnimating = false;
 
         // 运行
         Laya.stage.bgColor = "#ded6df"
         this.init()
     }
     init() {
-        // 
-        // Laya.LocalStorage.setItem("realLevel", 0);
         if (!Laya.LocalStorage.getItem("realLevel")) {
             Laya.LocalStorage.setItem("realLevel", -1);
             this.realLevel = 0;
         } else {
             this.realLevel = Number(Laya.LocalStorage.getItem("realLevel"))
         }
+
         this.drawBg();
         this.drawCard();
         this.drawBottomBtn();
         this.drawTopProgress();
         $ob.on('nextGame', [this.goNextGame, this]);
+        this.initAnimate();
     }
+    /**
+     * 加载动画
+     */
+    initAnimate() {
+        // 卡片切换时的动效
+        this.changeCard_timeline = new TimeLine();
+        this.changeCard_timeline.addLabel("big", 0).to(this.card_bg, { scaleX: 1.06, scaleY: 1.05, rotation: 0, x: 390 }, 200, null, 0)
+            .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1, rotation: 0, x: -500 }, 300, null, 0);
+        // 卡片切换时文字动效
+        this.changeNum_timeline = new TimeLine();
+        this.changeNum_timeline.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, rotation: 0, x: 340 }, 200, null, 0)
+            .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, rotation: 0, x: -450 }, 300, null, 0);
+    }
+
     /**
      * 绘制画布
      */
@@ -72,60 +95,140 @@ export default class DrawHome {
         this.game_bg = new Laya.Sprite();
         this.game_bg.size(750, 1334);
         Laya.stage.addChild(this.game_bg);
-        this.game_bg.loadImage(GameConfig.host + 'assets/images/home_bg.png');
+        this.game_bg.loadImage('assets/images/home_bg.png');
         // 绘制标题
     }
-    // 绘制中心卡片
-    drawCard() {
-        // 绘制背景
-        this.card_bg = new Laya.Sprite();
-        this.card_bg.size(615, 817);
+    // 绘制中心卡片，顶部和底部的卡片同时绘制
+    drawCard(next_url, text, color) {
+        if (!this.card_bg) {
+            // 绘制背景
+            this.card_bg = new Laya.Sprite();
+            this.card_bg.size(615, 817);
+            this.card_bg.zOrder = 1;
+            Laya.stage.addChild(this.card_bg);
+            let url = "assets/images/card-bg.png";
+            if (this.realLevel < 0) {
+                url = "assets/images/card-0-bg.png"
+            }
+            this.card_bg.loadImage(url);
+            this.card_bg.on(Event.CLICK, this, this.startGame);
+            // 卡片放大缩小动画 
+            this.timeLine = new TimeLine();
+            this.timeLine.addLabel("big", 0).to(this.card_bg, { scaleX: 1.07, scaleY: 1.05 }, 1500, null, 0)
+                .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1 }, 1500, null, 0);
+            this.timeLine.play(0, true);
+        } else {
+            this.card_bg.loadImage(next_url);
+        }
         this.card_bg.pos(375, 540);
         this.card_bg.pivot(307, 408);
-        Laya.stage.addChild(this.card_bg);
-        let url = "assets/images/card-bg.png";
-        if (this.realLevel < 0) {
-            url = "assets/images/card-0-bg.png"
-        }
-        this.card_bg.loadImage(GameConfig.host + url);
-        this.card_bg.on(Event.CLICK, this, this.startGame);
+        this.card_bg.rotation = 0;
 
-        // 绘制文字
-        this.num = new Text();
-        this.num.color = "#f9dfc7";
-        this.num.font = "din";
-        this.num.bold = true;
-        this.num.fontSize = 170;
-        this.num.width = 590;
+        if (!this.num) {
+            // 绘制文字
+            this.num = new Text();
+            this.num.color = "#f9dfc7";
+            this.num.font = "din";
+            this.num.bold = true;
+            this.num.fontSize = 170;
+            this.num.width = 590;
+
+            this.num.align = "center";
+            this.num.alpha = 0.8;
+            this.num.zOrder = 1;
+            var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
+            //设置滤镜集合为发光滤镜
+            this.num.filters = [glowFilter];
+            Laya.stage.addChild(this.num);
+            this.gameLevel = this.gameLevel == '' ? this.realLevel + 1 : this.gameLevel
+            this.num.text = gameData[this.gameLevel].num;
+            // 动画
+            // 卡片文字放大缩小动画 
+            this.timeLine2 = new TimeLine();
+            this.timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.07, scaleY: 1.05 }, 1500, null, 0)
+                .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1 }, 1500, null, 0)
+            this.timeLine2.play(0, true);
+        } else {
+            this.num.color = color;
+            this.num.text = text;
+        }
         this.num.pivot(245, 0);
         this.num.x = 325;
         this.num.y = 640;
-        this.num.align = "center";
-        this.num.alpha = 0.8;
-        var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
-        //设置滤镜集合为发光滤镜
-        this.num.filters = [glowFilter];
-        // this.num.zOrder=1;
-        Laya.stage.addChild(this.num);
-        this.gameLevel = this.gameLevel == '' ? this.realLevel + 1 : this.gameLevel
-        // console.log(this.gameLevel, gameData[this.gameLevel])
-        this.num.text = gameData[this.gameLevel].num
-        // 放大缩小动画 
-        this.timeLine = new TimeLine();
-        this.timeLine.addLabel("big", 0).to(this.card_bg, { scaleX: 1.07, scaleY: 1.05 }, 1500, null, 0)
-            .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1 }, 1500, null, 0)
-        this.timeLine.play(0, true);
-        this.timeLine2 = new TimeLine();
-        this.timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.07, scaleY: 1.05 }, 1500, null, 0)
-            .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1 }, 1500, null, 0)
-        this.timeLine2.play(0, true);
-        // this.drawSideCard();
+        this.num.rotation = 0;
+
+    }
+    // 绘制底部的卡片
+    drawNextCard(card_url, text, color) {
+        // 绘制背景
+        if (!this.card_bg_next) {
+            this.card_bg_next = new Laya.Sprite();
+            this.card_bg_next.size(615, 817);
+            this.card_bg_next.pos(375, 540);
+            this.card_bg_next.pivot(307, 408);
+            Laya.stage.addChild(this.card_bg_next);
+        }
+        this.card_bg_next.loadImage(card_url);
+
+        // 绘制文字
+        if (!this.num_next) {
+            this.num_next = new Text();
+
+            this.num_next.font = "din";
+            this.num_next.bold = true;
+            this.num_next.fontSize = 170;
+            this.num_next.width = 590;
+            this.num_next.pivot(245, 0);
+            this.num_next.x = 325;
+            this.num_next.y = 640;
+            this.num_next.align = "center";
+            this.num_next.alpha = 0.8;
+            var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
+            //设置滤镜集合为发光滤镜
+            this.num_next.filters = [glowFilter];
+            Laya.stage.addChild(this.num_next);
+        }
+        this.num_next.text = text;
+        this.num_next.color = color;
+    }
+    // 绘制上层的卡片
+    drawNextCard(card_url, text, color) {
+        // 绘制背景
+        if (!this.card_bg_top) {
+            this.card_bg_top = new Laya.Sprite();
+            this.card_bg_top.size(615, 817);
+            this.card_bg_top.pos(375, 540);
+            this.card_bg_top.pivot(307, 408);
+            Laya.stage.addChild(this.card_bg_top);
+        }
+        this.card_bg_top.loadImage(card_url);
+
+        // 绘制文字
+        if (!this.num_next) {
+            this.num_next = new Text();
+
+            this.num_next.font = "din";
+            this.num_next.bold = true;
+            this.num_next.fontSize = 170;
+            this.num_next.width = 590;
+            this.num_next.pivot(245, 0);
+            this.num_next.x = 325;
+            this.num_next.y = 640;
+            this.num_next.align = "center";
+            this.num_next.alpha = 0.8;
+            var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
+            //设置滤镜集合为发光滤镜
+            this.num_next.filters = [glowFilter];
+            Laya.stage.addChild(this.num_next);
+        }
+        this.num_next.text = text;
+        this.num_next.color = color;
     }
     // 绘制顶部进度条
     drawTopProgress() {
         this.progress_bg = new Sprite();
         this.progress_bg.graphics.drawRect(0, 0, 750, 30, '#a984ec');
-        this.progress_bg.alpha = 0.5
+        this.progress_bg.alpha = 0.5;
         Laya.stage.addChild(this.progress_bg);
 
         this.level_text = new Text();
@@ -143,13 +246,13 @@ export default class DrawHome {
     drawBottomBtn() {
         this.left_more = new Sprite()
         Laya.stage.addChild(this.left_more);
-        this.left_more.loadImage(GameConfig.host + 'assets/images/home_left_more.png');
+        this.left_more.loadImage('assets/images/home_left_more.png');
         this.left_more.size(122, 91);
         this.left_more.pos(94, 975)
 
         this.left = new Sprite();
         Laya.stage.addChild(this.left);
-        this.left.loadImage(GameConfig.host + 'assets/images/home_left.png');
+        this.left.loadImage('assets/images/home_left.png');
         this.left.size(122, 91);
         this.left.pos(241, 975);
         this.left.name = "left"
@@ -157,14 +260,14 @@ export default class DrawHome {
 
         this.right = new Sprite()
         Laya.stage.addChild(this.right);
-        this.right.loadImage(GameConfig.host + 'assets/images/home_right.png');
+        this.right.loadImage('assets/images/home_right.png');
         this.right.size(122, 91);
         this.right.pos(388, 975);
         this.right.on(Event.CLICK, this, this.changeLevel);
 
         this.right_more = new Sprite()
         Laya.stage.addChild(this.right_more);
-        this.right_more.loadImage(GameConfig.host + 'assets/images/home_right_more.png');
+        this.right_more.loadImage('assets/images/home_right_more.png');
         this.right_more.size(122, 91);
         this.right_more.pos(535, 975);
     }
@@ -195,11 +298,12 @@ export default class DrawHome {
             }
         }
         // this.isHome = false
-        SoundManager.playSound(GameConfig.host + "assets/music/dong.mp3", 1, null, null, 13);
+        SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
     }
     // 切换关卡
     changeLevel(e) {
-        // console.log(Laya.stage.mouseX)
+        if(this.isAnimating) return;
+        // 修改关卡
         let x = Laya.stage.mouseX
         if (x < 240) {
             // this.gameLevel--;
@@ -207,42 +311,51 @@ export default class DrawHome {
         } else if (x < 380) {
             if (this.gameLevel - 1 < 0) return;
             this.gameLevel--;
-            this.num.text = gameData[this.gameLevel].num
+            // this.num.text = gameData[this.gameLevel].num
         } else if (x < 530) {
             if (this.gameLevel + 1 >= gameData.length) return;
             this.gameLevel++;
-            this.num.text = gameData[this.gameLevel].num
+            // this.num.text = gameData[this.gameLevel].num
         } else {
             // this.gameLevel++;
             // this.num.text = gameData[this.gameLevel].num
         }
 
-        this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`
-        console.log(this.gameLevel, this.realLevel);
+        // 绘制底下的卡片
+        let next_url = "", color = "", text = "";
+
         if (this.gameLevel - 1 > this.realLevel) {
-            this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg-lock.png');
-            this.num.alpha = 0.8;
-            this.num.color = '#514682'
+            next_url = "assets/images/card-bg-lock.png"
+            color = '#514682'
             this.timeLine.pause();
             this.timeLine2.pause();
         } else {
-            let url = "assets/images/card-bg.png"
             if (this.gameLevel == 0) {
-                url = "assets/images/card-0-bg.png"
+                next_url = "assets/images/card-0-bg.png"
+            } else {
+                next_url = "assets/images/card-bg.png"
             }
-            this.card_bg.loadImage(GameConfig.host + url)
-            this.num.alpha = 0.8
-            this.num.color = "#f9dfc7";
-            this.timeLine.play(0, true)
-            this.timeLine2.play(0, true)
+            color = "#f9dfc7"
+            this.timeLine.play(0, true);
+            this.timeLine2.play(0, true);
         }
-        // 变换效果
-        // var timeLine2 = new TimeLine();
-        // timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, alpha: 0.5 }, 100, null, 0)
-        //     .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, alpha: 1 }, 100, null, 0)
-        // timeLine2.play(0, false);
+        text = gameData[this.gameLevel].num
+        this.drawNextCard(next_url, text, color);
 
+        // 变换效果
+        this.changeCard_timeline.play(0, false);
+        this.changeNum_timeline.play(0, false);
+        this.isAnimating = true;
+
+        setTimeout(() => {
+            this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`;
+            this.changeCard_timeline.pause();
+            this.changeNum_timeline.pause();
+            this.drawCard(next_url, text, color)
+            this.isAnimating = false;
+        }, 600)
     }
+
     // 进入下一关
     goNextGame() {
         // changeLevel(530);
@@ -254,13 +367,13 @@ export default class DrawHome {
             setTimeout(() => {
                 this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`
                 this.num.text = gameData[this.gameLevel].num
-                this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg.png');
+                this.card_bg.loadImage('assets/images/card-bg.png');
                 this.num.alpha = 0.8;
                 this.timeLine.play(0, true);
                 this.timeLine2.play(0, true);
             }, 500)
         } else {
-            // this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg.png')
+            // this.card_bg.loadImage( 'assets/images/card-bg.png')
             // this.num.alpha = 1
             // this.timeLine.play(0, true)
             // this.timeLine2.play(0, true)

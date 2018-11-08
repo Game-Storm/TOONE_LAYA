@@ -57,7 +57,7 @@ export default class DrawHome {
         this.sence_bg = new Laya.Sprite();
         this.sence_bg.size(750, 1334);
         Laya.stage.addChild(this.sence_bg);
-        this.sence_bg.loadImage(GameConfig.host + 'assets/images/sence-0_bg.png');
+        this.sence_bg.loadImage('assets/images/sence-0_bg.png');
         this.sence_bg.alpha = 0;
         Tween.to(this.sence_bg, {
             alpha: 1
@@ -107,7 +107,7 @@ export default class DrawHome {
         this.next_btn.pos(304, 900);
         this.next_btn.size(142, 106);
         Laya.stage.addChild(this.next_btn)
-        this.next_btn.loadImage(GameConfig.host + 'assets/images/next_btn.png')
+        this.next_btn.loadImage('assets/images/next_btn.png')
         this.next_btn.on(Event.CLICK, this, this.clickNext);
         this.next_btn.zOrder = 2
         this.next_btn.alpha = 0
@@ -123,7 +123,9 @@ export default class DrawHome {
         this.next_btn.zOrder = -1
         this.isShowing = false;
         SoundManager.stopAllSound();
-        $ob.emit('nextGame', 1)
+        let realLevel = Laya.LocalStorage.getItem('realLevel');
+        if (realLevel == -1) Laya.LocalStorage.setItem('realLevel', 0);
+        $ob.emit('nextGame', 1);
     }
 
     //显示0关
@@ -132,7 +134,7 @@ export default class DrawHome {
 
         this.drawBg();
         SoundManager.setSoundVolume(0.1);
-        SoundManager.playSound(GameConfig.host + "assets/music/troughts.mp3", 1, null, null, 13);
+        SoundManager.playSound("assets/music/troughts.mp3", 1, null, null, 13);
         // this.drawNextBtn()
 
         this.sence_bg.zOrder = 1

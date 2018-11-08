@@ -22,7 +22,7 @@ import GameConfig from './GameConfig';
     (function () {
         // 不支持WebGL时自动切换至Canvas
         Laya.init(pageWidth, pageHeight, WebGL);
-        Laya.Stat.show(0,0);
+        // Laya.Stat.show(0,0);
         //性能统计面板的调用
         //Laya.Stat.show(0,0);
         Laya.stage.alignV = Stage.ALIGN_MIDDLE;
@@ -64,7 +64,7 @@ import GameConfig from './GameConfig';
         let fontNames = ['DIN.ttf', 'SFC.otf']
         fontNames.map(item => {
             assets.push({
-                url: GameConfig.host + 'font/' + item
+                url: 'font/' + item
             });
         })
 
@@ -76,7 +76,7 @@ import GameConfig from './GameConfig';
         ];
         imgNames.map(item => {
             assets.push({
-                url: GameConfig.host + 'assets/images/' + item,
+                url: 'assets/images/' + item,
                 type: Loader.IMAGE  // type类型一定要加！！
             });
         })
@@ -85,7 +85,7 @@ import GameConfig from './GameConfig';
         let soundNames = ['shua.mp3', 'dong.mp3']
         soundNames.map(item => {
             assets.push({
-                url: GameConfig.host + 'assets/music/' + item,
+                url: 'assets/music/' + item,
                 type: Loader.SOUND
             });
         })

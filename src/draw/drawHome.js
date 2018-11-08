@@ -52,7 +52,7 @@ export default class DrawHome {
         // 
         // Laya.LocalStorage.setItem("realLevel", 0);
         if (!Laya.LocalStorage.getItem("realLevel")) {
-            Laya.LocalStorage.setItem("realLevel", 0);
+            Laya.LocalStorage.setItem("realLevel", -1);
             this.realLevel = 0;
         } else {
             this.realLevel = Number(Laya.LocalStorage.getItem("realLevel"))
@@ -83,7 +83,11 @@ export default class DrawHome {
         this.card_bg.pos(375, 540);
         this.card_bg.pivot(307, 408);
         Laya.stage.addChild(this.card_bg);
-        this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg.png');
+        let url = "assets/images/card-bg.png";
+        if (this.realLevel < 0) {
+            url = "assets/images/card-0-bg.png"
+        }
+        this.card_bg.loadImage(GameConfig.host + url);
         this.card_bg.on(Event.CLICK, this, this.startGame);
 
         // 绘制文字
@@ -98,6 +102,9 @@ export default class DrawHome {
         this.num.y = 640;
         this.num.align = "center";
         this.num.alpha = 0.8;
+        var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
+        //设置滤镜集合为发光滤镜
+        this.num.filters = [glowFilter];
         // this.num.zOrder=1;
         Laya.stage.addChild(this.num);
         this.gameLevel = this.gameLevel == '' ? this.realLevel + 1 : this.gameLevel
@@ -214,20 +221,26 @@ export default class DrawHome {
         console.log(this.gameLevel, this.realLevel);
         if (this.gameLevel - 1 > this.realLevel) {
             this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg-lock.png');
-            this.num.alpha = 0.5;
+            this.num.alpha = 0.8;
+            this.num.color = '#514682'
             this.timeLine.pause();
             this.timeLine2.pause();
         } else {
-            this.card_bg.loadImage(GameConfig.host + 'assets/images/card-bg.png')
-            this.num.alpha = 1
+            let url = "assets/images/card-bg.png"
+            if (this.gameLevel == 0) {
+                url = "assets/images/card-0-bg.png"
+            }
+            this.card_bg.loadImage(GameConfig.host + url)
+            this.num.alpha = 0.8
+            this.num.color = "#f9dfc7";
             this.timeLine.play(0, true)
             this.timeLine2.play(0, true)
         }
         // 变换效果
-        var timeLine2 = new TimeLine();
-        timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, alpha: 0.5 }, 100, null, 0)
-            .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, alpha: 1 }, 100, null, 0)
-        timeLine2.play(0, false);
+        // var timeLine2 = new TimeLine();
+        // timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, alpha: 0.5 }, 100, null, 0)
+        //     .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, alpha: 1 }, 100, null, 0)
+        // timeLine2.play(0, false);
 
     }
     // 进入下一关

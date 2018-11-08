@@ -162,7 +162,7 @@ export default class DrawHome {
             Laya.stage.addChild(this.card_bg_next);
         }
         this.card_bg_next.loadImage(card_url);
-        this.card_bg_next.alpha = 1;
+        this.card_bg_next.alpha = 0.8;
         this.card_bg_next.zOrder = 0;
         if (!isUp) {
             this.card_bg_next.rotation = -50 * symbol;

@@ -76,14 +76,6 @@ export default class DrawHome {
      * 加载动画
      */
     initAnimate() {
-        // 卡片切换时的动效
-        this.changeCard_timeline = new TimeLine();
-        this.changeCard_timeline.addLabel("big", 0).to(this.card_bg, { scaleX: 1.06, scaleY: 1.05, rotation: 0, x: 390 }, 200, null, 0)
-            .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1, rotation: 0, x: -500 }, 300, null, 0);
-        // 卡片切换时文字动效
-        this.changeNum_timeline = new TimeLine();
-        this.changeNum_timeline.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, rotation: 0, x: 340 }, 200, null, 0)
-            .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, rotation: 0, x: -450 }, 300, null, 0);
     }
 
     /**
@@ -124,6 +116,7 @@ export default class DrawHome {
         this.card_bg.pivot(307, 408);
         this.card_bg.rotation = 0;
 
+
         if (!this.num) {
             // 绘制文字
             this.num = new Text();
@@ -159,7 +152,7 @@ export default class DrawHome {
 
     }
     // 绘制底部的卡片
-    drawNextCard(card_url, text, color) {
+    drawNextCard(card_url, text, color, isUp, symbol) {
         // 绘制背景
         if (!this.card_bg_next) {
             this.card_bg_next = new Laya.Sprite();
@@ -169,11 +162,17 @@ export default class DrawHome {
             Laya.stage.addChild(this.card_bg_next);
         }
         this.card_bg_next.loadImage(card_url);
+        this.card_bg_next.alpha = 1;
+        this.card_bg_next.zOrder = 0;
+        if (!isUp) {
+            this.card_bg_next.rotation = -50 * symbol;
+            this.card_bg_next.x = 307 - 800 * symbol;
+            this.card_bg_next.zOrder = 2;
+        }
 
         // 绘制文字
         if (!this.num_next) {
             this.num_next = new Text();
-
             this.num_next.font = "din";
             this.num_next.bold = true;
             this.num_next.fontSize = 170;
@@ -190,39 +189,13 @@ export default class DrawHome {
         }
         this.num_next.text = text;
         this.num_next.color = color;
-    }
-    // 绘制上层的卡片
-    drawNextCard(card_url, text, color) {
-        // 绘制背景
-        if (!this.card_bg_top) {
-            this.card_bg_top = new Laya.Sprite();
-            this.card_bg_top.size(615, 817);
-            this.card_bg_top.pos(375, 540);
-            this.card_bg_top.pivot(307, 408);
-            Laya.stage.addChild(this.card_bg_top);
+        this.num_next.alpha = 1;
+        this.num_next.zOrder = 0;
+        if (!isUp) {
+            this.num_next.x = 325 - 800 * symbol;
+            this.num_next.rotation = -50 * symbol;
+            this.num_next.zOrder = 2;
         }
-        this.card_bg_top.loadImage(card_url);
-
-        // 绘制文字
-        if (!this.num_next) {
-            this.num_next = new Text();
-
-            this.num_next.font = "din";
-            this.num_next.bold = true;
-            this.num_next.fontSize = 170;
-            this.num_next.width = 590;
-            this.num_next.pivot(245, 0);
-            this.num_next.x = 325;
-            this.num_next.y = 640;
-            this.num_next.align = "center";
-            this.num_next.alpha = 0.8;
-            var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
-            //设置滤镜集合为发光滤镜
-            this.num_next.filters = [glowFilter];
-            Laya.stage.addChild(this.num_next);
-        }
-        this.num_next.text = text;
-        this.num_next.color = color;
     }
     // 绘制顶部进度条
     drawTopProgress() {
@@ -302,23 +275,19 @@ export default class DrawHome {
     }
     // 切换关卡
     changeLevel(e) {
-        if(this.isAnimating) return;
+        if (this.isAnimating) return;
+        let isUp = true;//是否是向下滑卡片？
         // 修改关卡
         let x = Laya.stage.mouseX
         if (x < 240) {
-            // this.gameLevel--;
-            // this.num.text = gameData[this.gameLevel].num
         } else if (x < 380) {
             if (this.gameLevel - 1 < 0) return;
             this.gameLevel--;
-            // this.num.text = gameData[this.gameLevel].num
+            isUp = false;
         } else if (x < 530) {
             if (this.gameLevel + 1 >= gameData.length) return;
             this.gameLevel++;
-            // this.num.text = gameData[this.gameLevel].num
         } else {
-            // this.gameLevel++;
-            // this.num.text = gameData[this.gameLevel].num
         }
 
         // 绘制底下的卡片
@@ -339,10 +308,34 @@ export default class DrawHome {
             this.timeLine.play(0, true);
             this.timeLine2.play(0, true);
         }
-        text = gameData[this.gameLevel].num
-        this.drawNextCard(next_url, text, color);
+        text = gameData[this.gameLevel].num;
 
         // 变换效果
+        // 卡片切换时的动效
+        let symbol = this.gameLevel % 2 == 0 ? -1 : 1;
+
+        this.drawNextCard(next_url, text, color, isUp, symbol);
+        if (isUp) {
+            this.changeCard_timeline = new TimeLine();
+            this.changeCard_timeline.addLabel("big", 0).to(this.card_bg, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 390 }, 200, null, 0)
+                .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 307 - 800 * symbol }, 300, null, 0);
+            // 卡片切换时文字动效
+            this.changeNum_timeline = new TimeLine();
+            this.changeNum_timeline.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 340 }, 200, null, 0)
+                .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 325 - 800 * symbol }, 300, null, 0);
+        } else {
+            this.changeCard_timeline = new TimeLine();
+            this.changeCard_timeline.addLabel("big", 0).to(this.card_bg_next, { scaleX: 1.06, scaleY: 1.05, rotation: -10 * symbol, x: 375 }, 300, null, 0)
+                .addLabel("big", 0).to(this.card_bg_next, { scaleX: 1, scaleY: 1, rotation: 0, x: 375 }, 200, null, 0)
+
+            // 卡片切换时文字动效
+            this.changeNum_timeline = new TimeLine();
+            this.changeNum_timeline.addLabel("big", 0).to(this.num_next, { scaleX: 1.06, scaleY: 1.05, rotation: -10 * symbol, x: 325 }, 300, null, 0)
+                .addLabel("big", 0).to(this.num_next, { scaleX: 1, scaleY: 1, rotation: 0, x: 325 }, 200, null, 0)
+        }
+
+
+
         this.changeCard_timeline.play(0, false);
         this.changeNum_timeline.play(0, false);
         this.isAnimating = true;
@@ -351,6 +344,8 @@ export default class DrawHome {
             this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`;
             this.changeCard_timeline.pause();
             this.changeNum_timeline.pause();
+            this.num_next.alpha = 0;
+            this.card_bg_next.alpha = 0;
             this.drawCard(next_url, text, color)
             this.isAnimating = false;
         }, 600)

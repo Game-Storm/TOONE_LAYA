@@ -71,7 +71,11 @@ export default class DrawHome {
         this.drawTopProgress();
         $ob.on('nextGame', [this.goNextGame, this]);
         this.initAnimate();
-        // this.goNextGame();
+        this.goNextGame(true);
+
+        SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
+        SoundManager.autoStopMusic = false;
+        SoundManager.setMusicVolume(0.7);
     }
     /**
      * 加载动画
@@ -116,7 +120,6 @@ export default class DrawHome {
         this.card_bg.pos(375, 540);
         this.card_bg.pivot(307, 408);
         this.card_bg.rotation = 0;
-
 
         if (!this.num) {
             // 绘制文字
@@ -166,8 +169,8 @@ export default class DrawHome {
         this.card_bg_next.alpha = 1;
         this.card_bg_next.zOrder = 0;
         if (!isUp) {
-            this.card_bg_next.rotation = -50 * symbol;
-            this.card_bg_next.x = 307 - 800 * symbol;
+            this.card_bg_next.rotation = 50 * symbol ;
+            this.card_bg_next.x = 307 + 800 * symbol ;
             this.card_bg_next.zOrder = 2;
         }
 
@@ -193,8 +196,8 @@ export default class DrawHome {
         this.num_next.alpha = 1;
         this.num_next.zOrder = 0;
         if (!isUp) {
-            this.num_next.x = 325 - 800 * symbol;
-            this.num_next.rotation = -50 * symbol;
+            this.num_next.x = 325 + 800 * symbol;
+            this.num_next.rotation = 50 * symbol;
             this.num_next.zOrder = 2;
         }
     }
@@ -254,6 +257,8 @@ export default class DrawHome {
             return;
         }
         if (this.gameLevel > this.realLevel + 1) return;
+        SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
+
         if (this.gameLevel == 0) {
             // 0关 初始场景
             this.StartSence ? this.StartSence.showStartSence() : this.StartSence = new DrawStartSence()
@@ -262,17 +267,14 @@ export default class DrawHome {
         } else {
             // 正常关卡
             Laya.LocalStorage.setItem('gameLevel', this.gameLevel);
+
             if (this.GAME) {
                 this.GAME.startGame()
             } else {
                 this.GAME = new DrawGame();
-                console.log(this.GAME);
-                // this.GAME.level=6;
-                // console.log(this.GAME);
             }
         }
         // this.isHome = false
-        SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
     }
     // 切换关卡
     changeLevel(e) {
@@ -328,7 +330,6 @@ export default class DrawHome {
             this.changeCard_timeline = new TimeLine();
             this.changeCard_timeline.addLabel("big", 0).to(this.card_bg_next, { scaleX: 1.06, scaleY: 1.05, rotation: -10 * symbol, x: 375 }, 300, null, 0)
                 .addLabel("big", 0).to(this.card_bg_next, { scaleX: 1, scaleY: 1, rotation: 0, x: 375 }, 200, null, 0)
-
             // 卡片切换时文字动效
             this.changeNum_timeline = new TimeLine();
             this.changeNum_timeline.addLabel("big", 0).to(this.num_next, { scaleX: 1.06, scaleY: 1.05, rotation: -10 * symbol, x: 325 }, 300, null, 0)
@@ -338,6 +339,8 @@ export default class DrawHome {
         this.changeCard_timeline.play(0, false);
         this.changeNum_timeline.play(0, false);
         this.isAnimating = true;
+
+        SoundManager.playSound("assets/music/shua.mp3", 1, null, null, 13);
 
         setTimeout(() => {
             this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`;
@@ -360,22 +363,22 @@ export default class DrawHome {
         if (isNext) {
             this.gameLevel++;
             // 创建卡片飞出去的效果
-            let symbol = this.gameLevel % 2 == 0 ? -1 : 1;
+            let symbol = this.gameLevel % 2 == 0 ? 1 : -1;
             this.changeCard_timeline = new TimeLine();
-            this.changeCard_timeline.addLabel("big", 0).to(this.card_bg, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 390 }, 200, null, 0)
-                .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 307 - 1000 * symbol }, 300, null, 0)
-                ;
+            this.changeCard_timeline.addLabel("big", 0).to(this.card_bg, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 390 }, 100, null, 0)
+                .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 307 - 1000 * symbol }, 200, null, 0);
             // 卡片切换时文字动效
             this.changeNum_timeline = new TimeLine();
-            this.changeNum_timeline.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 340 }, 200, null, 0)
-                .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 325 - 1000 * symbol }, 300, null, 0);
+            this.changeNum_timeline.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 340 }, 100, null, 0)
+                .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 325 - 1000 * symbol }, 200, null, 0);
             //绘制下一关的卡片 
             this.drawNextCard('assets/images/card-bg-lock.png', gameData[this.gameLevel].num, '#514682', symbol)
-
+            // SoundManager.playSound("assets/music/zhuanchang.mp3", 1, null, null, 13);
             setTimeout(() => {
                 this.changeCard_timeline.play(0, false);
                 this.changeNum_timeline.play(0, false);
                 this.isAnimating = true;
+                SoundManager.playSound("assets/music/shua.mp3", 1, null, null, 13);
             }, 500);
             // 动画渐变
 
@@ -385,6 +388,10 @@ export default class DrawHome {
             showWinNumLine.addLabel('show', 0).to(this.num, { alpha: 1 }, 500, null, 0);
 
             setTimeout(() => {
+                SoundManager.playSound("assets/music/dianzi.mp3", 1, null, null, 13);
+            }, 1700)
+
+            setTimeout(() => {
                 this.drawCard('assets/images/card-bg.png', gameData[this.gameLevel].num, '#f9dfc7');
                 this.card_bg.alpha = 0;
                 this.num.alpha = 0;
@@ -392,13 +399,12 @@ export default class DrawHome {
                 this.card_bg.zOrder = 1;
                 showWinNumLine.play(0, false);
                 showWinCardLine.play(0, false);
+
             }, 2000);
 
             setTimeout(() => {
                 // 这里缺一个进度条前进
                 this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`
-                // this.num.text = gameData[this.gameLevel].num
-                // this.card_bg.loadImage('assets/images/card-bg.png');
                 this.num_next.alpha = 0;
                 this.card_bg_next.alpha = 0;
                 this.isAnimating = false;

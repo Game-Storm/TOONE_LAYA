@@ -124,8 +124,12 @@ export default class DrawHome {
         this.isShowing = false;
         SoundManager.stopAllSound();
         let realLevel = Laya.LocalStorage.getItem('realLevel');
-        if (realLevel == -1) Laya.LocalStorage.setItem('realLevel', 0);
-        $ob.emit('nextGame', 1);
+        if (realLevel == -1) {
+            Laya.LocalStorage.setItem('realLevel', 0);
+            $ob.emit('nextGame', true);
+        }else{
+            $ob.emit('nextGame')
+        }   
     }
 
     //显示0关
@@ -133,8 +137,8 @@ export default class DrawHome {
         if (this.isShowing) return;
 
         this.drawBg();
-        SoundManager.setSoundVolume(0.1);
-        SoundManager.playSound("assets/music/troughts.mp3", 1, null, null, 13);
+        SoundManager.setMusicVolume(0.1);
+        SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
         // this.drawNextBtn()
 
         this.sence_bg.zOrder = 1

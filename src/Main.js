@@ -82,7 +82,7 @@ import GameConfig from './GameConfig';
         })
 
         // 添加音效
-        let soundNames = ['shua.mp3', 'dong.mp3']
+        let soundNames = ['shua.mp3', 'dong.mp3',"ding.mp3","zhuanchang.mp3","dao.mp3","dianzi.mp3","sou.mp3"]
         soundNames.map(item => {
             assets.push({
                 url: 'assets/music/' + item,

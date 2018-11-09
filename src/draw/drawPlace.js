@@ -411,6 +411,8 @@ export default class DrawGame {
     }
     // 输了的逻辑
     showFail() {
+        SoundManager.playSound("assets/music/sou.mp3", 1, null, null, 13);
+
         if (!this.failMaskSp) {
             this.failMaskSp = new Sprite();
             // this.failBgSp.pos(50, 200);
@@ -464,7 +466,7 @@ export default class DrawGame {
         this.failRefresh.zOrder = 7
         Tween.to(this.failRefresh, {
             x: 500,
-        }, 550, Ease.strongInOut, null, 200)
+        }, 550, Ease.strongIn, null, 100)
     }
     //关闭弹窗
     closeAlert() {

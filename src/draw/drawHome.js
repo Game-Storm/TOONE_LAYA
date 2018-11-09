@@ -162,7 +162,7 @@ export default class DrawHome {
             Laya.stage.addChild(this.card_bg_next);
         }
         this.card_bg_next.loadImage(card_url);
-        this.card_bg_next.alpha = 0.8;
+        this.card_bg_next.alpha = 1;
         this.card_bg_next.zOrder = 0;
         if (!isUp) {
             this.card_bg_next.rotation = -50 * symbol;
@@ -334,8 +334,6 @@ export default class DrawHome {
                 .addLabel("big", 0).to(this.num_next, { scaleX: 1, scaleY: 1, rotation: 0, x: 325 }, 200, null, 0)
         }
 
-
-
         this.changeCard_timeline.play(0, false);
         this.changeNum_timeline.play(0, false);
         this.isAnimating = true;
@@ -346,8 +344,8 @@ export default class DrawHome {
             this.changeNum_timeline.pause();
             this.num_next.alpha = 0;
             this.card_bg_next.alpha = 0;
-            this.num.zOrder=0;
-            this.card_bg.zOrder=0;
+            this.num.zOrder=1;
+            this.card_bg.zOrder=1;
             this.drawCard(next_url, text, color)
             this.isAnimating = false;
         }, 600)

@@ -67,12 +67,12 @@ export default class DrawGame {
 
     // 开启游戏
     startGame() {
-        this.game_bg.zOrder = 1;
-        this.table_bg.zOrder = 2;
-        this.topSp.zOrder = 3;
-        this.refreshSp.zOrder = 3;
-        this.returnSp.zOrder = 3;
-        this.numScreenSp.zOrder = 3;
+        this.game_bg.zOrder =2;
+        this.table_bg.zOrder = 3;
+        this.topSp.zOrder = 4;
+        this.refreshSp.zOrder = 4;
+        this.returnSp.zOrder = 4;
+        this.numScreenSp.zOrder = 4;
 
         // 开启比赛
         this.isGaming = true;
@@ -83,7 +83,7 @@ export default class DrawGame {
                 // 创建宫格舞台
                 this.itemsSprite[i][j] = new Sprite();
                 Laya.stage.addChild(this.itemsSprite[i][j]);
-                this.itemsSprite[i][j].zOrder = 3;
+                this.itemsSprite[i][j].zOrder = 4;
             }
         }
         this.drawTable(true);
@@ -411,7 +411,7 @@ export default class DrawGame {
             this.failMaskSp.loadImage('assets/images/alert_fail_mask.png')
             Laya.stage.addChild(this.failMaskSp);
         }
-        this.failMaskSp.zOrder = 4;
+        this.failMaskSp.zOrder = 5;
         this.failMaskSp.alpha = 0;
         Tween.to(this.failMaskSp, {
             alpha: 1
@@ -425,7 +425,7 @@ export default class DrawGame {
             this.failBgSp.loadImage('assets/images/alert_fail_bg.png');
         }
         this.failBgSp.pos(50, -550);
-        this.failBgSp.zOrder = 5;
+        this.failBgSp.zOrder = 6;
         // 进入动画
         Tween.to(this.failBgSp, {
             y: 250,
@@ -441,7 +441,7 @@ export default class DrawGame {
             this.failReturn.on('click', this, this.returnHome)
         }
         this.failReturn.pos(900, 480)
-        this.failReturn.zOrder = 6;
+        this.failReturn.zOrder = 7;
         Tween.to(this.failReturn, {
             x: 500,
         }, 550, Ease.bounceOut, null, 200)
@@ -454,7 +454,7 @@ export default class DrawGame {
             this.failRefresh.on('click', this, this.refresh)
         }
         this.failRefresh.pos(900, 650)
-        this.failRefresh.zOrder = 6
+        this.failRefresh.zOrder = 7
         Tween.to(this.failRefresh, {
             x: 500,
         }, 550, Ease.strongInOut, null, 200)

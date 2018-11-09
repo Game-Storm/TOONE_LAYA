@@ -67,7 +67,7 @@ export default class DrawGame {
 
     // 开启游戏
     startGame() {
-        this.game_bg.zOrder =2;
+        this.game_bg.zOrder = 2;
         this.table_bg.zOrder = 3;
         this.topSp.zOrder = 4;
         this.refreshSp.zOrder = 4;
@@ -345,8 +345,15 @@ export default class DrawGame {
             return items.every(item => item.num == '1')
         })
         if (isWin) {
-            Laya.LocalStorage.setItem('realLevel', this.level++)
-            $ob.emit('nextGame')
+            // 如果不是玩的以前的关卡
+            console.log(this.level, Laya.LocalStorage.getItem('realLevel'))
+            if (this.level - 1 == Laya.LocalStorage.getItem('realLevel')) {
+                Laya.LocalStorage.setItem('realLevel', this.level++)
+                $ob.emit('nextGame', true)
+            } else {
+                $ob.emit('nextGame', false)
+            }
+
             this.clearPlaceAll()
         } else {
             // 验证是否失败

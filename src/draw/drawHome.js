@@ -71,6 +71,7 @@ export default class DrawHome {
         this.drawTopProgress();
         $ob.on('nextGame', [this.goNextGame, this]);
         this.initAnimate();
+        // this.goNextGame();
     }
     /**
      * 加载动画
@@ -90,7 +91,7 @@ export default class DrawHome {
         this.game_bg.loadImage('assets/images/home_bg.png');
         // 绘制标题
     }
-    // 绘制中心卡片，顶部和底部的卡片同时绘制
+    // 绘制中心卡片
     drawCard(next_url, text, color) {
         if (!this.card_bg) {
             // 绘制背景
@@ -152,7 +153,7 @@ export default class DrawHome {
 
     }
     // 绘制底部的卡片
-    drawNextCard(card_url, text, color, isUp, symbol) {
+    drawNextCard(card_url, text, color, isUp, symbol = -1) {
         // 绘制背景
         if (!this.card_bg_next) {
             this.card_bg_next = new Laya.Sprite();
@@ -344,39 +345,69 @@ export default class DrawHome {
             this.changeNum_timeline.pause();
             this.num_next.alpha = 0;
             this.card_bg_next.alpha = 0;
-            this.num.zOrder=1;
-            this.card_bg.zOrder=1;
+            this.num.zOrder = 1;
+            this.card_bg.zOrder = 1;
             this.drawCard(next_url, text, color)
             this.isAnimating = false;
         }, 600)
     }
 
-    // 进入下一关
-    goNextGame() {
-        // changeLevel(530);
+    // 回到首页进入下一关
+    goNextGame(isNext) {
         if (this.gameLevel + 1 >= gameData.length) return;
-        this.gameLevel++;
         this.realLevel = Number(Laya.LocalStorage.getItem('realLevel'))
         // 说明是刚解锁新的关卡需要一个转换的动画
-        if (this.gameLevel > this.realLevel) {
+        if (isNext) {
+            this.gameLevel++;
+            // 创建卡片飞出去的效果
+            let symbol = this.gameLevel % 2 == 0 ? -1 : 1;
+            this.changeCard_timeline = new TimeLine();
+            this.changeCard_timeline.addLabel("big", 0).to(this.card_bg, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 390 }, 200, null, 0)
+                .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 307 - 1000 * symbol }, 300, null, 0)
+                ;
+            // 卡片切换时文字动效
+            this.changeNum_timeline = new TimeLine();
+            this.changeNum_timeline.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 340 }, 200, null, 0)
+                .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 325 - 1000 * symbol }, 300, null, 0);
+            //绘制下一关的卡片 
+            this.drawNextCard('assets/images/card-bg-lock.png', gameData[this.gameLevel].num, '#514682', symbol)
+
             setTimeout(() => {
+                this.changeCard_timeline.play(0, false);
+                this.changeNum_timeline.play(0, false);
+                this.isAnimating = true;
+            }, 500);
+            // 动画渐变
+
+            let showWinCardLine = new TimeLine();
+            let showWinNumLine = new TimeLine();
+            showWinCardLine.addLabel('show', 0).to(this.card_bg, { alpha: 1 }, 500, null, 0);
+            showWinNumLine.addLabel('show', 0).to(this.num, { alpha: 1 }, 500, null, 0);
+
+            setTimeout(() => {
+                this.drawCard('assets/images/card-bg.png', gameData[this.gameLevel].num, '#f9dfc7');
+                this.card_bg.alpha = 0;
+                this.num.alpha = 0;
+                this.num.zOrder = 1;
+                this.card_bg.zOrder = 1;
+                showWinNumLine.play(0, false);
+                showWinCardLine.play(0, false);
+            }, 2000);
+
+            setTimeout(() => {
+                // 这里缺一个进度条前进
                 this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`
-                this.num.text = gameData[this.gameLevel].num
-                this.card_bg.loadImage('assets/images/card-bg.png');
-                this.num.alpha = 0.8;
-                this.timeLine.play(0, true);
-                this.timeLine2.play(0, true);
-            }, 500)
+                // this.num.text = gameData[this.gameLevel].num
+                // this.card_bg.loadImage('assets/images/card-bg.png');
+                this.num_next.alpha = 0;
+                this.card_bg_next.alpha = 0;
+                this.isAnimating = false;
+            }, 3000)
         } else {
             // this.card_bg.loadImage( 'assets/images/card-bg.png')
-            // this.num.alpha = 1
-            // this.timeLine.play(0, true)
-            // this.timeLine2.play(0, true)
+            this.num.alpha = 1
+            this.timeLine.play(0, true)
+            this.timeLine2.play(0, true)
         }
-        // 变换效果
-        // var timeLine2 = new TimeLine();
-        // timeLine2.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, alpha: 0.5 }, 100, null, 0)
-        //     .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, alpha: 1 }, 100, null, 0)
-        // timeLine2.play(0, false);
     }
 }

@@ -24,7 +24,7 @@ import GameConfig from './GameConfig';
         Laya.init(pageWidth, pageHeight, WebGL);
         // Laya.Stat.show(0,0);
         //性能统计面板的调用
-        Laya.Stat.show(0,0);
+        // Laya.Stat.show(0,0);
         Laya.stage.alignV = Stage.ALIGN_MIDDLE;
         Laya.stage.alignH = Stage.ALIGN_CENTER;
         Laya.stage.screenAdaptationEnabled = false;
@@ -82,7 +82,8 @@ import GameConfig from './GameConfig';
         })
 
         // 添加音效
-        let soundNames = ['shua.mp3', 'dong.mp3',"ding.mp3","zhuanchang.mp3","dao.mp3","dianzi.mp3","sou.mp3","load.mp3"]
+        let soundNames = ['shua.mp3', 'dong.mp3',"zhuanchang.mp3","dao.mp3","dianzi.mp3","sou.mp3","load.mp3",
+            "output.mp3"]
         soundNames.map(item => {
             assets.push({
                 url: 'assets/music/' + item,

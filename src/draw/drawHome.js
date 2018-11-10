@@ -53,6 +53,7 @@ export default class DrawHome {
         this.changeNum_timeline = ""
 
         this.isAnimating = false;
+        this.isgaming = false;
 
         // 运行
         Laya.stage.bgColor = "#ded6df"
@@ -71,8 +72,9 @@ export default class DrawHome {
         this.drawBottomBtn();
         this.drawTopProgress();
         $ob.on('nextGame', [this.goNextGame, this]);
-        this.initAnimate();
+        $ob.on('returnHome', [this.returnHome, this]);
 
+        this.initAnimate();
 
         // SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
         SoundManager.autoStopMusic = false;
@@ -265,7 +267,6 @@ export default class DrawHome {
         }
         if (this.gameLevel > this.realLevel + 1) return;
         SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
-
         if (this.gameLevel == 0) {
             // 0关 初始场景
             this.StartSence ? this.StartSence.showStartSence() : this.StartSence = new DrawStartSence()
@@ -276,12 +277,13 @@ export default class DrawHome {
             Laya.LocalStorage.setItem('gameLevel', this.gameLevel);
 
             if (this.GAME) {
-                this.GAME.startGame()
+                // this.GAME.startGame()
+                this.GAME.init()
             } else {
                 this.GAME = new DrawGame();
             }
         }
-        // this.isHome = false
+        this.isHome = false
     }
     // 切换关卡
     changeLevel(e) {
@@ -364,6 +366,8 @@ export default class DrawHome {
 
     // 回到首页进入下一关
     goNextGame(isNext) {
+        this.isHome=true;
+        debugger
         if (this.gameLevel + 1 >= gameData.length) return;
         this.realLevel = Number(Laya.LocalStorage.getItem('realLevel'))
         // 说明是刚解锁新的关卡需要一个转换的动画
@@ -422,5 +426,8 @@ export default class DrawHome {
             this.timeLine.play(0, true)
             this.timeLine2.play(0, true)
         }
+    }
+    returnHome() {
+        this.isHome = true;
     }
 }

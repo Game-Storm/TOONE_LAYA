@@ -60,6 +60,8 @@ export default class DrawGame {
         // 动画
         this.topTextLine = ""
         this.tipTextLine = ""
+        this.winLine = ""
+        this.winMoveLine=""
 
         // 运行
         this.init();
@@ -463,7 +465,10 @@ export default class DrawGame {
     // 清除所有画布的东西
     clearPlaceAll() {
         console.log('执行')
-        // 设置层级下沉
+        // 清除动画
+        this.winLine.destroy();
+        this.winMoveLine.destroy();
+        // 清除画布
         this.clearSp(this.game_bg);
         this.clearSp(this.table_bg);
         // this.topSp.destroy();
@@ -477,7 +482,7 @@ export default class DrawGame {
         this.clearSp(this.failBgSp);
         this.clearSp(this.failMaskSp);
         this.clearSp(this.failRefresh);
-        this.clearSp(this.failRetur);
+        this.clearSp(this.failReturn);
 
         for (var i = 0; i < this.col; i++) {
             for (var j = 0; j < this.row; j++) {
@@ -485,15 +490,19 @@ export default class DrawGame {
             }
         }
 
+
+
         this.slideBlock = ""
         // 事件监听失效
         this.isGaming = false;
 
     }
     // 封装clear的事件
-    clearSp(sp) {
-        if (!sp) return;
+    clearSp(sp, noclear) {
+        console.log(sp);
+        if (!sp.alpha) return;
         Tween.from(sp, { alpha: sp.alpha }, 500).to(sp, { alpha: 0 }, 500)
+        if (noclear) return;
         setTimeout(() => {
             sp.destroy()
         }, 1500);
@@ -586,31 +595,32 @@ export default class DrawGame {
                             pivotY: this.iWidth * 0.5,
                             alpha: 1
                         }, 500, Ease.circInOut, null, 200)
-                    // setTimeout(() => {
+
+
                     console.log(this.itemsSprite[i][j])
                     this.itemsSprite[i][j].loadImage('assets/images/item-enter.png');
-                    var timeLine = new TimeLine()
-                    timeLine.addLabel('big', 0).to(this.itemsSprite[i][j], { scaleX: 1.15, scaleY: 1.15 }, 500, null, 300)
+                    this.winLine = new TimeLine()
+                    this.winLine.addLabel('big', 0).to(this.itemsSprite[i][j], { scaleX: 1.15, scaleY: 1.15 }, 500, null, 300)
                         .to(this.itemsSprite[i][j], { scaleX: 1.1, scaleY: 1.1 }, 500, null, 300)
-                    timeLine.play(0,true);
-                    // }, 400);
-                    this.clearSp(this.returnSp)
-                    this.clearSp(this.refreshSp)
-                    this.clearSp(this.table_bg)
+                    this.winLine.play(0, true);
+
+                    this.clearSp(this.returnSp, true)
+                    this.clearSp(this.refreshSp, true)
+                    this.clearSp(this.table_bg, true)
 
                 } else {
-                    Tween.from(this.itemsSprite[i][j], {
-                        pivotX: this.iWidth * 0.5,
-                        pivotY: this.iWidth * 0.5,
-                        alpha: 1
-                    }, 500, Ease.circInOut, null, 100)
-                    Tween.to(this.itemsSprite[i][j], {
-                        pivotX: this.iWidth * 0.5,
-                        pivotY: this.iWidth * 0.5,
-                        x: moveX + this.iWidth * 0.5,
-                        y: moveY + this.iWidth * 0.5,
-                        alpha: 0,
-                    }, 500, Ease.circInOut, null, 100)
+                    this.winMoveLine = new TimeLine()
+                    this.winMoveLine
+                        .addLabel('big', 0)
+                        .to(this.itemsSprite[i][j], {
+                            pivotX: this.iWidth * 0.5,
+                            pivotY: this.iWidth * 0.5,
+                            x: moveX + this.iWidth * 0.5,
+                            y: moveY + this.iWidth * 0.5,
+                            alpha: 0,
+                        }, 200, null, 300)
+                    this.winMoveLine.play(0, false);
+
                 }
 
             }

@@ -15,6 +15,7 @@ var Event = Laya.Event;
 var Loader = Laya.Loader;
 var Tween = Laya.Tween;
 var Ease = Laya.Ease;
+var Text = Laya.Text;
 var SoundManager = Laya.SoundManager;
 var TimeLine = Laya.TimeLine;
 
@@ -42,6 +43,8 @@ export default class DrawGame {
         this.failRefresh = ""
         this.failReturn = ""
         this.slideBlock = ""
+        this.numText = ""
+        this.tipText = ""
 
         // 游戏数据
         this.level = ""
@@ -53,6 +56,10 @@ export default class DrawGame {
 
         // 游戏交互
         this.startP = [];
+
+        // 动画
+        this.topTextLine = ""
+
         // 运行
         this.init();
     }
@@ -62,6 +69,7 @@ export default class DrawGame {
         this.drawPlace()
         this.refreshTable()
         this.drawTopButton()
+        this.drawTipText()
         this.startGame()
     }
 
@@ -72,7 +80,10 @@ export default class DrawGame {
         this.topSp.zOrder = 4;
         this.refreshSp.zOrder = 4;
         this.returnSp.zOrder = 4;
-        this.numScreenSp.zOrder = 4;
+        // this.numScreenSp.zOrder = 4;
+
+        // 缓动动画
+        Tween.from(this.game_bg, { alpha: 0 }, 500).to(this.game_bg, { alpha: 1 }, 500)
 
         // 开启比赛
         this.isGaming = true;
@@ -86,7 +97,11 @@ export default class DrawGame {
                 this.itemsSprite[i][j].zOrder = 4;
             }
         }
-        this.drawTable(true);
+        SoundManager.playSound("assets/music/load.mp3", 1, null, null, 5000);
+        setTimeout(() => {
+            this.drawTable(true);
+        }, 1500)
+
         // 调试
         // this.showFail()
     }
@@ -102,6 +117,7 @@ export default class DrawGame {
         this.game_bg.size(750, 1334);
         Laya.stage.addChild(this.game_bg);
         this.game_bg.loadImage('assets/images/game_bg1.png')
+        this.game_bg.alpha = 0;
         //添加键盘抬起事件
         Laya.stage.on(Event.KEY_UP, this, this.onKeyUp);
     }
@@ -133,13 +149,15 @@ export default class DrawGame {
         this.refreshSp.pos(578, 30);
         this.refreshSp.size(142, 106);
         this.refreshSp.on('click', this, this.refresh)
+        this.refreshSp.alpha = 0;
         // this.refreshSp.graphics.destroy()
         // 绘制数字显示屏
-        this.numScreenSp = new Sprite();
-        Laya.stage.addChild(this.numScreenSp);
-        this.numScreenSp.loadImage('assets/images/top_num_screen.png');
-        this.numScreenSp.size(330, 130);
-        this.numScreenSp.pos(210, 20)
+        // this.numScreenSp = new Sprite();
+        // Laya.stage.addChild(this.numScreenSp);
+        // this.numScreenSp.loadImage('assets/images/top_num_screen.png');
+        // this.numScreenSp.size(330, 130);
+        // this.numScreenSp.pos(210, 20)
+        // this.numScreenSp.alpha = 0;
 
         // 绘制返回按钮
         this.returnSp = new Sprite();
@@ -147,12 +165,14 @@ export default class DrawGame {
         this.returnSp.loadImage('assets/images/return_btn.png');
         this.returnSp.pos(30, 30);
         this.returnSp.size(142, 106);
-        this.returnSp.on('click', this, this.returnHome)
+        this.returnSp.on('click', this, this.returnHome);
+        this.returnSp.alpha = 0;
     }
     // 画宫格
     drawTable(first = false) {
         // 如果是第一次画宫格
         if (first) {
+
             for (var i = 0; i < this.col; i++) {
                 for (var j = 0; j < this.row; j++) {
                     let x = this.x + j * (this.iWidth + this.gab) + this.gab, y = this.y + i * (this.iWidth + this.gab) + this.gab;
@@ -169,14 +189,14 @@ export default class DrawGame {
 
                         pivotY: this.iWidth * 0.5,
                         alpha: 0
-                    }, 250, Ease.circInOut, null, 200)
+                    }, 250, Ease.circInOut, null, i * 200 * this.row + j * 200)
                     Tween.to(this.itemsSprite[i][j], {
                         scaleY: 1,
                         scaleX: 1,
                         pivotX: this.iWidth * 0.5,
                         pivotY: this.iWidth * 0.5,
                         alpha: 1
-                    }, 250, Ease.circInOut, null, 200)
+                    }, 250, Ease.circInOut, null, i * 200 * this.row + j * 200)
                 }
             }
         } else {
@@ -226,6 +246,44 @@ export default class DrawGame {
         this.itemsSprite[i][j].graphics.clear();
         this.itemsSprite[i][j].loadImage(url);
     }
+    // 画顶部提示
+    drawTipText() {
+        this.numText = new Text();
+        Laya.stage.addChild(this.numText);
+        this.numText.text = gameData[this.level].num;
+        this.numText.font = "din";
+        this.numText.bold = true;
+        this.numText.fontSize = 120;
+        this.numText.width = 750;
+        this.numText.zOrder = 4;
+        this.numText.color = "#fde5cd"
+        // this.numText.pivot(245, 0);
+        this.numText.align = "center";
+        this.numText.y = 30;
+        this.numText.x = 0;
+        this.numText.alpha = 0.2;
+        this.topTextLine = new TimeLine();
+        this.topTextLine.addLabel("move", 0).to(this.numText, { alpha: 1 }, 500, null, 0)
+            .addLabel("move1", 0).to(this.numText, { alpha: 0.2 }, 500, null, 0)
+        this.topTextLine.play(0, true);
+
+        this.tipText = new Text()
+        Laya.stage.addChild(this.tipText);
+        this.tipText.text = "二进制转码中...";
+        this.tipText.font = "din";
+        this.tipText.bold = true;
+        this.tipText.fontSize = 30;
+        this.tipText.width = 750;
+        this.tipText.zOrder = 4;
+        this.tipText.color = "#fde5cd"
+        // this.tipText.pivot(245, 0);
+        this.tipText.align = "center";
+        this.tipText.y = 160;
+        this.tipText.x = 0;
+        this.tipText.alpha = 1;
+
+    }
+
     /**
      * 键盘事件
      */
@@ -346,6 +404,7 @@ export default class DrawGame {
         })
         if (isWin) {
             // 如果不是玩的以前的关卡
+            this.clearPlaceAll();
             console.log(this.level, Laya.LocalStorage.getItem('realLevel'))
             if (this.level - 1 == Laya.LocalStorage.getItem('realLevel')) {
                 Laya.LocalStorage.setItem('realLevel', this.level++)
@@ -354,7 +413,6 @@ export default class DrawGame {
                 $ob.emit('nextGame', false)
             }
 
-            this.clearPlaceAll()
         } else {
             // 验证是否失败
             let j = this.pNow[0],
@@ -388,10 +446,12 @@ export default class DrawGame {
         // 设置层级下沉
         this.game_bg.zOrder = -1;
         this.table_bg.zOrder = -3;
-        this.topSp.zOrder = -2
-        this.refreshSp.zOrder = -2
-        this.returnSp.zOrder = -2
+        this.topSp.zOrder = -2;
+        this.refreshSp.zOrder = -2;
+        this.returnSp.zOrder = -2;
         this.numScreenSp.zOrder = -2;
+        this.tipText.zOrder = -2
+        this.numText.zOrder = -2
         if (this.slideBlock) this.slideBlock.zOrder = -2;
         if (this.failBgSp) {
             this.failBgSp.zOrder = -2
@@ -399,10 +459,9 @@ export default class DrawGame {
             this.failRefresh.zOrder = -2
             this.failReturn.zOrder = -2
         }
-
         for (var i = 0; i < this.col; i++) {
             for (var j = 0; j < this.row; j++) {
-                this.itemsSprite[i][j].zOrder = -2
+                this.itemsSprite[i][j].zOrder = -3
             }
         }
         this.slideBlock = ""

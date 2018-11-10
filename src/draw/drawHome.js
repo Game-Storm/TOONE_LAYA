@@ -4,6 +4,7 @@ import GameConfig from "../GameConfig";
 import { getNum, gameData } from "../lib/gameData";
 import DrawGame from "./drawPlace";
 import DrawStartSence from './drawStartSence'
+import DrawNumPass from './drawNumPass'
 
 var Sprite = Laya.Sprite;
 var Stage = Laya.Stage;
@@ -71,11 +72,17 @@ export default class DrawHome {
         this.drawTopProgress();
         $ob.on('nextGame', [this.goNextGame, this]);
         this.initAnimate();
-        this.goNextGame(true);
 
-        SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
+
+        // SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
         SoundManager.autoStopMusic = false;
         SoundManager.setMusicVolume(0.7);
+
+        // 测试
+        setTimeout(() => {
+            // new DrawNumPass()
+        }, 1000)
+        // this.goNextGame(true);
     }
     /**
      * 加载动画
@@ -169,8 +176,8 @@ export default class DrawHome {
         this.card_bg_next.alpha = 1;
         this.card_bg_next.zOrder = 0;
         if (!isUp) {
-            this.card_bg_next.rotation = 50 * symbol ;
-            this.card_bg_next.x = 307 + 800 * symbol ;
+            this.card_bg_next.rotation = 50 * symbol;
+            this.card_bg_next.x = 307 + 800 * symbol;
             this.card_bg_next.zOrder = 2;
         }
 

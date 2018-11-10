@@ -72,6 +72,7 @@ export default class DrawHome {
         this.drawBottomBtn();
         this.drawTopProgress();
         $ob.on('nextGame', [this.goNextGame, this]);
+        // $ob.on('nextGame', [this.goNextGame, this]);
         $ob.on('returnHome', [this.returnHome, this]);
 
         this.initAnimate();
@@ -366,8 +367,8 @@ export default class DrawHome {
 
     // 回到首页进入下一关
     goNextGame(isNext) {
-        this.isHome=true;
-        debugger
+        this.isHome = true;
+        // debugger
         if (this.gameLevel + 1 >= gameData.length) return;
         this.realLevel = Number(Laya.LocalStorage.getItem('realLevel'))
         // 说明是刚解锁新的关卡需要一个转换的动画
@@ -429,5 +430,7 @@ export default class DrawHome {
     }
     returnHome() {
         this.isHome = true;
+        SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
+        // debugger
     }
 }

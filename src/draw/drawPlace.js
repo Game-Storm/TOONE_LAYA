@@ -108,9 +108,10 @@ export default class DrawGame {
             this.isGaming = true;
             this.tipText.text = "   转码完成！"
             var timeLine = new TimeLine();
-            timeLine.addLabel("move", 0).to(this.tipText, { alpha: 0 }, 500, null, 2000)
-            timeLine.play(0, false);
-
+            // if (this.tipText) {
+            //     timeLine.addLabel("move", 0).to(this.tipText, { alpha: 0 }, 500, null, 2000)
+            //     timeLine.play(0, false);
+            // }
             this.topTextLine.destroy();
             this.numText.alpha = 1;
             this.drawTopButton()
@@ -175,9 +176,10 @@ export default class DrawGame {
         this.returnSp.loadImage('assets/images/return_btn.png');
         this.returnSp.pos(30, 30);
         this.returnSp.size(142, 106);
-        this.returnSp.on('click', this, this.returnHome);
+
         this.returnSp.alpha = 0;
         this.returnSp.zOrder = 4;
+        this.returnSp.on('click', this, this.returnHome);
         // 动画
         var timeLine2 = new TimeLine();
         timeLine2.addLabel("move", 0).to(this.returnSp, { alpha: 1 }, 500, null, 0)
@@ -310,7 +312,7 @@ export default class DrawGame {
         this.tipText.x = 0;
         this.tipText.alpha = 0;
         this.tipTextLine = new TimeLine();
-        this.tipTextLine.addLabel("move", 0).to(this.tipText, { alpha: 1 }, 500, null, 1000)
+        this.tipTextLine.addLabel("move", 0).to(this.tipText, { alpha: 0.8 }, 500, null, 1000)
         this.tipTextLine.play(0, false);
     }
 
@@ -347,7 +349,7 @@ export default class DrawGame {
         } else {
             if (Math.abs(moveY) > 80) direction = moveY > 0 ? 'down' : 'top';
         }
-        console.log(direction, moveX, moveY)
+        // console.log(direction, moveX, moveY)
         if (direction) this.moveBlock(direction)
     }
     /**
@@ -429,16 +431,7 @@ export default class DrawGame {
             return items.every(item => item.num == '1')
         })
         if (isWin) {
-            // 如果不是玩的以前的关卡
-            this.clearPlaceAll();
-            console.log(this.level, Laya.LocalStorage.getItem('realLevel'))
-            if (this.level - 1 == Laya.LocalStorage.getItem('realLevel')) {
-                Laya.LocalStorage.setItem('realLevel', this.level++)
-                $ob.emit('nextGame', true)
-            } else {
-                $ob.emit('nextGame', false)
-            }
-
+            this.showWin()
         } else {
             // 验证是否失败
             let j = this.pNow[0],
@@ -464,38 +457,59 @@ export default class DrawGame {
     }
     // 返回 Home
     returnHome() {
+        $ob.emit('returnHome')
         this.clearPlaceAll()
+
         // new DrawHome()
     }
     // 清除所有画布的东西
     clearPlaceAll() {
         console.log('执行')
-        // 设置层级下沉
-        this.game_bg.destroy();
-        this.table_bg.destroy();
-        // this.topSp.destroy();
-        this.refreshSp.destroy();
-        this.returnSp.destroy();
-        this.tipText.destroy();
-        this.numText.destroy();
-        if (this.slideBlock) this.slideBlock.destroy();
+        // 缓动动画
+        // Tween.from(this.game_bg, { alpha: 1 }, 500).to(this.game_bg, { alpha: 0 }, 800)
+        // Tween.from(this.table_bg, { alpha: 1 }, 500).to(this.game_bg, { alpha: 0 }, 800)
+        // Tween.from(this.refreshSp, { alpha: 1 }, 500).to(this.game_bg, { alpha: 0 }, 800)
+        // Tween.from(this.returnSp, { alpha: 1 }, 500).to(this.game_bg, { alpha: 0 }, 800)
+        // Tween.from(this.numText, { alpha: 1 }, 500).to(this.game_bg, { alpha: 0 }, 800)
+        // Tween.from(this.tipText, { alpha: 1 }, 500).to(this.game_bg, { alpha: 0 }, 800)
 
-        if (this.failBgSp) {
-            this.failBgSp.destroy();
-            this.failMaskSp.destroy();
-            this.failRefresh.destroy();
-            this.failReturn.destroy();
-        }
+        // setTimeout(() => {
+        // 设置层级下沉
+        this.clearSp(this.game_bg);
+        this.clearSp(this.table_bg);
+        // this.topSp.destroy();
+        this.clearSp(this.refreshSp);
+        this.clearSp(this.returnSp);
+        this.clearSp(this.tipText);
+        this.clearSp(this.numText);
+
+        this.clearSp(this.slideBlock);
+
+        this.clearSp(this.failBgSp);
+        this.clearSp(this.failMaskSp);
+        this.clearSp(this.failRefresh);
+        this.clearSp(this.failRetur);
+
         for (var i = 0; i < this.col; i++) {
             for (var j = 0; j < this.row; j++) {
-                // this.itemsSprite[i][j].zOrder = -3
-                this.itemsSprite[i][j].destroy()
+                this.clearSp(this.itemsSprite[i][j])
             }
         }
+
+        // }, 800);
+
         this.slideBlock = ""
         // 事件监听失效
         this.isGaming = false;
-        $ob.emit('returnHome')
+
+    }
+    // 封装clear的事件
+    clearSp(sp) {
+        if (!sp) return;
+        Tween.from(sp, { alpha: sp.alpha }, 500).to(sp, { alpha: 0 }, 500)
+        setTimeout(() => {
+            sp.destroy()
+        }, 1000);
     }
     // 输了的逻辑
     showFail() {
@@ -531,6 +545,7 @@ export default class DrawGame {
         this.failReturn.on('click', this, this.returnHome)
         this.failReturn.pos(900, 480)
         this.failReturn.zOrder = 7;
+
         Tween.to(this.failReturn, {
             x: 500,
         }, 550, Ease.bounceOut, null, 200)
@@ -545,6 +560,65 @@ export default class DrawGame {
         Tween.to(this.failRefresh, {
             x: 500,
         }, 550, Ease.strongIn, null, 100)
+    }
+    // 赢了的逻辑
+    showWin() {
+        // let x = this.pNow[x]
+        let moveX = this.x + this.pNow[0] * (this.iWidth + this.gab) + this.gab, moveY = this.y + this.pNow[0] * (this.iWidth + this.gab) + this.gab;
+        for (var i = 0; i < this.col; i++) {
+            for (var j = 0; j < this.row; j++) {
+                // let x = this.x + j * (this.iWidth + this.gab) + this.gab, y = this.y + i * (this.iWidth + this.gab) + this.gab;
+                // this.drawItemBlock(i, j);
+                // this.itemsSprite[i][j].pos(x + this.iWidth * 0.5, y + this.iWidth * 0.5);
+                // this.itemsSprite[i][j].size(this.iWidth, this.iWidth);
+                // // 动画
+                // this.itemsSprite[i][j].alpha = 0
+                if (this.pNow[0] == j && this.pNow[1] == i) {
+                    this.itemsSprite[i][j].on(Event.CLICK, this, this.clickToNext);
+                    Tween.from(this.itemsSprite[i][j], {
+                        scaleY: 1,
+                        scaleX: 1,
+                        pivotX: this.iWidth * 0.5,
+                        pivotY: this.iWidth * 0.5,
+                        alpha: 0
+                    }, 500, Ease.circInOut, null, 100)
+                        .to(this.itemsSprite[i][j], {
+                            scaleY: 1.1,
+                            scaleX: 1.1,
+                            pivotX: this.iWidth * 0.5,
+                            pivotY: this.iWidth * 0.5,
+                            alpha: 1
+                        }, 500, Ease.circInOut, null, 200)
+                } else {
+                    Tween.from(this.itemsSprite[i][j], {
+                        // pivotX: this.iWidth * 0.5,
+                        // pivotY: this.iWidth * 0.5,
+                        alpha: 1
+                    }, 500, Ease.circInOut, null, 100)
+                    Tween.to(this.itemsSprite[i][j], {
+                        pivotX: this.iWidth * 0.5,
+                        pivotY: this.iWidth * 0.5,
+                        x: moveX + this.iWidth * 0.5,
+                        y: moveY + this.iWidth * 0.5,
+                        alpha: 0,
+                        zOrder: 3
+                    }, 500, Ease.circInOut, null, 100)
+                }
+
+            }
+
+        }
+    }
+    // 点击进入下一关
+    clickToNext() {
+        this.clearPlaceAll();
+        // 如果不是玩的以前的关卡
+        if (this.level - 1 == Laya.LocalStorage.getItem('realLevel')) {
+            Laya.LocalStorage.setItem('realLevel', this.level++)
+            $ob.emit('nextGame', true);
+        } else {
+            $ob.emit('nextGame', false);
+        }
     }
     //关闭弹窗
     closeAlert() {

@@ -76,16 +76,9 @@ export default class DrawHome {
         $ob.on('returnHome', [this.returnHome, this]);
 
         this.initAnimate();
-
-        // SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
         SoundManager.autoStopMusic = false;
         SoundManager.setMusicVolume(1);
 
-        // 测试
-        setTimeout(() => {
-            // new DrawNumPass()
-        }, 1000)
-        // this.goNextGame(true);
     }
     /**
      * 加载动画
@@ -236,6 +229,7 @@ export default class DrawHome {
         this.left_more.loadImage('assets/images/home_left_more.png');
         this.left_more.size(122, 91);
         this.left_more.pos(94, 975)
+        this.left_more.on(Event.CLICK, this, this.changeLevel);
 
         this.left = new Sprite();
         Laya.stage.addChild(this.left);
@@ -257,6 +251,7 @@ export default class DrawHome {
         this.right_more.loadImage('assets/images/home_right_more.png');
         this.right_more.size(122, 91);
         this.right_more.pos(535, 975);
+        this.right_more.on(Event.CLICK, this, this.changeLevel);
     }
     /**
      * 逻辑处理
@@ -294,8 +289,12 @@ export default class DrawHome {
         if (this.isAnimating) return;
         let isUp = true;//是否是向下滑卡片？
         // 修改关卡
-        let x = Laya.stage.mouseX
+        let x = Laya.stage.mouseX;
+        console.log(x)
         if (x < 240) {
+            if (this.gameLevel - 10 < 0) return;
+            this.gameLevel = this.gameLevel - 10;
+            isUp = false;
         } else if (x < 380) {
             if (this.gameLevel - 1 < 0) return;
             this.gameLevel--;
@@ -304,6 +303,8 @@ export default class DrawHome {
             if (this.gameLevel + 1 >= gameData.length) return;
             this.gameLevel++;
         } else {
+            if (this.gameLevel + 10 >= gameData.length) return;
+            this.gameLevel = this.gameLevel + 10;
         }
 
         // 绘制底下的卡片

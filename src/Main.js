@@ -24,7 +24,7 @@ import GameConfig from './GameConfig';
         Laya.init(pageWidth, pageHeight, WebGL);
         // Laya.Stat.show(0,0);
         //性能统计面板的调用
-        // Laya.Stat.show(0,0);
+        Laya.Stat.show(0,0);
         Laya.stage.alignV = Stage.ALIGN_MIDDLE;
         Laya.stage.alignH = Stage.ALIGN_CENTER;
         Laya.stage.screenAdaptationEnabled = false;
@@ -71,7 +71,7 @@ import GameConfig from './GameConfig';
         // 加载images下的文件
         let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'alert_fail_bg.png', 'sence-0_bg.png',
             'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card-0-bg.png", 'alert_fail_mask.png',
-            'game_bg.png', 'card-bg.png', 'logo_title.png', 'home_bg.png', 'card-bg-lock.png',
+             'card-bg.png', 'logo_title.png', 'home_bg.png', 'card-bg-lock.png',
             'home_right.png', 'home_right_more.png', 'home_left.png', 'home_left_more.png', 'next_btn.png', 'item-enter.png'
         ];
         imgNames.map(item => {

@@ -77,9 +77,9 @@ export default class DrawHome {
 
         this.initAnimate();
 
-        // SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
+        SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
         SoundManager.autoStopMusic = false;
-        SoundManager.setMusicVolume(0.7);
+        SoundManager.setMusicVolume(1);
 
         // 测试
         setTimeout(() => {
@@ -263,10 +263,13 @@ export default class DrawHome {
      */
     // 进入关卡
     startGame(params) {
+        console.log(this.isHome)
         if (!this.isHome) {
             return;
         }
+        console.log('ok')
         if (this.gameLevel > this.realLevel + 1) return;
+        console.log('ok')
         SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
         if (this.gameLevel == 0) {
             // 0关 初始场景

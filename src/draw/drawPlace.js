@@ -61,7 +61,7 @@ export default class DrawGame {
         this.topTextLine = ""
         this.tipTextLine = ""
         this.winLine = ""
-        this.winMoveLine=""
+        this.winMoveLine = ""
 
         // 运行
         this.init();
@@ -371,6 +371,7 @@ export default class DrawGame {
         this.tWidth = 750 - 2 * this.x;//桌面宽度
         this.iWidth = (this.tWidth - (this.row + 1) * this.gab) / this.row;//单个的高度
         this.tHeight = this.iWidth * this.col - 1 + (this.col + 1) * this.gab;
+        this.arr = [];
         for (var i = 0; i < this.col; i++) {
             this.arr[i] = [];
             for (var j = 0; j < this.row; j++) {
@@ -432,8 +433,12 @@ export default class DrawGame {
         let isWin = this.arr.every(items => {
             return items.every(item => item.num == '1')
         })
+        console.log(this.arr);
         if (isWin) {
-            this.showWin()
+            SoundManager.playSound("assets/music/win.mp3", 1, null, null, 5000);
+            setTimeout(() => {
+                this.showWin()
+            }, 500)
         } else {
             // 验证是否失败
             let j = this.pNow[0],
@@ -466,8 +471,8 @@ export default class DrawGame {
     clearPlaceAll() {
         console.log('执行')
         // 清除动画
-        this.winLine.destroy();
-        this.winMoveLine.destroy();
+        if (this.winLine) this.winLine.destroy();
+        if (this.winMoveLine) this.winMoveLine.destroy();
         // 清除画布
         this.clearSp(this.game_bg);
         this.clearSp(this.table_bg);
@@ -477,7 +482,7 @@ export default class DrawGame {
         this.clearSp(this.tipText);
         this.clearSp(this.numText);
 
-        this.clearSp(this.slideBlock);
+        this.clearSp(this.slideBlock, 0.2);
 
         this.clearSp(this.failBgSp);
         this.clearSp(this.failMaskSp);
@@ -490,19 +495,16 @@ export default class DrawGame {
             }
         }
 
-
-
         this.slideBlock = ""
         // 事件监听失效
         this.isGaming = false;
 
     }
     // 封装clear的事件
-    clearSp(sp, noclear) {
+    clearSp(sp, alpha = 1) {
         console.log(sp);
-        if (!sp.alpha) return;
-        Tween.from(sp, { alpha: sp.alpha }, 500).to(sp, { alpha: 0 }, 500)
-        if (noclear) return;
+        if (!sp) return;
+        Tween.from(sp, { alpha: alpha }, 500).to(sp, { alpha: 0 }, 500);
         setTimeout(() => {
             sp.destroy()
         }, 1500);
@@ -528,9 +530,11 @@ export default class DrawGame {
         this.failBgSp.loadImage('assets/images/alert_fail_bg.png');
         this.failBgSp.pos(50, -550);
         this.failBgSp.zOrder = 6;
+        this.failBgSp.alpha = 1;
         // 进入动画
         Tween.to(this.failBgSp, {
             y: 250,
+            alpha: 1
         }, 550, Ease.bounceOut, null, 200)
 
         // 画返回按钮
@@ -541,6 +545,8 @@ export default class DrawGame {
         this.failReturn.on('click', this, this.returnHome)
         this.failReturn.pos(900, 480)
         this.failReturn.zOrder = 7;
+        this.failReturn.alpha = 1;
+
 
         Tween.to(this.failReturn, {
             x: 500,
@@ -553,6 +559,7 @@ export default class DrawGame {
         this.failRefresh.on('click', this, this.refresh)
         this.failRefresh.pos(900, 650)
         this.failRefresh.zOrder = 7
+        this.failRefresh.alpha = 1
         Tween.to(this.failRefresh, {
             x: 500,
         }, 550, Ease.strongIn, null, 100)
@@ -560,6 +567,7 @@ export default class DrawGame {
     // 赢了的逻辑
     showWin() {
         console.log(this.pNow);
+        this.tipText.text = "  TO ONE ！"
         // let x = this.pNow[x]
         let moveX = this.x + this.pNow[0] * (this.iWidth + this.gab) + this.gab, moveY = this.y + this.pNow[1] * (this.iWidth + this.gab) + this.gab;
         console.log(moveX, moveY);
@@ -582,31 +590,30 @@ export default class DrawGame {
                         alpha: 0
                     }, 500, Ease.circInOut, null, 100)
                         .to(this.itemsSprite[i][j], {
-                            scaleY: 1.1,
-                            scaleX: 1.1,
+                            scaleY: 1,
+                            scaleX: 1,
                             pivotX: this.iWidth * 0.5,
                             pivotY: this.iWidth * 0.5,
                             alpha: 0.5
                         }, 500, Ease.circInOut, null, 200)
                         .to(this.itemsSprite[i][j], {
-                            scaleY: 1.1,
-                            scaleX: 1.1,
+                            scaleY: 1,
+                            scaleX: 1,
                             pivotX: this.iWidth * 0.5,
                             pivotY: this.iWidth * 0.5,
                             alpha: 1
                         }, 500, Ease.circInOut, null, 200)
 
-
-                    console.log(this.itemsSprite[i][j])
+                    // console.log(this.itemsSprite[i][j])
                     this.itemsSprite[i][j].loadImage('assets/images/item-enter.png');
                     this.winLine = new TimeLine()
-                    this.winLine.addLabel('big', 0).to(this.itemsSprite[i][j], { scaleX: 1.15, scaleY: 1.15 }, 500, null, 300)
-                        .to(this.itemsSprite[i][j], { scaleX: 1.1, scaleY: 1.1 }, 500, null, 300)
+                    this.winLine.addLabel('big', 0).to(this.itemsSprite[i][j], { scaleX: 1.1, scaleY: 1.1 }, 300, null, 300)
+                        .addLabel('big', 0).to(this.itemsSprite[i][j], { scaleX: 1, scaleY: 1 }, 300, null, 300)
                     this.winLine.play(0, true);
 
-                    this.clearSp(this.returnSp, true)
-                    this.clearSp(this.refreshSp, true)
-                    this.clearSp(this.table_bg, true)
+                    this.clearSp(this.returnSp)
+                    this.clearSp(this.refreshSp)
+                    this.clearSp(this.table_bg, 0.5)
 
                 } else {
                     this.winMoveLine = new TimeLine()
@@ -646,6 +653,5 @@ export default class DrawGame {
             this.failRefresh.destroy();
             this.failReturn.destroy();
         }
-
     }
 }

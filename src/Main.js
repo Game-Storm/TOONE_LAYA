@@ -70,9 +70,9 @@ import GameConfig from './GameConfig';
 
         // 加载images下的文件
         let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'alert_fail_bg.png', 'sence-0_bg.png',
-            'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card.png","card-0-bg.png", 'alert_fail_mask.png',
+            'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card.png", "card-0-bg.png", 'alert_fail_mask.png',
             'game_bg.png', 'top_num_screen.png', 'card-bg.png', 'logo_title.png', 'home_bg.png', 'card-bg-lock.png',
-            'home_right.png', 'home_right_more.png', 'home_left.png', 'home_left_more.png', 'next_btn.png','item-enter.png'
+            'home_right.png', 'home_right_more.png', 'home_left.png', 'home_left_more.png', 'next_btn.png', 'item-enter.png'
         ];
         imgNames.map(item => {
             assets.push({
@@ -82,8 +82,8 @@ import GameConfig from './GameConfig';
         })
 
         // 添加音效
-        let soundNames = ['shua.mp3', 'dong.mp3',"zhuanchang.mp3","dao.mp3","dianzi.mp3","sou.mp3","load.mp3",
-            "output.mp3"]
+        let soundNames = ['troughts.mp3', 'shua.mp3', 'dong.mp3', "zhuanchang.mp3", "dao.mp3", "dianzi.mp3", "sou.mp3", "load.mp3",
+            "output.mp3",'win.mp3']
         soundNames.map(item => {
             assets.push({
                 url: 'assets/music/' + item,

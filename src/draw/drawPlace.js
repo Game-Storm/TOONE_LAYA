@@ -71,7 +71,7 @@ export default class DrawGame {
         // console.log('执行init');
         this.drawPlace()
         this.refreshTable()
-        // this.drawTopButton()
+        // this.drawTopButton();
         this.drawTableBg()
         this.startGame()
     }
@@ -102,25 +102,17 @@ export default class DrawGame {
         this.aniSplit = 2000 / this.row / this.col;
 
         setTimeout(() => {
-            this.drawTable(true, true,true);
+            this.drawTable(true, true, true);
         }, 1500);
 
         // 4500ms 后转码完成
         setTimeout(() => {
-            this.isGaming = true;
             this.tipText.text = "   转码完成！"
             var timeLine = new TimeLine();
-            // if (this.tipText) {
-            //     timeLine.addLabel("move", 0).to(this.tipText, { alpha: 0 }, 500, null, 2000)
-            //     timeLine.play(0, false);
-            // }
             this.topTextLine.destroy();
             this.numText.alpha = 1;
-            this.drawTopButton()
+            this.drawTopButton();
         }, 3500)
-
-        // 调试
-        // this.showFail()
     }
 
     /**
@@ -131,7 +123,7 @@ export default class DrawGame {
     drawPlace() {
         // 画游戏的背景布
         this.game_bg = new Laya.Sprite();
-        this.game_bg.size(750, 1334);
+        this.game_bg.size(750, Browser.height);
         Laya.stage.addChild(this.game_bg);
         this.game_bg.loadImage('assets/images/game_bg1.png');
         this.game_bg.alpha = 0;
@@ -231,7 +223,8 @@ export default class DrawGame {
             }
             if (callback) {
                 setTimeout(() => {
-                    this.drawTable(true,false)
+                    this.drawTable(true, false);
+                    this.isGaming = true;
                 }, 2300)
             }
         } else {
@@ -468,18 +461,22 @@ export default class DrawGame {
     returnHome() {
         $ob.emit('returnHome')
         this.clearPlaceAll()
-
         // new DrawHome()
     }
     // 清除所有画布的东西
-    clearPlaceAll() {
+    clearPlaceAll(iswin) {
         console.log('执行')
+        console.log(this.winLine);
         // 清除动画
-        if (this.winLine) this.winLine.destroy();
-        if (this.winMoveLine) this.winMoveLine.destroy();
+
+        if (iswin) {
+            this.winLine.pause();
+            this.winLine.destroy();
+            // this.winMoveLine.destroy();
+        }
         // 清除画布
         this.clearSp(this.game_bg);
-        this.clearSp(this.table_bg);
+        this.clearSp(this.table_bg, 0.5);
         // this.topSp.destroy();
         this.clearSp(this.refreshSp);
         this.clearSp(this.returnSp);
@@ -492,13 +489,13 @@ export default class DrawGame {
         this.clearSp(this.failMaskSp);
         this.clearSp(this.failRefresh);
         this.clearSp(this.failReturn);
-
+        // debugger
         for (var i = 0; i < this.col; i++) {
             for (var j = 0; j < this.row; j++) {
-                this.clearSp(this.itemsSprite[i][j])
+                this.clearSp(this.itemsSprite[i][j], 0)
             }
         }
-
+        // debugger
         this.slideBlock = ""
         // 事件监听失效
         this.isGaming = false;
@@ -506,16 +503,16 @@ export default class DrawGame {
     }
     // 封装clear的事件
     clearSp(sp, alpha = 1) {
-        console.log(sp);
+        // console.log(sp);
         if (!sp) return;
-        Tween.from(sp, { alpha: alpha }, 500).to(sp, { alpha: 0 }, 500);
+        Tween.from(sp, { alpha: alpha }, 500).to(sp, { alpha: 0 }, 800);
         setTimeout(() => {
             sp.destroy()
         }, 1500);
     }
     // 输了的逻辑
     showFail() {
-        SoundManager.playSound("assets/music/sou.mp3", 1, null, null, 13);
+        SoundManager.playSound("assets/music/win.mp3", 1, null, null, 13);
 
         this.failMaskSp = new Sprite();
         this.failMaskSp.size(750, Browser.height);
@@ -551,7 +548,6 @@ export default class DrawGame {
         this.failReturn.zOrder = 7;
         this.failReturn.alpha = 1;
 
-
         Tween.to(this.failReturn, {
             x: 500,
         }, 550, Ease.bounceOut, null, 200)
@@ -577,40 +573,11 @@ export default class DrawGame {
         console.log(moveX, moveY);
         for (var i = 0; i < this.col; i++) {
             for (var j = 0; j < this.row; j++) {
-                // let x = this.x + j * (this.iWidth + this.gab) + this.gab, y = this.y + i * (this.iWidth + this.gab) + this.gab;
-                // this.drawItemBlock(i, j);
-                // this.itemsSprite[i][j].pos(x + this.iWidth * 0.5, y + this.iWidth * 0.5);
-                // this.itemsSprite[i][j].size(this.iWidth, this.iWidth);
-                // // 动画
-                // this.itemsSprite[i][j].alpha = 0
                 if (this.pNow[0] == j && this.pNow[1] == i) {
                     this.itemsSprite[i][j].on(Event.CLICK, this, this.clickToNext);
-
-                    Tween.from(this.itemsSprite[i][j], {
-                        scaleY: 1,
-                        scaleX: 1,
-                        pivotX: this.iWidth * 0.5,
-                        pivotY: this.iWidth * 0.5,
-                        alpha: 0
-                    }, 500, Ease.circInOut, null, 100)
-                        .to(this.itemsSprite[i][j], {
-                            scaleY: 1,
-                            scaleX: 1,
-                            pivotX: this.iWidth * 0.5,
-                            pivotY: this.iWidth * 0.5,
-                            alpha: 0.5
-                        }, 500, Ease.circInOut, null, 200)
-                        .to(this.itemsSprite[i][j], {
-                            scaleY: 1,
-                            scaleX: 1,
-                            pivotX: this.iWidth * 0.5,
-                            pivotY: this.iWidth * 0.5,
-                            alpha: 1
-                        }, 500, Ease.circInOut, null, 200)
-
-                    // console.log(this.itemsSprite[i][j])
                     this.itemsSprite[i][j].loadImage('assets/images/item-enter.png');
-                    this.winLine = new TimeLine()
+                    this.itemsSprite[i][j].zOrder = 6;
+                    this.winLine = new TimeLine();
                     this.winLine.addLabel('big', 0).to(this.itemsSprite[i][j], { scaleX: 1.1, scaleY: 1.1 }, 300, null, 300)
                         .addLabel('big', 0).to(this.itemsSprite[i][j], { scaleX: 1, scaleY: 1 }, 300, null, 300)
                     this.winLine.play(0, true);
@@ -620,27 +587,25 @@ export default class DrawGame {
                     this.clearSp(this.table_bg, 0.5)
 
                 } else {
-                    this.winMoveLine = new TimeLine()
-                    this.winMoveLine
-                        .addLabel('big', 0)
-                        .to(this.itemsSprite[i][j], {
-                            pivotX: this.iWidth * 0.5,
-                            pivotY: this.iWidth * 0.5,
-                            x: moveX + this.iWidth * 0.5,
-                            y: moveY + this.iWidth * 0.5,
-                            alpha: 0,
-                        }, 200, null, 300)
-                    this.winMoveLine.play(0, false);
+                    Tween.to(this.itemsSprite[i][j], {
+                        pivotX: this.iWidth * 0.5,
+                        pivotY: this.iWidth * 0.5,
+                        x: moveX + this.iWidth * 0.5,
+                        y: moveY + this.iWidth * 0.5,
+                        alpha: 0
+                    }, 500)
 
                 }
 
             }
-
         }
     }
     // 点击进入下一关
     clickToNext() {
-        this.clearPlaceAll();
+        setTimeout(() => {
+            this.clearPlaceAll(true);
+        }, 500)
+
         // 如果不是玩的以前的关卡
         if (this.level - 1 == Laya.LocalStorage.getItem('realLevel')) {
             Laya.LocalStorage.setItem('realLevel', this.level++)

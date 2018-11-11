@@ -55,7 +55,7 @@ export default class DrawHome {
     drawBg() {
         // 开始的场景
         this.sence_bg = new Laya.Sprite();
-        this.sence_bg.size(750, 1334);
+        this.sence_bg.size(750, Browser.height);
         Laya.stage.addChild(this.sence_bg);
         this.sence_bg.loadImage('assets/images/sence-0_bg.png');
         this.sence_bg.alpha = 0;

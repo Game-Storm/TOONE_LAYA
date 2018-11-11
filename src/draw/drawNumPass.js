@@ -37,11 +37,11 @@ export default class DrawHome {
     drawBackground() {
         console.log('ok')
         this.bg = new Sprite();
-        this.bg.size(750, 1334);
+        this.bg.size(750, Browser.height);
         this.bg.alpha = 0;
         this.bg.zOrder = 2;
         Laya.stage.addChild(this.bg);
-        this.bg.graphics.drawRect(0, 0, 750, 1334, '#aaa');
+        this.bg.graphics.drawRect(0, 0, 750, Browser.height, '#aaa');
         var timeLine = new TimeLine();
         timeLine.addLabel("big", 0).to(this.bg, { alpha: 1}, 1000, null, 0);
         timeLine.play(0);

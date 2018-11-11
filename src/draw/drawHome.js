@@ -77,7 +77,7 @@ export default class DrawHome {
 
         this.initAnimate();
 
-        SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
+        // SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
         SoundManager.autoStopMusic = false;
         SoundManager.setMusicVolume(1);
 

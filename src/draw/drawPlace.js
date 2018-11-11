@@ -102,7 +102,7 @@ export default class DrawGame {
         this.aniSplit = 2000 / this.row / this.col;
 
         setTimeout(() => {
-            this.drawTable(true, true);
+            this.drawTable(true, true,true);
         }, 1500);
 
         // 4500ms 后转码完成
@@ -188,7 +188,7 @@ export default class DrawGame {
         timeLine2.play(0, false);
     }
     // 画宫格
-    drawTable(first = false, showAnimate = false) {
+    drawTable(first = false, showAnimate = false, callback) {
         // 如果是第一次画宫格
         if (first) {
             for (var i = 0; i < this.col; i++) {
@@ -229,7 +229,11 @@ export default class DrawGame {
             } else {
                 SoundManager.playSound("assets/music/load.mp3", 1, null, null, 5000);
             }
-
+            if (callback) {
+                setTimeout(() => {
+                    this.drawTable(true,false)
+                }, 2300)
+            }
         } else {
             // 移动滑块
             if (!this.slideBlock) {
@@ -455,10 +459,10 @@ export default class DrawGame {
 
     }
     // 重置游戏
-    refresh() {
+    refresh(isFirst) {
         this.closeAlert()
         this.refreshTable()
-        this.drawTable(true)
+        this.drawTable(true, null)
     }
     // 返回 Home
     returnHome() {

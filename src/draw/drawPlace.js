@@ -232,7 +232,7 @@ export default class DrawGame {
                 this.slideBlock = new Sprite()
                 Laya.stage.addChild(this.slideBlock);
                 this.slideBlock.zOrder = 4;
-                this.slideBlock.loadImage('assets/images/item-1-active.png');
+                this.slideBlock.loadImage('assets/images/item-1-active-no.png');
                 this.slideBlock.size(this.iWidth, this.iWidth);
             }
             let toX = this.x + this.pNow[0] * (this.iWidth + this.gab) + this.gab, toY = this.y + this.pNow[1] * (this.iWidth + this.gab) + this.gab;
@@ -264,7 +264,7 @@ export default class DrawGame {
     drawItemBlock(i, j) {
         let url;
         if (j == this.pNow[0] && i == this.pNow[1]) {
-            url = this.arr[i][j].num == '0' ? 'assets/images/item-0-active.png' : 'assets/images/item-1-active.png';
+            url = this.arr[i][j].num == '0' ? 'assets/images/item-0-active.png' : `assets/images/item-1-active${this.isLock ? '' : '-no'}.png`;
         } else if (this.arr[i][j].isUsed) {
             url = 'assets/images/item-1-lock.png'
         } else {
@@ -363,9 +363,12 @@ export default class DrawGame {
         this.numData = getNum(this.level).items;
         this.col = getNum(this.level).col;
         this.row = getNum(this.level).row;
+        this.isLock = getNum(this.level).lock;
 
-        this.x = this.col > 3 ? 40 : 80;
-        this.y = 250;
+        let xArr = [150, 80, 40, 40, 40, 40, 40, 40];
+        let yArr = [400, 300, 250, 250, 250, 250, 250, 250,250]
+        this.x = xArr[this.row - 2];
+        this.y = yArr[this.col - 1];
 
         this.gab = 20 + (4 - this.row) * 5
         this.tWidth = 750 - 2 * this.x;//桌面宽度
@@ -420,7 +423,10 @@ export default class DrawGame {
         this.frontPostion[1] = a;
 
         this.arr[i][j].num = this.arr[i][j].num == "1" ? "0" : "1";
-        this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
+        if (this.isLock) {
+            this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
+        }
+
 
         this.drawTable();
         // 播放滑动音效
@@ -607,7 +613,7 @@ export default class DrawGame {
         setTimeout(() => {
             this.clearPlaceAll(true);
         }, 500)
-
+        SoundManager.playSound("assets/music/return-home.mp3", 1, null, null, 0);
         // 如果不是玩的以前的关卡
         if (this.level - 1 == Laya.LocalStorage.getItem('realLevel')) {
             Laya.LocalStorage.setItem('realLevel', this.level++)

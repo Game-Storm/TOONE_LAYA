@@ -38,14 +38,24 @@ export default class DrawHome {
             "TO ONE",
         ]
         this.isShowing = false
-
-        this.timeLine=""
-
-
-        this.init()
-    }
-    init() {
         this.showStartSence()
+    }
+    //显示0关
+    showStartSence() {
+        if (this.isShowing) return;
+
+        this.timeLine = new TimeLine();
+        this.lastTimeLine = new TimeLine();
+        this.lastBtnTimeLine = new TimeLine();
+
+        this.drawBg();
+        SoundManager.setMusicVolume(0.1);
+        SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
+        // this.drawNextBtn()
+
+        this.sence_bg.zOrder = 1
+        this.first_text.zOrder = 2
+        this.isShowing = true;
     }
 
     /**
@@ -66,7 +76,7 @@ export default class DrawHome {
         // 文字的动画过场
         this.drawText(this.textArr[0]);
         let i = 1;
-        let textInterval = setInterval(() => {
+        this.textInterval = setInterval(() => {
             // console.log(i)
             this.drawText(this.textArr[i], i);
             i++;
@@ -94,17 +104,14 @@ export default class DrawHome {
         this.first_text.text = textContent;
         // 如果是最后一个则不消失且显示下一步按钮
         if (index == this.textArr.length - 1) {
-            var timeLine = new TimeLine();
-            timeLine.addLabel("show", 0).to(this.first_text, { alpha: 1 }, 1000, null, 1000)
-            timeLine.play(0, false);
+            this.lastTimeLine.addLabel("show", 0).to(this.first_text, { alpha: 1 }, 1000, null, 1000)
+            this.lastTimeLine.play(0, false);
             this.drawNextBtn()
         } else {
-            this.timeLine = new TimeLine();
             this.timeLine.addLabel("show", 0).to(this.first_text, { alpha: 1 }, 1000, null, 2000)
                 .addLabel("hidden", 0).to(this.first_text, { alpha: 0 }, 1000, null, 1000)
             this.timeLine.play(0, false);
         }
-
     }
     // 绘制下一部按钮
     drawNextBtn() {
@@ -117,18 +124,18 @@ export default class DrawHome {
         this.next_btn.zOrder = 2
         this.next_btn.alpha = 0
         // 缓慢显示
-        var timeLine = new TimeLine();
-        timeLine.addLabel("show", 0).to(this.next_btn, { alpha: 1 }, 1000, null, 1000);
-        timeLine.play(0, false);
+        this.lastBtnTimeLine.addLabel("show", 0).to(this.next_btn, { alpha: 1 }, 1000, null, 1000);
+        this.lastBtnTimeLine.play(0, false);
     }
-
+    // 绘制跳过按钮
     drawNextTopBtn() {
         this.next_top_btn = new Sprite();
         this.next_top_btn.zOrder = 3;
         this.next_top_btn.alpha = 0;
-        DRAW.drawRoundedRectangle(this.next_top_btn, 0, 0, 150, 80, 40, '#fff');
-        this.next_top_btn.size(150,80)
-        this.next_top_btn.pos(570,30)
+        // DRAW.drawRoundedRectangle(this.next_top_btn, 0, 0, 150, 80, 40, '#fff');
+        this.next_top_btn.loadImage('assets/images/pass_btn.png')
+        this.next_top_btn.size(170, 92)
+        this.next_top_btn.pos(540, 40)
         Laya.stage.addChild(this.next_top_btn)
         this.next_top_btn.on(Event.CLICK, this, this.clickNext);
         Tween.to(this.next_top_btn, {
@@ -138,14 +145,20 @@ export default class DrawHome {
 
     // 点击进入下一关
     clickNext() {
-        this.timeLine.destroy()
+        SoundManager.stopAll();
+        clearInterval(this.textInterval);
+        this.timeLine.destroy();
+        this.lastTimeLine.destroy();
+        this.lastBtnTimeLine.destroy();
+        // debugger
         this.clearSp(this.sence_bg)
         this.clearSp(this.first_text)
         this.clearSp(this.next_btn)
         this.clearSp(this.next_top_btn)
         this.isShowing = false;
-        SoundManager.stopAllSound();
+
         let realLevel = Laya.LocalStorage.getItem('realLevel');
+
         if (realLevel == -1) {
             Laya.LocalStorage.setItem('realLevel', 0);
             $ob.emit('nextGame', true);
@@ -154,26 +167,12 @@ export default class DrawHome {
         }
     }
 
-    //显示0关
-    showStartSence() {
-        if (this.isShowing) return;
-
-        this.drawBg();
-        SoundManager.setMusicVolume(0.1);
-        SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
-        // this.drawNextBtn()
-
-        // this.sence_bg.zOrder = 1
-        // this.first_text.zOrder = 2
-        this.isShowing = true;
-    }
-
     clearSp(sp, alpha = 1) {
         console.log(sp);
         if (!sp) return;
         Tween.from(sp, { alpha: alpha }, 500).to(sp, { alpha: 0 }, 800);
         setTimeout(() => {
-            sp.destroy()
+            // sp.destroy()
         }, 1500);
     }
 

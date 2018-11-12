@@ -1,6 +1,7 @@
 import DrawGame from './draw/drawPlace'
 import DrawHome from './draw/drawHome'
 import GameConfig from './GameConfig';
+import DRAW from './lib/graphics';
 
 (function () {
     var Sprite = Laya.Sprite;
@@ -17,7 +18,8 @@ import GameConfig from './GameConfig';
     // var pageHeight = Browser.clientHeight;
     var pageWidth = 750;
     var pageHeight = 1334;
-    var loadBG, loadTiao;
+    var loadBG, loadLogo, loadText;
+
 
 
     (function () {
@@ -30,13 +32,13 @@ import GameConfig from './GameConfig';
         Laya.stage.alignH = Stage.ALIGN_CENTER;
         Laya.stage.screenAdaptationEnabled = true;
         Laya.stage.screenMode = "none";
-        if (Laya.Browser.onPC || Laya.Browser.onIPad ) {
+        if (Laya.Browser.onPC || Laya.Browser.onIPad) {
             Laya.stage.scaleMode = "showall";
         } else {
             Laya.stage.scaleMode = "fixedwidth";
         }
         // Laya.stage.scaleMode = Stage.SCALE_FIXED_WIDTH; //fixedwidth | fixedauto | full | showall
-        Laya.stage.bgColor = "#4c58ae";
+        Laya.stage.bgColor = "#736bc5";
         downLoadMedia()
 
         // 创建一个发布订阅模式
@@ -78,7 +80,7 @@ import GameConfig from './GameConfig';
         // 加载images下的文件
         let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'alert_fail_bg.png', 'sence-0_bg.png',
             'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card-0-bg.png", 'alert_fail_mask.png',
-            'card-bg.png', 'logo_title.png', 'home_bg.png', 'card-bg-lock.png',
+            'card-bg.png', 'home_bg.png', 'card-bg-lock.png', 'pass_btn.png', 'item-1-active-no.png',
             'home_right.png', 'home_right_more.png', 'home_left.png', 'home_left_more.png', 'next_btn.png', 'item-enter.png'
         ];
         imgNames.map(item => {
@@ -100,80 +102,56 @@ import GameConfig from './GameConfig';
 
         // console.log(assets)
         //加载
-        Laya.loader.load(assets, Handler.create(this, init), Handler.create(this, onLoading, null, false), Loader.TEXT);
+        Laya.loader.load('assets/images/logo_title2.png', Handler.create(this, function () {
+            Laya.loader.load(assets, Handler.create(this, init), Handler.create(this, onLoading, null, false), Loader.TEXT);
+        }))
+
         // 侦听加载失败
         Laya.loader.on(Event.ERROR, this, onError);
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // 绘制顶部logo
+        loadLogo = new Sprite();
+        Laya.stage.addChild(loadLogo);
+        loadLogo.size(323, 103)
+        loadLogo.pos(222, 340)
+        loadLogo.loadImage('assets/images/logo_title2.png')
+        // 绘制文字
+        loadText = new Laya.Text();
+        Laya.stage.addChild(loadText);
+        loadText.width = 750;
+        loadText.y = 480;
+        loadText.fontSize = 35;
+        loadText.align = 'center';
+        loadText.text = '建议佩戴耳机';
+        loadText.color = "#ccc";
+
         //绘制进度条
         loadBG = new Sprite();
         Laya.stage.addChild(loadBG);
-        var path = [
-            ["moveTo", 8, 0], //画笔的起始点，
-            ["arcTo", 0, 0, 0, 8, 8], //p1（500,0）为夹角B，（500,30）为端点p2
-            ["arcTo", 0, 16, 8, 16, 8],
-            ["lineTo", 200, 16],
-            ["arcTo", 208, 16, 208, 8, 8],
-            ["arcTo", 208, 0, 200, 0, 8],
-            ["lineTo", 8, 0]
-        ];
-        //绘制圆角矩形
-        loadBG.graphics.drawPath((pageWidth - 208) / 2, Math.round(pageHeight / 2.5) - 10, path, { fillStyle: "#cbefff" });
-        loadTiao = new Sprite();
-        Laya.stage.addChild(loadTiao);
-        var path = [
-            ["moveTo", 4, 0], //画笔的起始点，
-            ["arcTo", 0, 0, 0, 4, 4], //p1（500,0）为夹角B，（500,30）为端点p2
-            ["arcTo", 0, 8, 4, 8, 4],
-            ["lineTo", 4, 8],
-            ["arcTo", 8, 8, 8, 4, 4],
-            ["arcTo", 8, 0, 4, 0, 4],
-            ["lineTo", 4, 0]
-        ];
-        loadTiao.graphics.drawPath((pageWidth - 208) / 2 + 4, Math.round(pageHeight / 2.5) - 6, path, { fillStyle: "#4892b3" });
+        DRAW.drawRoundedRectangle(loadBG, 100, 650, 150, 80, 40, '#fff');
     }
 
     //加载静态资源完成，开始初始化游戏
     function init() {
         clearLoading()
         console.log('初始化游戏');
-        // console.log(DrawGame);
-        // new DrawGame();
-        new DrawHome();
+        // new DrawHome();
     }
 
     // 加载进度侦听器
     function onLoading(progress) {
-        progress = Math.round(progress * 100);
-        //console.log("加载进度: " + progress);
-        // loadTiao.graphics.clear();
-        var OnePercent = (192 - 4) / 100;//每百分之一进度的距离
-        var addPercent = Math.round(progress * OnePercent);//需要增加的百分比
-        var path = [
-            ["moveTo", 4, 0], //画笔的起始点，
-            ["arcTo", 0, 0, 0, 4, 4], //p1（500,0）为夹角B，（500,30）为端点p2
-            ["arcTo", 0, 8, 4, 8, 4],
-            ["lineTo", 192, 8],
-            ["arcTo", 200, 8, 200, 4, 4],
-            ["arcTo", 200, 0, 192, 0, 4],
-            ["lineTo", 4, 0]
-        ];
-        var path = [
-            ["moveTo", 4, 0], //画笔的起始点，
-            ["arcTo", 0, 0, 0, 4, 4], //p1（500,0）为夹角B，（500,30）为端点p2
-            ["arcTo", 0, 8, 4, 8, 4],
-            ["lineTo", 4 + addPercent, 8],
-            ["arcTo", 8 + addPercent, 8, 8 + addPercent, 4, 4],
-            ["arcTo", 8 + addPercent, 0, 4 + addPercent, 0, 4],
-            ["lineTo", 4, 0]
-        ];
-        loadTiao.graphics.drawPath((pageWidth - 208) / 2 + 4, Math.round(pageHeight / 2.5) - 6, path, { fillStyle: "#4892b3" });
+        let width = 578 * progress;
+        console.log(width)
+        loadBG.graphics.clear();
+        DRAW.drawRoundedRectangle(loadBG, 80, 700, width, 30, 15, '#44348c');
     }
 
     // 清除滚动条
     function clearLoading() {
-        loadTiao.graphics.clear();
-        loadBG.graphics.clear();
+        // loadLogo.graphics.clear();
+        // loadText.graphics.clear();
+        // loadBG.graphics.clear();
     }
 
     //打印加载失败日志

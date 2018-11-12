@@ -134,7 +134,7 @@ export default class DrawGame {
     drawTableBg() {
         // 画中心的方块组背景
         this.table_bg = new Laya.Sprite();
-        this.table_bg.size(this.tWidth, this.tHeight * 2);//一定要设置size才能监控事件 
+        this.table_bg.size(750, 1334);//一定要设置size才能监控事件
         Laya.stage.addChild(this.table_bg);
         this.table_bg.alpha = 0.2
         this.table_bg.zOrder = 3;
@@ -366,7 +366,7 @@ export default class DrawGame {
         this.isLock = getNum(this.level).lock;
 
         let xArr = [150, 80, 40, 40, 40, 40, 40, 40];
-        let yArr = [400, 300, 250, 250, 250, 250, 250, 250,250]
+        let yArr = [400, 300, 250, 250, 250, 250, 250, 250, 250]
         this.x = xArr[this.row - 2];
         this.y = yArr[this.col - 1];
 

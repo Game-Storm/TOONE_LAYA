@@ -39,7 +39,7 @@ let gameData = [
         num: 0.233
     },
     {
-        num: 0.25
+        num: 0.265
     },
     {
         num: 0.26
@@ -132,7 +132,7 @@ let gameData = [
         num: 0.73
     },
     {
-        num: 0.75
+        num: 0.74
     },
     {
         num: 0.76
@@ -194,7 +194,7 @@ function getNum(level) {
     let arr = toBinaryLists(num)
     arr.row = getRow(Number(level))
     arr.col = getCol(Number(level))
-    arr.lock = Number(level) < 10 ? false : true
+    arr.lock = Number(level) < 15 ? false : true
     arr.items = arr.map(item => {
         return {
             num: item,

@@ -82,7 +82,7 @@ export default class DrawHome {
         this.initAnimate();
         SoundManager.autoStopMusic = false;
         SoundManager.setMusicVolume(1);
-
+        SoundManager.playMusic('assets/music/steven.mp3', 0)
     }
     /**
      * 加载动画
@@ -456,6 +456,7 @@ export default class DrawHome {
     returnHome() {
         this.isHome = true;
         SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
+        SoundManager.playMusic('assets/music/steven.mp3', 0)
         // debugger
     }
 }

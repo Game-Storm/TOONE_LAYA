@@ -92,7 +92,7 @@ import DRAW from './lib/graphics';
 
         // 添加音效
         let soundNames = ['shua.mp3', 'dong.mp3', "zhuanchang.mp3", "dao.mp3", "dianzi.mp3", "load.mp3",
-            "output.mp3", 'win.mp3']
+            "output.mp3", 'win.mp3', 'steven.mp3']
         soundNames.map(item => {
             assets.push({
                 url: 'assets/music/' + item,

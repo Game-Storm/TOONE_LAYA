@@ -24,6 +24,7 @@ export default class DrawHome {
         this.sence_bg = ""
         this.first_text = ""
         this.next_btn = ""
+        this.next_top_btn = ""
 
         this.textArr = [
             "十八世纪\n德国数理大师莱布尼兹发现了二进制",
@@ -38,13 +39,13 @@ export default class DrawHome {
         ]
         this.isShowing = false
 
+        this.timeLine=""
+
 
         this.init()
     }
     init() {
-        // Laya.LocalStorage.setItem("item", str);
         this.showStartSence()
-        // Laya.LocalStorage.setItem("realLevel", 0.02);
     }
 
     /**
@@ -66,11 +67,15 @@ export default class DrawHome {
         this.drawText(this.textArr[0]);
         let i = 1;
         let textInterval = setInterval(() => {
-            console.log(i)
+            // console.log(i)
             this.drawText(this.textArr[i], i);
             i++;
             if (i > this.textArr.length - 1) clearInterval(textInterval)
         }, 5000)
+
+        if (Laya.LocalStorage.getItem('realLevel') >= 0) {
+            this.drawNextTopBtn()
+        }
     }
     // 绘制顶部文字
     drawText(textContent, index) {
@@ -94,10 +99,10 @@ export default class DrawHome {
             timeLine.play(0, false);
             this.drawNextBtn()
         } else {
-            var timeLine = new TimeLine();
-            timeLine.addLabel("show", 0).to(this.first_text, { alpha: 1 }, 1000, null, 2000)
+            this.timeLine = new TimeLine();
+            this.timeLine.addLabel("show", 0).to(this.first_text, { alpha: 1 }, 1000, null, 2000)
                 .addLabel("hidden", 0).to(this.first_text, { alpha: 0 }, 1000, null, 1000)
-            timeLine.play(0, false);
+            this.timeLine.play(0, false);
         }
 
     }
@@ -106,8 +111,8 @@ export default class DrawHome {
         this.next_btn = new Sprite();
         this.next_btn.pos(304, 900);
         this.next_btn.size(142, 106);
-        Laya.stage.addChild(this.next_btn)
-        this.next_btn.loadImage('assets/images/next_btn.png')
+        Laya.stage.addChild(this.next_btn);
+        this.next_btn.loadImage('assets/images/next_btn.png');
         this.next_btn.on(Event.CLICK, this, this.clickNext);
         this.next_btn.zOrder = 2
         this.next_btn.alpha = 0
@@ -116,20 +121,37 @@ export default class DrawHome {
         timeLine.addLabel("show", 0).to(this.next_btn, { alpha: 1 }, 1000, null, 1000);
         timeLine.play(0, false);
     }
+
+    drawNextTopBtn() {
+        this.next_top_btn = new Sprite();
+        this.next_top_btn.zOrder = 3;
+        this.next_top_btn.alpha = 0;
+        DRAW.drawRoundedRectangle(this.next_top_btn, 0, 0, 150, 80, 40, '#fff');
+        this.next_top_btn.size(150,80)
+        this.next_top_btn.pos(570,30)
+        Laya.stage.addChild(this.next_top_btn)
+        this.next_top_btn.on(Event.CLICK, this, this.clickNext);
+        Tween.to(this.next_top_btn, {
+            alpha: 1
+        }, 700, Ease.linearIn, null, 1000)
+    }
+
     // 点击进入下一关
     clickNext() {
-        this.sence_bg.zOrder = -2
-        this.first_text.zOrder = -1
-        this.next_btn.zOrder = -1
+        this.timeLine.destroy()
+        this.clearSp(this.sence_bg)
+        this.clearSp(this.first_text)
+        this.clearSp(this.next_btn)
+        this.clearSp(this.next_top_btn)
         this.isShowing = false;
         SoundManager.stopAllSound();
         let realLevel = Laya.LocalStorage.getItem('realLevel');
         if (realLevel == -1) {
             Laya.LocalStorage.setItem('realLevel', 0);
             $ob.emit('nextGame', true);
-        }else{
+        } else {
             $ob.emit('nextGame')
-        }   
+        }
     }
 
     //显示0关
@@ -141,9 +163,18 @@ export default class DrawHome {
         SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
         // this.drawNextBtn()
 
-        this.sence_bg.zOrder = 1
-        this.first_text.zOrder = 2
+        // this.sence_bg.zOrder = 1
+        // this.first_text.zOrder = 2
         this.isShowing = true;
+    }
+
+    clearSp(sp, alpha = 1) {
+        console.log(sp);
+        if (!sp) return;
+        Tween.from(sp, { alpha: alpha }, 500).to(sp, { alpha: 0 }, 800);
+        setTimeout(() => {
+            sp.destroy()
+        }, 1500);
     }
 
     /**

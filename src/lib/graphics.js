@@ -27,6 +27,6 @@ export default {
         ], {
                 fillStyle: fill || '#ff0000'
             }, )
-    }
+    },
 }
 

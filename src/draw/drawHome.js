@@ -62,15 +62,19 @@ export default class DrawHome {
     init() {
         if (!Laya.LocalStorage.getItem("realLevel")) {
             Laya.LocalStorage.setItem("realLevel", -1);
-            this.realLevel = 0;
+            this.realLevel = -1;
         } else {
             this.realLevel = Number(Laya.LocalStorage.getItem("realLevel"))
         }
 
         this.drawBg();
         this.drawCard();
-        this.drawBottomBtn();
-        this.drawTopProgress();
+
+        if (this.realLevel >= 0) {
+            this.drawBottomBtn();
+            this.drawTopProgress();
+        }
+
         $ob.on('nextGame', [this.goNextGame, this]);
         // $ob.on('nextGame', [this.goNextGame, this]);
         $ob.on('returnHome', [this.returnHome, this]);
@@ -94,8 +98,8 @@ export default class DrawHome {
     drawBg() {
         this.game_bg = new Laya.Sprite();
         console.log(Browser.height)
-        this.game_bg.size(750,1334);
-        this.game_bg.top=0;
+        this.game_bg.size(750, 1334);
+        this.game_bg.top = 0;
         Laya.stage.addChild(this.game_bg);
         this.game_bg.loadImage('assets/images/home_bg.png');
         // 绘制标题
@@ -208,6 +212,7 @@ export default class DrawHome {
     }
     // 绘制顶部进度条
     drawTopProgress() {
+
         this.progress_bg = new Sprite();
         this.progress_bg.graphics.drawRect(0, 0, 750, 30, '#a984ec');
         this.progress_bg.alpha = 0.5;
@@ -223,6 +228,16 @@ export default class DrawHome {
         this.level_text.align = "center"
         this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`
         Laya.stage.addChild(this.level_text);
+        this.drawTopProgressActive();
+    }
+    drawTopProgressActive() {
+        let aWidth = this.realLevel / (gameData.length - 1) * 750
+        console.log(aWidth)
+        this.progress_active = new Sprite();
+        this.progress_active.graphics.drawCircle(aWidth, 15, 15, '#8e2f7e');
+        this.progress_active.graphics.drawRect(0, 0, aWidth, 30, '#8e2f7e');
+        // this.progress_active.size(100, 30);
+        Laya.stage.addChild(this.progress_active);
     }
     //绘制底部按钮
     drawBottomBtn() {
@@ -417,7 +432,11 @@ export default class DrawHome {
                 this.card_bg.zOrder = 1;
                 showWinNumLine.play(0, false);
                 showWinCardLine.play(0, false);
-
+                this.drawTopProgressActive();
+                if (this.realLevel == 0) {
+                    this.drawBottomBtn();
+                    this.drawTopProgress();
+                }
             }, 2000);
 
             setTimeout(() => {

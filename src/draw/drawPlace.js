@@ -122,7 +122,7 @@ export default class DrawGame {
     drawPlace() {
         // 画游戏的背景布
         this.game_bg = new Laya.Sprite();
-        this.game_bg.size(750, Browser.height);
+        this.game_bg.size(750, 1334);
         Laya.stage.addChild(this.game_bg);
         this.game_bg.loadImage('assets/images/game_bg1.png');
         this.game_bg.alpha = 0;
@@ -364,9 +364,8 @@ export default class DrawGame {
         this.col = getNum(this.level).col;
         this.row = getNum(this.level).row;
 
-        this.x = 40;
+        this.x = this.col > 3 ? 40 : 80;
         this.y = 250;
-
 
         this.gab = 20 + (4 - this.row) * 5
         this.tWidth = 750 - 2 * this.x;//桌面宽度

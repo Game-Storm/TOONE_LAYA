@@ -129,14 +129,14 @@ import DRAW from './lib/graphics';
         //绘制进度条
         loadBG = new Sprite();
         Laya.stage.addChild(loadBG);
-        DRAW.drawRoundedRectangle(loadBG, 100, 650, 150, 80, 40, '#fff');
+        // DRAW.drawRoundedRectangle(loadBG, 100, 650, 150, 80, 40, '#fff');
     }
 
     //加载静态资源完成，开始初始化游戏
     function init() {
         clearLoading()
         console.log('初始化游戏');
-        // new DrawHome();
+        new DrawHome();
     }
 
     // 加载进度侦听器
@@ -149,9 +149,9 @@ import DRAW from './lib/graphics';
 
     // 清除滚动条
     function clearLoading() {
-        // loadLogo.graphics.clear();
-        // loadText.graphics.clear();
-        // loadBG.graphics.clear();
+        loadLogo.graphics.clear();
+        loadText.graphics.clear();
+        loadBG.graphics.clear();
     }
 
     //打印加载失败日志

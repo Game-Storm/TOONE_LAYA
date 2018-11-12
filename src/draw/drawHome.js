@@ -93,7 +93,9 @@ export default class DrawHome {
     // 绘制背景
     drawBg() {
         this.game_bg = new Laya.Sprite();
-        this.game_bg.size(750, Browser.height);
+        console.log(Browser.height)
+        this.game_bg.size(750,1334);
+        this.game_bg.top=0;
         Laya.stage.addChild(this.game_bg);
         this.game_bg.loadImage('assets/images/home_bg.png');
         // 绘制标题

@@ -19,15 +19,23 @@ import GameConfig from './GameConfig';
     var pageHeight = 1334;
     var loadBG, loadTiao;
 
+
     (function () {
         // 不支持WebGL时自动切换至Canvas
         Laya.init(pageWidth, pageHeight, WebGL);
         //性能统计面板的调用
         // Laya.Stat.show(0,0);
+        console.log(Browser.clientHeight, Browser.pixelRatio)
         Laya.stage.alignV = Stage.ALIGN_MIDDLE;
         Laya.stage.alignH = Stage.ALIGN_CENTER;
         Laya.stage.screenAdaptationEnabled = true;
-        Laya.stage.scaleMode = "fixedwidth";
+        Laya.stage.screenMode = "none";
+        if (Laya.Browser.onPC || Laya.Browser.onIPad ) {
+            Laya.stage.scaleMode = "showall";
+        } else {
+            Laya.stage.scaleMode = "fixedwidth";
+        }
+        // Laya.stage.scaleMode = Stage.SCALE_FIXED_WIDTH; //fixedwidth | fixedauto | full | showall
         Laya.stage.bgColor = "#4c58ae";
         downLoadMedia()
 
@@ -70,7 +78,7 @@ import GameConfig from './GameConfig';
         // 加载images下的文件
         let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'alert_fail_bg.png', 'sence-0_bg.png',
             'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card-0-bg.png", 'alert_fail_mask.png',
-             'card-bg.png', 'logo_title.png', 'home_bg.png', 'card-bg-lock.png',
+            'card-bg.png', 'logo_title.png', 'home_bg.png', 'card-bg-lock.png',
             'home_right.png', 'home_right_more.png', 'home_left.png', 'home_left_more.png', 'next_btn.png', 'item-enter.png'
         ];
         imgNames.map(item => {

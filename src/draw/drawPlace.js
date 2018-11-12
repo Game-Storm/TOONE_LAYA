@@ -37,7 +37,6 @@ export default class DrawGame {
         // this.topSp = ""
         this.refreshSp = ""
         this.returnSp = ""
-        // this.numScreenSp = ""
         this.failBgSp = ""
         this.failMaskSp = ""
         this.failRefresh = ""
@@ -357,13 +356,18 @@ export default class DrawGame {
 
     // 格式化棋盘
     refreshTable() {
-        console.log('执行了！！！')
+        // console.log('执行了！！！')
         this.pNow = [0, 0];
         this.level = Laya.LocalStorage.getItem('gameLevel');
-        // console.log(this.level)
+
         this.numData = getNum(this.level).items;
         this.col = getNum(this.level).col;
         this.row = getNum(this.level).row;
+
+        this.x = 40;
+        this.y = 250;
+
+
         this.gab = 20 + (4 - this.row) * 5
         this.tWidth = 750 - 2 * this.x;//桌面宽度
         this.iWidth = (this.tWidth - (this.row + 1) * this.gab) / this.row;//单个的高度
@@ -499,7 +503,6 @@ export default class DrawGame {
         this.slideBlock = ""
         // 事件监听失效
         this.isGaming = false;
-
     }
     // 封装clear的事件
     clearSp(sp, alpha = 1) {

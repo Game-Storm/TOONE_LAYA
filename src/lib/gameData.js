@@ -220,7 +220,7 @@ function getCol(level) {
     else if (level <= 5) return 2;
     else if (level <= 10) return 3;
     else if (level <= 25) return 4;
-    else if (nlevel <= 35) return 5;
+    else if (level <= 35) return 5;
     else if (level <= 40) return 6;
     else if (level <= 48) return 7;
     else if (level <= 60) return 7;

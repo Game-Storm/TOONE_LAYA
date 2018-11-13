@@ -40,8 +40,7 @@ export default class DrawHome {
 
         this.left = ""
         this.right = ""
-        this.left_more = ""
-        this.right_more = ""
+        this.refresh = ""
         this.level_text = ""
         this.progress_bg = ""
         this.progress_active = ""
@@ -81,7 +80,7 @@ export default class DrawHome {
 
         this.initAnimate();
         SoundManager.autoStopMusic = false;
-        SoundManager.setMusicVolume(1);
+        SoundManager.setMusicVolume(0.6);
         SoundManager.playMusic('assets/music/steven.mp3', 0)
     }
     /**
@@ -142,9 +141,9 @@ export default class DrawHome {
             this.num.align = "center";
             this.num.alpha = 0.8;
             this.num.zOrder = 1;
-            var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
-            //设置滤镜集合为发光滤镜
-            this.num.filters = [glowFilter];
+            // var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
+            // //设置滤镜集合为发光滤镜
+            // this.num.filters = [glowFilter];
             Laya.stage.addChild(this.num);
             this.gameLevel = this.gameLevel == '' ? this.realLevel + 1 : this.gameLevel
             this.num.text = gameData[this.gameLevel].num;
@@ -195,9 +194,9 @@ export default class DrawHome {
             this.num_next.y = 640;
             this.num_next.align = "center";
             this.num_next.alpha = 0.8;
-            var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
-            //设置滤镜集合为发光滤镜
-            this.num_next.filters = [glowFilter];
+            // var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
+            // //设置滤镜集合为发光滤镜
+            // this.num_next.filters = [glowFilter];
             Laya.stage.addChild(this.num_next);
         }
         this.num_next.text = text;
@@ -241,34 +240,29 @@ export default class DrawHome {
     }
     //绘制底部按钮
     drawBottomBtn() {
-        this.left_more = new Sprite()
-        Laya.stage.addChild(this.left_more);
-        this.left_more.loadImage('assets/images/home_left_more.png');
-        this.left_more.size(122, 91);
-        this.left_more.pos(94, 975)
-        this.left_more.on(Event.CLICK, this, this.changeLevel);
+
 
         this.left = new Sprite();
         Laya.stage.addChild(this.left);
         this.left.loadImage('assets/images/home_left.png');
         this.left.size(122, 91);
-        this.left.pos(241, 975);
+        this.left.pos(138, 975);
         this.left.name = "left"
-        this.left.on(Event.CLICK, this, this.changeLevel);
+        this.left.on(Event.CLICK, this, this.changeLevel, [-1]);
+
+        this.refresh = new Sprite()
+        Laya.stage.addChild(this.refresh);
+        this.refresh.loadImage('assets/images/refresh-card.png');
+        this.refresh.size(157, 119);
+        this.refresh.pos(288, 961)
+        this.refresh.on(Event.CLICK, this, this.changeLevel);
 
         this.right = new Sprite()
         Laya.stage.addChild(this.right);
         this.right.loadImage('assets/images/home_right.png');
         this.right.size(122, 91);
-        this.right.pos(388, 975);
-        this.right.on(Event.CLICK, this, this.changeLevel);
-
-        this.right_more = new Sprite()
-        Laya.stage.addChild(this.right_more);
-        this.right_more.loadImage('assets/images/home_right_more.png');
-        this.right_more.size(122, 91);
-        this.right_more.pos(535, 975);
-        this.right_more.on(Event.CLICK, this, this.changeLevel);
+        this.right.pos(473, 975);
+        this.right.on(Event.CLICK, this, this.changeLevel, [1]);
     }
     /**
      * 逻辑处理
@@ -302,28 +296,24 @@ export default class DrawHome {
         this.isHome = false
     }
     // 切换关卡
-    changeLevel(e) {
+    changeLevel(change) {
+        // console.log('-------')
+        console.log(change)
         if (this.isAnimating) return;
         let isUp = true;//是否是向下滑卡片？
         // 修改关卡
-        let x = Laya.stage.mouseX;
-        console.log(x)
-        if (x < 240) {
-            if (this.gameLevel - 10 < 0) return;
-            this.gameLevel = this.gameLevel - 10;
-            isUp = false;
-        } else if (x < 380) {
+        if (change == -1) {
             if (this.gameLevel - 1 < 0) return;
             this.gameLevel--;
             isUp = false;
-        } else if (x < 530) {
+        } else if (change == 1) {
             if (this.gameLevel + 1 >= gameData.length) return;
             this.gameLevel++;
         } else {
-            if (this.gameLevel + 10 >= gameData.length) return;
-            this.gameLevel = this.gameLevel + 10;
+            if (this.gameLevel == this.realLevel + 1) return;
+            if (this.gameLevel > this.realLevel + 1) isUp = false
+            this.gameLevel = this.realLevel + 1;
         }
-
         // 绘制底下的卡片
         let next_url = "", color = "", text = "";
 
@@ -351,27 +341,27 @@ export default class DrawHome {
         this.drawNextCard(next_url, text, color, isUp, symbol);
         if (isUp) {
             this.changeCard_timeline = new TimeLine();
-            this.changeCard_timeline.addLabel("big", 0).to(this.card_bg, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 390 }, 200, null, 0)
+            this.changeCard_timeline.addLabel("big", 0).to(this.card_bg, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 390 }, 100, null, 0)
                 .addLabel("small", 0).to(this.card_bg, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 307 - 800 * symbol }, 300, null, 0);
             // 卡片切换时文字动效
             this.changeNum_timeline = new TimeLine();
-            this.changeNum_timeline.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 340 }, 200, null, 0)
+            this.changeNum_timeline.addLabel("big", 0).to(this.num, { scaleX: 1.06, scaleY: 1.05, rotation: 10 * symbol, x: 340 }, 100, null, 0)
                 .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 325 - 800 * symbol }, 300, null, 0);
         } else {
             this.changeCard_timeline = new TimeLine();
             this.changeCard_timeline.addLabel("big", 0).to(this.card_bg_next, { scaleX: 1.06, scaleY: 1.05, rotation: -10 * symbol, x: 375 }, 300, null, 0)
-                .addLabel("big", 0).to(this.card_bg_next, { scaleX: 1, scaleY: 1, rotation: 0, x: 375 }, 200, null, 0)
+                .addLabel("big", 0).to(this.card_bg_next, { scaleX: 1, scaleY: 1, rotation: 0, x: 375 }, 100, null, 0)
             // 卡片切换时文字动效
             this.changeNum_timeline = new TimeLine();
             this.changeNum_timeline.addLabel("big", 0).to(this.num_next, { scaleX: 1.06, scaleY: 1.05, rotation: -10 * symbol, x: 325 }, 300, null, 0)
-                .addLabel("big", 0).to(this.num_next, { scaleX: 1, scaleY: 1, rotation: 0, x: 325 }, 200, null, 0)
+                .addLabel("big", 0).to(this.num_next, { scaleX: 1, scaleY: 1, rotation: 0, x: 325 }, 100, null, 0)
         }
 
         this.changeCard_timeline.play(0, false);
         this.changeNum_timeline.play(0, false);
         this.isAnimating = true;
 
-        SoundManager.playSound("assets/music/shua.mp3", 1, null, null, 13);
+        // SoundManager.playSound("assets/music/shua.mp3", 1, null, null, 13);
 
         setTimeout(() => {
             this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`;

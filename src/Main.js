@@ -39,7 +39,11 @@ import DRAW from './lib/graphics';
         }
         // Laya.stage.scaleMode = Stage.SCALE_FIXED_WIDTH; //fixedwidth | fixedauto | full | showall
         Laya.stage.bgColor = "#736bc5";
-        downLoadMedia()
+        // 首先加载位图文件，然后在进入加载页
+        var mBitmapFont = new Laya.BitmapFont();
+        mBitmapFont.loadFont("font/myFont.fnt", new Laya.Handler(this, downLoadMedia));
+        mBitmapFont.setSpaceWidth(10);
+        Laya.Text.registerBitmapFont('din', mBitmapFont);
 
         // 创建一个发布订阅模式
         function Observer2() {
@@ -80,8 +84,8 @@ import DRAW from './lib/graphics';
         // 加载images下的文件
         let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'alert_fail_bg.png', 'sence-0_bg.png',
             'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card-0-bg.png", 'alert_fail_mask.png',
-            'card-bg.png', 'home_bg.png', 'card-bg-lock.png', 'pass_btn.png', 'item-1-active-no.png','refresh-card.png',
-            'home_right.png', 'home_left.png',  'next_btn.png', 'item-enter.png'
+            'card-bg.png', 'home_bg.png', 'card-bg-lock.png', 'pass_btn.png', 'item-1-active-no.png', 'refresh-card.png',
+            'home_right.png', 'home_left.png', 'next_btn.png', 'item-enter.png'
         ];
         imgNames.map(item => {
             assets.push({
@@ -92,7 +96,7 @@ import DRAW from './lib/graphics';
 
         // 添加音效
         let soundNames = ['shua.mp3', 'dong.mp3', "zhuanchang.mp3", "dao.mp3", "dianzi.mp3", "load.mp3",
-            "output.mp3", 'steven.mp3','enter.mp3']
+            "output.mp3", 'steven.mp3', 'enter.mp3']
         soundNames.map(item => {
             assets.push({
                 url: 'assets/music/' + item,

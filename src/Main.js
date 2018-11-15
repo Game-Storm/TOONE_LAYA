@@ -43,7 +43,7 @@ import DRAW from './lib/graphics';
         var mBitmapFont = new Laya.BitmapFont();
         mBitmapFont.loadFont("font/myFont.fnt", new Laya.Handler(this, downLoadMedia));
         mBitmapFont.setSpaceWidth(10);
-        Laya.Text.registerBitmapFont('din', mBitmapFont);
+        Laya.Text.registerBitmapFont('din1', mBitmapFont);
 
         // 创建一个发布订阅模式
         function Observer2() {
@@ -146,7 +146,7 @@ import DRAW from './lib/graphics';
     // 加载进度侦听器
     function onLoading(progress) {
         let width = 578 * progress;
-        console.log(width)
+        // console.log(width)
         loadBG.graphics.clear();
         DRAW.drawRoundedRectangle(loadBG, 80, 700, width, 30, 15, '#44348c');
     }

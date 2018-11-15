@@ -298,7 +298,7 @@ export default class DrawGame {
         this.tipText = new Text()
         Laya.stage.addChild(this.tipText);
         this.tipText.text = "二进制转码中...";
-        this.tipText.font = "din";
+        // this.tipText.font = "din";
         this.tipText.bold = true;
         this.tipText.fontSize = 40;
         this.tipText.width = 750;
@@ -592,7 +592,7 @@ export default class DrawGame {
 
                     this.clearSp(this.returnSp)
                     this.clearSp(this.refreshSp)
-                    this.clearSp(this.table_bg, 0.5)
+                    this.clearSp(this.table_bg, 0.8)
 
                 } else {
                     Tween.to(this.itemsSprite[i][j], {

@@ -44,6 +44,8 @@ export default class DrawHome {
         this.level_text = ""
         this.progress_bg = ""
         this.progress_active = ""
+        this.bottombtnlists = []
+        this.bottombtnBg = []
 
         // 动画
         this.timeLine = ""
@@ -72,6 +74,7 @@ export default class DrawHome {
         if (this.realLevel >= 0) {
             this.drawBottomBtn();
             this.drawTopProgress();
+            this.drawBottomFourBtn();
         }
 
         $ob.on('nextGame', [this.goNextGame, this]);
@@ -81,7 +84,8 @@ export default class DrawHome {
         this.initAnimate();
         SoundManager.autoStopMusic = false;
         SoundManager.setMusicVolume(0.6);
-        SoundManager.playMusic('assets/music/steven.mp3', 0)
+        SoundManager.playMusic('assets/music/steven.mp3', 0);
+
     }
     /**
      * 加载动画
@@ -127,7 +131,7 @@ export default class DrawHome {
         } else {
             this.card_bg.loadImage(next_url);
         }
-        this.card_bg.pos(375, 520);
+        this.card_bg.pos(375, 510);
         this.card_bg.pivot(307, 408);
         this.card_bg.rotation = 0;
 
@@ -160,7 +164,7 @@ export default class DrawHome {
         }
         this.num.pivot(245, 0);
         this.num.x = 325;
-        this.num.y = 620;
+        this.num.y = 610;
         this.num.rotation = 0;
 
     }
@@ -170,7 +174,7 @@ export default class DrawHome {
         if (!this.card_bg_next) {
             this.card_bg_next = new Laya.Sprite();
             this.card_bg_next.size(615, 817);
-            this.card_bg_next.pos(375, 520);
+            this.card_bg_next.pos(375, 510);
             this.card_bg_next.pivot(307, 408);
             Laya.stage.addChild(this.card_bg_next);
         }
@@ -192,7 +196,7 @@ export default class DrawHome {
             this.num_next.width = 590;
             this.num_next.pivot(245, 0);
             this.num_next.x = 325;
-            this.num_next.y = 620;
+            this.num_next.y = 610;
             this.num_next.align = "center";
             this.num_next.alpha = 0.8;
             // var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
@@ -224,7 +228,7 @@ export default class DrawHome {
         this.level_text.fontSize = 40;
         this.level_text.width = 750;
         this.level_text.x = 0
-        this.level_text.y = 80
+        this.level_text.y = 70
         this.level_text.align = "center"
         this.level_text.text = `- ${this.gameLevel + 1} / ${gameData.length} -`
         Laya.stage.addChild(this.level_text);
@@ -245,7 +249,7 @@ export default class DrawHome {
         Laya.stage.addChild(this.left);
         this.left.loadImage('assets/images/home_left.png');
         this.left.size(122, 91);
-        this.left.pos(138, 955);
+        this.left.pos(138, 935);
         this.left.name = "left"
         this.left.on(Event.CLICK, this, this.changeLevel, [-1]);
 
@@ -253,15 +257,37 @@ export default class DrawHome {
         Laya.stage.addChild(this.refresh);
         this.refresh.loadImage('assets/images/refresh-card.png');
         this.refresh.size(157, 119);
-        this.refresh.pos(288, 941)
+        this.refresh.pos(288, 921)
         this.refresh.on(Event.CLICK, this, this.changeLevel);
 
         this.right = new Sprite()
         Laya.stage.addChild(this.right);
         this.right.loadImage('assets/images/home_right.png');
         this.right.size(122, 91);
-        this.right.pos(473, 955);
+        this.right.pos(473, 935);
         this.right.on(Event.CLICK, this, this.changeLevel, [1]);
+    }
+    // 绘制底部四个按钮
+    drawBottomFourBtn() {
+        this.bottombtnBg = new Sprite();
+        this.bottombtnBg.graphics.drawRect(0, 1052, 750, 121, '#5e46a7');
+        this.bottombtnBg.alpha = 0.7;
+        Laya.stage.addChild(this.bottombtnBg);
+        let imagesUrl = ['pifu-icon.png', 'music-icon.png', 'world-icon.png', 'my-icon.png'];
+        // 音乐图标
+        var musicControl = Laya.LocalStorage.getItem('music');
+        if (musicControl == 'off') {
+            SoundManager.muted = true;
+            imagesUrl[1]="music-icon-no.png"
+        }
+        for (let i = 0; i < 4; i++) {
+            this.bottombtnlists[i] = new Sprite();
+            this.bottombtnlists[i].size(112, 91);
+            this.bottombtnlists[i].pos(90 + i * (40 + 112), 1072);
+            this.bottombtnlists[i].loadImage('assets/images/' + imagesUrl[i]);
+            Laya.stage.addChild(this.bottombtnlists[i]);
+            this.bottombtnlists[i].on(Event.CLICK, this, this.clickBottomFour, [i + 1]);
+        }
     }
     /**
      * 逻辑处理
@@ -376,7 +402,6 @@ export default class DrawHome {
             this.isAnimating = false;
         }, 600)
     }
-
     // 回到首页进入下一关
     goNextGame(isNext) {
         this.isHome = true;
@@ -437,6 +462,7 @@ export default class DrawHome {
                 if (this.realLevel == 0) {
                     this.drawBottomBtn();
                     this.drawTopProgress();
+                    this.drawBottomFourBtn();
                 }
             }, 2000);
 
@@ -454,6 +480,36 @@ export default class DrawHome {
             this.timeLine2.play(0, true)
         }
     }
+    // 点击底部四个按钮
+    clickBottomFour(i) {
+        console.log(i)
+        if (i == 1) {
+
+        } else if (i == 2) {
+            // 音乐控制
+            var stopMusic = Laya.LocalStorage.getItem('music');
+            console.log(stopMusic);
+            // console.log(!Boolean(stopMusic));
+            if (stopMusic == 'off') {
+                // 开启音乐
+                this.bottombtnlists[1].loadImage('assets/images/music-icon.png');
+                Laya.LocalStorage.setItem('music', "on");
+                SoundManager.muted = false;
+            } else {
+                // 关闭音乐
+                console.log('开启')
+                this.bottombtnlists[1].loadImage('assets/images/music-icon-no.png');
+                Laya.LocalStorage.setItem('music', "off");
+                SoundManager.muted = true;
+            }
+
+        } else if (i == 3) {
+            this.StartSence = new DrawStartSence();
+        } else if (i == 4) {
+
+        }
+    }
+    // 返回主页
     returnHome() {
         this.isHome = true;
         SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);

@@ -497,12 +497,14 @@ export default class DrawHome {
                 this.bottombtnlists[1].loadImage('assets/images/music-icon.png');
                 Laya.LocalStorage.setItem('music', "on");
                 SoundManager.muted = false;
+                return;
             } else {
                 // 关闭音乐
                 console.log('开启')
                 this.bottombtnlists[1].loadImage('assets/images/music-icon-no.png');
                 Laya.LocalStorage.setItem('music', "off");
                 SoundManager.muted = true;
+                return;
             }
 
         } else if (i == 3) {

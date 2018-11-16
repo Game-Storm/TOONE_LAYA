@@ -211,7 +211,7 @@ function getNum(level) {
     let arr = toBinaryLists(num)
     arr.row = getRow(Number(level))
     arr.col = getCol(Number(level))
-    arr.lock = Number(level) < 15 ? false : true
+    arr.lock = Number(level) < 10 ? false : true
     arr.items = arr.map(item => {
         return {
             num: item,

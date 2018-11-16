@@ -137,9 +137,11 @@ export default class DrawSkin {
         let lock = Laya.LocalStorage.getItem('realLevel') < (skinLevel[i] - 1);
         if (lock) return;
         let oldi = Laya.LocalStorage.getItem('skin') - 1;
+        if (oldi == -1) oldi = 0;
         Laya.LocalStorage.setItem("skin", i + 1);
         this.items_bg[i].graphics.clear();
-        this.items_bg[oldi].graphics.clear();
+        // console.log(oldi);
+        if (oldi >= 0) this.items_bg[oldi].graphics.clear();
         DRAW.drawRoundedRectangle(this.items_bg[i], 0, 0, 220, 323, 15, getSkinBg(i + 1));
         DRAW.drawRoundedRectangle(this.items_bg[oldi], 0, 0, 220, 323, 15, getSkinBg(oldi + 1));
     }
@@ -156,7 +158,7 @@ export default class DrawSkin {
         this.clearSp(this.top_btn)
 
         for (let i = 0; i < 6; i++) {
-            this.clearSp(this.items_bg[i],0.4)
+            this.clearSp(this.items_bg[i], 0.4)
             this.clearSp(this.itemTextLists[i])
             this.clearSp(this.itemLists[i])
         }

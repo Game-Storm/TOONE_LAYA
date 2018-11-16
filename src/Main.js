@@ -85,7 +85,8 @@ import DRAW from './lib/graphics';
         let imgNames = ['item-0-active.png', 'item-0.png', 'item-1-active.png', 'alert_fail_bg.png', 'sence-0_bg.png',
             'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card-0-bg.png", 'alert_fail_mask.png',
             'card-bg.png', 'home_bg.png', 'card-bg-lock.png', 'pass_btn.png', 'item-1-active-no.png', 'refresh-card.png',
-            'home_right.png', 'home_left.png', 'next_btn.png', 'item-enter.png','card-1-lock.png'
+            'home_right.png', 'home_left.png', 'next_btn.png', 'item-enter.png', 'card-1-lock.png', 'music-icon-no.png',
+            'music-icon.png', 'my-icon.png', 'pifu-icon.png', 'world-icon.png'
         ];
         imgNames.map(item => {
             assets.push({

@@ -397,9 +397,9 @@ export default class DrawHome {
                 .addLabel("small", 0).to(this.num, { scaleX: 1, scaleY: 1, rotation: -50 * symbol, x: 325 - 1000 * symbol }, 200, null, 0);
             //绘制下一关的卡片 
             if (gameData[this.gameLevel].num == 1) {
-                this.drawNextCard('assets/images/card-bg-lock.png', gameData[this.gameLevel].num, '#514682', symbol)
-            } else {
                 this.drawNextCard('assets/images/card-1-lock.png', gameData[this.gameLevel].num, '#514682', symbol)
+            } else {
+                this.drawNextCard('assets/images/card-bg-lock.png', gameData[this.gameLevel].num, '#514682', symbol)
             }
 
             // SoundManager.playSound("assets/music/zhuanchang.mp3", 1, null, null, 13);

@@ -1,7 +1,7 @@
 // 创建主游戏场景
 import DRAW from '../lib/graphics';
 import GameConfig from "../GameConfig";
-import { getNum, gameData } from "../lib/gameData";
+import { getNum, gameData, getBlock } from "../lib/gameData";
 import DrawHome from "./drawHome";
 
 console.log(GameConfig)
@@ -34,7 +34,6 @@ export default class DrawGame {
         // 画布
         this.game_bg = ""
         this.table_bg = ""
-        // this.topSp = ""
         this.refreshSp = ""
         this.returnSp = ""
         this.failBgSp = ""
@@ -44,6 +43,11 @@ export default class DrawGame {
         this.slideBlock = ""
         this.numText = ""
         this.tipText = ""
+
+        // 皮肤
+        this.item_0_active = `assets/images/block-mini/item-0-active${getBlock()}.png`
+        this.item_1_active = `assets/images/block-mini/item-1-active${getBlock()}.png`
+        this.item_1_active_no = `assets/images/block-mini/item-1-active-no${getBlock()}.png`
 
         // 游戏数据
         this.level = ""
@@ -232,7 +236,7 @@ export default class DrawGame {
                 this.slideBlock = new Sprite()
                 Laya.stage.addChild(this.slideBlock);
                 this.slideBlock.zOrder = 4;
-                this.slideBlock.loadImage('assets/images/item-1-active-no.png');
+                this.slideBlock.loadImage(this.item_1_active_no);
                 this.slideBlock.size(this.iWidth, this.iWidth);
             }
             let toX = this.x + this.pNow[0] * (this.iWidth + this.gab) + this.gab, toY = this.y + this.pNow[1] * (this.iWidth + this.gab) + this.gab;
@@ -264,7 +268,7 @@ export default class DrawGame {
     drawItemBlock(i, j) {
         let url;
         if (j == this.pNow[0] && i == this.pNow[1]) {
-            url = this.arr[i][j].num == '0' ? 'assets/images/item-0-active.png' : `assets/images/item-1-active${this.isLock ? '' : '-no'}.png`;
+            url = this.arr[i][j].num == '0' ? this.item_0_active : (this.isLock ? this.item_1_active : this.item_1_active_no);
         } else if (this.arr[i][j].isUsed) {
             url = 'assets/images/item-1-lock.png'
         } else {

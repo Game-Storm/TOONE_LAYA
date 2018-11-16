@@ -249,9 +249,15 @@ function toBinaryLists(num) {
     let binary = num.toString(2).split('.')[1]
     return binary.split('');
 }
+// 获取当前是哪个色块
+function getBlock(string) {
+    Laya.LocalStorage.setItem('block', 4);
+    var type = Laya.LocalStorage.getItem('block');
+    return type == 0 ? '' : '-' + type;
+}
 
 module.exports = {
     getNum: getNum,
-    // getGameData: getGameData
-    gameData: gameData
+    gameData: gameData,
+    getBlock: getBlock
 }

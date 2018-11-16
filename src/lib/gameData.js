@@ -255,8 +255,7 @@ function toBinaryLists(num) {
 function getBlock() {
     // Laya.LocalStorage.setItem('block', 4);
     var type = Laya.LocalStorage.getItem('skin') - 1;
-    console.log(type)
-    return type == 0 ? '' : '-' + type;
+    return type > 0 ? '-' + type : '';
 }
 
 function getSkinBg(i) {

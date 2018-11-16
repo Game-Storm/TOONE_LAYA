@@ -273,7 +273,7 @@ export default class DrawHome {
     drawBottomFourBtn() {
         this.bottombtnBg = new Sprite();
         this.bottombtnBg.graphics.drawRect(0, 1052, 750, 121, '#5e46a7');
-        this.bottombtnBg.alpha = 0.7;
+        this.bottombtnBg.alpha = 0.5;
         Laya.stage.addChild(this.bottombtnBg);
         let imagesUrl = ['pifu-icon.png', 'music-icon.png', 'world-icon.png', 'my-icon.png'];
         // 音乐图标

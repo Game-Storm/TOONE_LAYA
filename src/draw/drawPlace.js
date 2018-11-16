@@ -227,7 +227,9 @@ export default class DrawGame {
             if (callback) {
                 setTimeout(() => {
                     this.drawTable(true, false);
-                    this.isGaming = true;
+                    setTimeout(()=>{
+                        this.isGaming = true;
+                    },500)   
                 }, 2300)
             }
         } else {

@@ -44,10 +44,7 @@ export default class DrawGame {
         this.numText = ""
         this.tipText = ""
 
-        // 皮肤
-        this.item_0_active = `assets/images/block-mini/item-0-active${getBlock()}.png`
-        this.item_1_active = `assets/images/block-mini/item-1-active${getBlock()}.png`
-        this.item_1_active_no = `assets/images/block-mini/item-1-active-no${getBlock()}.png`
+
 
         // 游戏数据
         this.level = ""
@@ -71,6 +68,11 @@ export default class DrawGame {
     }
     // 首次注册
     init() {
+        // 皮肤
+        this.item_0_active = `assets/images/block-mini/item-0-active${getBlock()}.png`
+        this.item_1_active = `assets/images/block-mini/item-1-active${getBlock()}.png`
+        this.item_1_active_no = `assets/images/block-mini/item-1-active-no${getBlock()}.png`
+
         // console.log('执行init');
         this.drawPlace()
         this.refreshTable()
@@ -227,9 +229,9 @@ export default class DrawGame {
             if (callback) {
                 setTimeout(() => {
                     this.drawTable(true, false);
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         this.isGaming = true;
-                    },500)   
+                    }, 500)
                 }, 2300)
             }
         } else {

@@ -5,6 +5,7 @@ import { getNum, gameData } from "../lib/gameData";
 import DrawGame from "./drawPlace";
 import DrawStartSence from './drawStartSence'
 import DrawNumPass from './drawNumPass'
+import DrawSkin from './drawSkin'
 
 var Sprite = Laya.Sprite;
 var Stage = Laya.Stage;
@@ -27,6 +28,7 @@ export default class DrawHome {
         this.GAME = ""
         this.StartSence = ""
         this.isHome = true
+        this.drawSkin = ""
 
         // 绘制有关的属性
         this.game_bg = ""
@@ -278,7 +280,7 @@ export default class DrawHome {
         var musicControl = Laya.LocalStorage.getItem('music');
         if (musicControl == 'off') {
             SoundManager.muted = true;
-            imagesUrl[1]="music-icon-no.png"
+            imagesUrl[1] = "music-icon-no.png"
         }
         for (let i = 0; i < 4; i++) {
             this.bottombtnlists[i] = new Sprite();
@@ -298,9 +300,9 @@ export default class DrawHome {
         if (!this.isHome) {
             return;
         }
-        console.log('ok')
+        // console.log('ok')
         if (this.gameLevel > this.realLevel + 1) return;
-        console.log('ok')
+        // console.log('ok')
         SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
         if (this.gameLevel == 0) {
             // 0关 初始场景
@@ -451,7 +453,6 @@ export default class DrawHome {
                 } else {
                     this.drawCard('assets/images/card-bg.png', gameData[this.gameLevel].num, '#f9dfc7');
                 }
-
                 this.card_bg.alpha = 0;
                 this.num.alpha = 0;
                 this.num.zOrder = 1;
@@ -484,7 +485,8 @@ export default class DrawHome {
     clickBottomFour(i) {
         console.log(i)
         if (i == 1) {
-
+            // 进入皮肤管理页
+            this.drawSkin = new DrawSkin()
         } else if (i == 2) {
             // 音乐控制
             var stopMusic = Laya.LocalStorage.getItem('music');
@@ -506,8 +508,8 @@ export default class DrawHome {
         } else if (i == 3) {
             this.StartSence = new DrawStartSence();
         } else if (i == 4) {
-
         }
+        this.isHome = false
     }
     // 返回主页
     returnHome() {

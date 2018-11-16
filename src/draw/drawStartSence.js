@@ -34,7 +34,6 @@ export default class DrawHome {
             "main_5.png",
         ]
         this.isShowing = false
-
         this.timeout = ""
         this.showStartSence()
     }

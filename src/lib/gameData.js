@@ -201,6 +201,8 @@ let gameData = [
         num: 1
     }
 ]
+let skinLevel = [0, 18, 35, 50, 62, 75];
+
 
 function getNum(level) {
     // console.log(level)
@@ -250,14 +252,31 @@ function toBinaryLists(num) {
     return binary.split('');
 }
 // 获取当前是哪个色块
-function getBlock(string) {
-    Laya.LocalStorage.setItem('block', 4);
-    var type = Laya.LocalStorage.getItem('block');
+function getBlock() {
+    // Laya.LocalStorage.setItem('block', 4);
+    var type = Laya.LocalStorage.getItem('skin') - 1;
+    console.log(type)
     return type == 0 ? '' : '-' + type;
+}
+
+function getSkinBg(i) {
+    let skin = Laya.LocalStorage.getItem('skin');
+    let realLevel = Laya.LocalStorage.getItem('realLevel');
+    if ((!skin && i == 1) || skin == i) {
+        return "f39700";
+    }
+    else if (realLevel < skinLevel[i - 1] - 1) {
+        return "#313131";
+    } else {
+        return "#3955df"
+    }
+
 }
 
 module.exports = {
     getNum: getNum,
+    skinLevel: skinLevel,
     gameData: gameData,
-    getBlock: getBlock
+    getBlock: getBlock,
+    getSkinBg: getSkinBg
 }

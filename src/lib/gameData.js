@@ -15,6 +15,9 @@ let gameData = [
         num: 0.08
     },
     {
+        num: 0.088
+    },
+    {
         num: 0.1
     },
     {
@@ -28,6 +31,9 @@ let gameData = [
     },
     {
         num: 0.17
+    },
+    {
+        num: 0.182
     },
     {
         num: 0.2
@@ -57,25 +63,34 @@ let gameData = [
         num: 0.3
     },
     {
-        num: 0.31
+        num: 0.31,
+
     },
     {
         num: 0.33
     },
     {
-        num: 0.35
+        num: 0.35,
+        last: [0, 2]
     },
     {
-        num: 0.37
+        num: 0.37,
+        last: [2, 3]
     },
     {
         num: 0.38
+    },
+    {
+        num: 0.388
     },
     {
         num: 0.39
     },
     {
         num: 0.41
+    },
+    {
+        num: 0.427
     },
     {
         num: 0.44
@@ -99,6 +114,12 @@ let gameData = [
         num: 0.556
     },
     {
+        num: 0.56
+    },
+    {
+        num: 0.571
+    },
+    {
         num: 0.58
     },
     {
@@ -114,7 +135,13 @@ let gameData = [
         num: 0.61
     },
     {
-        num: 0.62
+        num: 0.63
+    },
+    {
+        num: 0.64
+    },
+    {
+        num: 0.651
     },
     {
         num: 0.66
@@ -130,6 +157,9 @@ let gameData = [
     },
     {
         num: 0.7
+    },
+    {
+        num: 0.711
     },
     {
         num: 0.73
@@ -174,6 +204,9 @@ let gameData = [
         num: 0.86
     },
     {
+        num: 0.87
+    },
+    {
         num: 0.88
     },
     {
@@ -189,7 +222,16 @@ let gameData = [
         num: 0.92
     },
     {
+        num: 0.93
+    },
+    {
+        num: 0.94
+    },
+    {
         num: 0.95
+    },
+    {
+        num: 0.96
     },
     {
         num: 0.97
@@ -208,10 +250,12 @@ function getNum(level) {
     // console.log(level)
     // console.log(gameData[Number(level)])
     let num = gameData[Number(level)].num
+    // let last = JSON.parse(JSON.stringify()) || null
     let arr = toBinaryLists(num)
     arr.row = getRow(Number(level))
     arr.col = getCol(Number(level))
     arr.lock = Number(level) < 10 ? false : true
+    arr.last = gameData[Number(level)].last || null
     arr.items = arr.map(item => {
         return {
             num: item,
@@ -225,10 +269,10 @@ function getRow(level) {
     if (level == 2) return 2;
     // else if (level <= 5) return 3;
     else if (level <= 8) return 3;
-    else if (level <= 20) return 4;
-    else if (level <= 30) return 5;
-    else if (level <= 40) return 6;
-    else if (level <= 50) return 7;
+    else if (level <= 25) return 4;
+    else if (level <= 35) return 5;
+    else if (level <= 45) return 6;
+    else if (level <= 55) return 7;
     else return 7;
 }
 
@@ -241,7 +285,7 @@ function getCol(level) {
     else if (level <= 40) return 6;
     else if (level <= 48) return 7;
     else if (level <= 60) return 7;
-    else return 6
+    else return 7;
 }
 
 function toBinaryLists(num) {

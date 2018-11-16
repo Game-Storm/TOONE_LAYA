@@ -3,6 +3,7 @@ import DRAW from '../lib/graphics';
 import GameConfig from "../GameConfig";
 import { getNum, gameData, getBlock } from "../lib/gameData";
 import DrawHome from "./drawHome";
+var GlowFilter = Laya.GlowFilter;
 
 console.log(GameConfig)
 
@@ -34,6 +35,7 @@ export default class DrawGame {
         // 画布
         this.game_bg = ""
         this.table_bg = ""
+        this.item_last_bg = ""
         this.refreshSp = ""
         this.returnSp = ""
         this.failBgSp = ""
@@ -44,8 +46,6 @@ export default class DrawGame {
         this.numText = ""
         this.tipText = ""
 
-
-
         // 游戏数据
         this.level = ""
         this.numData = "";
@@ -53,6 +53,7 @@ export default class DrawGame {
         this.pNow = [0, 0];
         this.frontPostion = [];
         this.isGaming = false;
+        this.isLast = "";//是否需要最后的成功验证
 
         // 游戏交互
         this.startP = [];
@@ -83,9 +84,6 @@ export default class DrawGame {
 
     // 开启游戏
     startGame() {
-        // 
-        // 
-        // this.topSp.zOrder = 4;
 
         // 缓动动画
         Tween.from(this.game_bg, { alpha: 0 }, 500).to(this.game_bg, { alpha: 1 }, 500)
@@ -147,6 +145,7 @@ export default class DrawGame {
         this.table_bg.on(Event.MOUSE_DOWN, this, this.onMouseDown);
         this.table_bg.on(Event.MOUSE_UP, this, this.onMouseUp);
         DRAW.drawRoundedRectangle(this.table_bg, this.x, this.y, this.tWidth, this.tHeight, this.gab, '#2f0048');
+        // console.log(this.last);
     }
     // 画顶部按钮
     drawTopButton() {
@@ -185,7 +184,7 @@ export default class DrawGame {
         timeLine2.play(0, false);
     }
     // 画宫格
-    drawTable(first = false, showAnimate = false, callback) {
+    drawTable(first = false, showAnimate = false, callback, last = false) {
         // 如果是第一次画宫格
         if (first) {
             for (var i = 0; i < this.col; i++) {
@@ -197,7 +196,6 @@ export default class DrawGame {
                     // 动画
                     this.itemsSprite[i][j].alpha = 0
                     Tween.from(this.itemsSprite[i][j], {
-                        // y:10
                         scaleY: 0,
                         scaleX: 0,
                         pivotX: this.iWidth * 0.5,
@@ -227,12 +225,28 @@ export default class DrawGame {
                 SoundManager.playSound("assets/music/load.mp3", 1, null, null, 5000);
             }
             if (callback) {
-                setTimeout(() => {
-                    this.drawTable(true, false);
+                if (!last) {
                     setTimeout(() => {
-                        this.isGaming = true;
-                    }, 500)
-                }, 2300)
+                        this.drawTable(true, false);
+                        if (this.last) {
+                            this.drawLastBlock()
+                        } else {
+                            setTimeout(() => {
+                                this.isGaming = true;
+                            }, 500)
+                        }
+                    }, 2300)
+                } else {
+                    setTimeout(() => {
+                        if (this.last) {
+                            this.drawLastBlock();
+                        } else {
+                            setTimeout(() => {
+                                this.isGaming = true;
+                            }, 500)
+                        }
+                    }, 100)
+                }
             }
         } else {
             // 移动滑块
@@ -267,6 +281,27 @@ export default class DrawGame {
         setTimeout(() => {
             this.judgeSuccess();
         }, 100)
+    }
+    //绘制底部last色块
+    drawLastBlock() {
+        let x = this.x + this.last[1] * (this.iWidth + this.gab),
+            y = this.y + this.last[0] * (this.iWidth + this.gab);
+        this.item_last_bg = new Laya.Sprite();
+        this.item_last_bg.size(this.iWidth + 0.6 * this.gab, this.iWidth + 0.6 * this.gab);//一定要设置size才能监控事件
+        this.item_last_bg.pos(x + this.gab * 0.7, y + this.gab * 0.7)
+        Laya.stage.addChild(this.item_last_bg);
+        this.item_last_bg.alpha = 0;
+        this.item_last_bg.zOrder = 3;
+        DRAW.drawRoundedRectangle(this.item_last_bg, 0, 0, this.iWidth + this.gab * 0.6, this.iWidth + this.gab * 0.6, 10, '#2f0048');
+        var glowFilter = new GlowFilter("#f9ebb5", 13, 0, 0);
+        //设置滤镜集合为发光滤镜
+        this.item_last_bg.filters = [glowFilter];
+        setTimeout(() => {
+            this.item_last_bg.alpha = 0.4;
+            console.log('listen!!')
+            SoundManager.playSound('assets/music/enter.mp3');
+            this.isGaming = true;
+        }, 1600)
     }
     // 根据坐标绘制相应的色块
     drawItemBlock(i, j) {
@@ -372,6 +407,8 @@ export default class DrawGame {
         this.col = getNum(this.level).col;
         this.row = getNum(this.level).row;
         this.isLock = getNum(this.level).lock;
+        console.log(getNum(this.level))
+        this.last = getNum(this.level).last;
 
         let xArr = [150, 80, 40, 40, 40, 40, 40, 40];
         let yArr = [400, 300, 250, 250, 250, 250, 250, 250, 250]
@@ -435,7 +472,6 @@ export default class DrawGame {
             this.arr[i][j].isUsed = this.arr[i][j].num == "1" ? true : false;
         }
 
-
         this.drawTable();
         // 播放滑动音效
         SoundManager.setSoundVolume(0.5);
@@ -449,6 +485,19 @@ export default class DrawGame {
         })
         console.log(this.arr);
         if (isWin) {
+            this.isGaming = false;
+            // 如果没有移动到指定格子；
+            if (this.last) {
+                console.log(this.pNow, this.last)
+                if (this.pNow[1] != this.last[0] || this.pNow[0] != this.last[1]) {
+                    this.item_last_bg.alpha = 0;
+                    SoundManager.playSound('assets/music/enter.mp3');
+                    setTimeout(() => {
+                        this.showFail();
+                    }, 700)
+                    return;
+                }
+            }
             SoundManager.playSound("assets/music/win.mp3", 1, null, null, 5000);
             setTimeout(() => {
                 this.showWin()
@@ -463,16 +512,23 @@ export default class DrawGame {
                 (j - 1 >= 0 && !this.arr[i][j - 1].isUsed)) {
                 return;
             } else {
+                this.isGaming = false;
                 this.showFail();
             }
         }
-
     }
     // 重置游戏
     refresh(isFirst) {
-        this.closeAlert()
-        this.refreshTable()
-        this.drawTable(true, null)
+        this.isGaming = false;
+        this.closeAlert();
+        this.refreshTable();
+        // this.drawTable(true, null);
+        if (this.last) {
+            this.item_last_bg.destroy();
+            this.drawTable(true, null, true, true);
+        } else {
+            this.drawTable(true, null);
+        }
     }
     // 返回 Home
     returnHome() {
@@ -491,8 +547,14 @@ export default class DrawGame {
             this.winLine.destroy();
             // this.winMoveLine.destroy();
         }
+        if (this.last) {
+            this.clearSp(this.item_last_bg, 0.4)
+        }
         // 清除画布
-        this.clearSp(this.game_bg);
+        setTimeout(() => {
+            this.clearSp(this.game_bg);
+        }, 300)
+
         this.clearSp(this.table_bg, 0.5);
         // this.topSp.destroy();
         this.clearSp(this.refreshSp);

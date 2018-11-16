@@ -25,11 +25,13 @@ export default class DrawHome {
         // this.first_text = ""
         this.next_btn = ""
         this.next_top_btn = ""
-        this.main = ""
+        this.main = new Sprite();
         this.imgArr = [
             "main_1.png",
             "main_2.png",
-            "main_3.png"
+            "main_3.png",
+            "main_4.png",
+            "main_5.png",
         ]
         this.isShowing = false
 
@@ -45,7 +47,7 @@ export default class DrawHome {
         this.lastBtnTimeLine = new TimeLine();
 
         this.drawBg();
-        SoundManager.setMusicVolume(0.1);
+        SoundManager.setMusicVolume(0.5);
         SoundManager.playMusic("assets/music/troughts.mp3", 1, null, null, 13);
         this.isShowing = true;
     }
@@ -87,33 +89,31 @@ export default class DrawHome {
 
     // 绘制当前场景图
     drawImage(index) {
-        if (!this.main) {
-            this.main = new Sprite();
-            this.main.pos(10, 120);
-            this.main.size(750, 1068);
-            this.main.zOrder = 2;
-            Laya.stage.addChild(this.main);
-        }
+
+        this.main.pos(10, 120);
+        this.main.size(750, 1068);
+        this.main.zOrder = 2;
+        Laya.stage.addChild(this.main);
         this.main.loadImage(`assets/images/main_${index + 1}.png`);
         this.main.alpha = 0;
         Tween.to(this.main, { alpha: 1 }, 800);
         if (index == this.imgArr.length - 1) {
             setTimeout(() => {
                 this.drawNextBtn();
+            }, 2000)
+        } else {
+            setTimeout(() => {
+                Tween.to(this.main, { alpha: 0 }, 800);
             }, 6000)
         }
-
-        setTimeout(() => {
-            Tween.to(this.main, { alpha: 0 }, 800);
-        }, 6000)
     }
 
     // 绘制下一部按钮
     drawNextBtn() {
         this.next_btn = new Sprite();
-        this.next_btn.pos(375, 800);
-        this.next_btn.size(150, 150);
-        this.next_btn.pivot(75, 75)
+        this.next_btn.pos(375, 900);
+        this.next_btn.size(120, 120);
+        this.next_btn.pivot(60, 60)
         Laya.stage.addChild(this.next_btn);
         this.next_btn.loadImage('assets/images/item-enter.png');
         this.next_btn.on(Event.CLICK, this, this.clickNext);
@@ -147,13 +147,13 @@ export default class DrawHome {
     // 点击进入下一关
     clickNext() {
         SoundManager.stopAll();
-        
+
         clearInterval(this.timeout);
-        
+
         this.timeLine.destroy();
         this.lastTimeLine.destroy();
         this.lastBtnTimeLine.destroy();
-        
+
         this.clearSp(this.sence_bg)
         this.clearSp(this.main)
         this.clearSp(this.next_btn)

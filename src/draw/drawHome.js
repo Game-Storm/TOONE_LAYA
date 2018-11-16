@@ -125,7 +125,7 @@ export default class DrawHome {
         } else {
             this.card_bg.loadImage(next_url);
         }
-        this.card_bg.pos(375, 540);
+        this.card_bg.pos(375, 520);
         this.card_bg.pivot(307, 408);
         this.card_bg.rotation = 0;
 
@@ -159,7 +159,7 @@ export default class DrawHome {
         }
         this.num.pivot(245, 0);
         this.num.x = 325;
-        this.num.y = 640;
+        this.num.y = 620;
         this.num.rotation = 0;
 
     }
@@ -169,7 +169,7 @@ export default class DrawHome {
         if (!this.card_bg_next) {
             this.card_bg_next = new Laya.Sprite();
             this.card_bg_next.size(615, 817);
-            this.card_bg_next.pos(375, 540);
+            this.card_bg_next.pos(375, 520);
             this.card_bg_next.pivot(307, 408);
             Laya.stage.addChild(this.card_bg_next);
         }
@@ -191,7 +191,7 @@ export default class DrawHome {
             this.num_next.width = 590;
             this.num_next.pivot(245, 0);
             this.num_next.x = 325;
-            this.num_next.y = 640;
+            this.num_next.y = 620;
             this.num_next.align = "center";
             this.num_next.alpha = 0.8;
             // var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
@@ -240,13 +240,11 @@ export default class DrawHome {
     }
     //绘制底部按钮
     drawBottomBtn() {
-
-
         this.left = new Sprite();
         Laya.stage.addChild(this.left);
         this.left.loadImage('assets/images/home_left.png');
         this.left.size(122, 91);
-        this.left.pos(138, 975);
+        this.left.pos(138, 955);
         this.left.name = "left"
         this.left.on(Event.CLICK, this, this.changeLevel, [-1]);
 
@@ -254,14 +252,14 @@ export default class DrawHome {
         Laya.stage.addChild(this.refresh);
         this.refresh.loadImage('assets/images/refresh-card.png');
         this.refresh.size(157, 119);
-        this.refresh.pos(288, 961)
+        this.refresh.pos(288, 941)
         this.refresh.on(Event.CLICK, this, this.changeLevel);
 
         this.right = new Sprite()
         Laya.stage.addChild(this.right);
         this.right.loadImage('assets/images/home_right.png');
         this.right.size(122, 91);
-        this.right.pos(473, 975);
+        this.right.pos(473, 955);
         this.right.on(Event.CLICK, this, this.changeLevel, [1]);
     }
     /**
@@ -279,7 +277,7 @@ export default class DrawHome {
         SoundManager.playSound("assets/music/dong.mp3", 1, null, null, 13);
         if (this.gameLevel == 0) {
             // 0关 初始场景
-            this.StartSence ? this.StartSence.showStartSence() : this.StartSence = new DrawStartSence()
+            this.StartSence = new DrawStartSence();
         } else if (this.gameLevel == gameData.length - 1) {
             // 1关 结束场景
         } else {

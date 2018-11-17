@@ -247,6 +247,8 @@ export default class DrawGame {
                         }
                     }, 100)
                 }
+            } else {
+                this.isGaming = true
             }
         } else {
             // 移动滑块
@@ -293,7 +295,7 @@ export default class DrawGame {
         this.item_last_bg.alpha = 0;
         this.item_last_bg.zOrder = 3;
         DRAW.drawRoundedRectangle(this.item_last_bg, 0, 0, this.iWidth + this.gab * 0.6, this.iWidth + this.gab * 0.6, 10, '#2f0048');
-        var glowFilter = new GlowFilter("#f9ebb5", 13, 0, 0);
+        var glowFilter = new GlowFilter("#fff", 13, 0, 0);
         //设置滤镜集合为发光滤镜
         this.item_last_bg.filters = [glowFilter];
         setTimeout(() => {

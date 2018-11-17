@@ -168,7 +168,8 @@ let gameData = [
         num: 0.74
     },
     {
-        num: 0.76
+        num: 0.76,
+        last: [6, 6]
     },
     {
         num: 0.77
@@ -243,7 +244,7 @@ let gameData = [
         num: 1
     }
 ]
-let skinLevel = [0, 18, 35, 50, 62, 75];
+let skinLevel = [0, 15, 25, 40, 52, 60];
 
 
 function getNum(level) {

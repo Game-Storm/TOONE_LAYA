@@ -86,7 +86,8 @@ import DRAW from './lib/graphics';
             'item-1-lock.png', 'item-1.png', 'refresh_btn.png', 'return_btn.png', "card-0-bg.png", 'alert_fail_mask.png',
             'card-bg.png', 'home_bg.png', 'card-bg-lock.png', 'pass_btn.png', 'item-1-active-no.png', 'refresh-card.png',
             'home_right.png', 'home_left.png', 'next_btn.png', 'item-enter.png', 'card-1-lock.png', 'music-icon-no.png',
-            'music-icon.png', 'my-icon.png', 'pifu-icon.png', 'world-icon.png'
+            'music-icon.png', 'my-icon.png', 'pifu-icon.png', 'world-icon.png', 'main_1.png', 'main_2.png', 'main_3.png',
+            'main_4.png', 'main_5.png',
         ];
         imgNames.map(item => {
             assets.push({

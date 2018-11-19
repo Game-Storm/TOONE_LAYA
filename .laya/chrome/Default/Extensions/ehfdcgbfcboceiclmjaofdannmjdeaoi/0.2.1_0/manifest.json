@@ -1,0 +1,31 @@
+{
+   "author": "InBasic",
+   "background": {
+      "scripts": [ "jszip.js", "save-images.js", "common.js" ]
+   },
+   "browser_action": {
+      "default_icon": {
+         "16": "data/icons/16.png",
+         "32": "data/icons/32.png"
+      }
+   },
+   "description": "Grab and download media (image and video) sources by monitoring network (like FlashGot)",
+   "homepage_url": "http://add0n.com/media-tools.html",
+   "icons": {
+      "128": "data/icons/128.png",
+      "16": "data/icons/16.png",
+      "48": "data/icons/48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm+I91A1PeCpDiPLmcP8DFx6Y5zOmuy4NwVjWTzMSUi3Rx9eJ+b4+32RW37f5jQjyjfxZAOER6aYz+p/t40LUGIGzaQippscwvDEBkd8iZwlq2w9AQKtbMoUrsK+xaKiknISq4Z/O0vyMtLVwP/nRlYc5kznChhvwOfhn8091WyeQ9cafu0uecLRhSv8hNnr+pCOMy1AbWPpfyorlPoReqy/XPnTRo7efI9FUHwutCbT5K8bDI/jF4jity0Yy/OOYq1kyZYywGZPQnkh9A3yBGPH/KMbs48zaf6gZzEYx6is1J68X5ZC/uToImhUhFMx48itOlE83NuIF3ic7gWsEUwIDAQAB",
+   "manifest_version": 2,
+   "name": "Bulk Media Downloader",
+   "options_ui": {
+      "chrome_style": true,
+      "page": "data/options/index.html"
+   },
+   "permissions": [ "storage", "tabs", "\u003Call_urls>", "webRequest", "downloads", "management", "notifications", "contextMenus" ],
+   "short_name": "ibmdownloader",
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "0.2.1",
+   "web_accessible_resources": [ "data/inject/index.html" ]
+}

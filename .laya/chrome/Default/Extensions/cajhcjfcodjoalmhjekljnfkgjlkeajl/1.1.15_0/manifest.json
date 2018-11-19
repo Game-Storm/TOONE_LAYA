@@ -1,0 +1,38 @@
+{
+   "author": "Waynecz \u003C451578533@qq.com>",
+   "background": {
+      "scripts": [ "background/background.js" ]
+   },
+   "browser_action": {
+      "default_icon": "logo.png",
+      "default_popup": "popup/popup.html",
+      "default_title": "达达划词翻译"
+   },
+   "content_scripts": [ {
+      "all_frames": true,
+      "css": [ "styles/translator.css" ],
+      "js": [ "content/content.js" ],
+      "matches": [ "\u003Call_urls>" ],
+      "run_at": "document_start"
+   } ],
+   "content_security_policy": "font-src 'self' https://fonts.googleapis.com; script-src 'self' 'unsafe-eval'; object-src 'self'",
+   "description": "划词翻译、生词本、吐司弹词、与扇贝同步",
+   "homepage_url": "https://github.com/waynecz/dadda-translate-crx",
+   "icons": {
+      "128": "logo.png",
+      "16": "logo.png",
+      "48": "logo.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqxsb1iQSMWXFnw6A2Z0xs8E/PD9KE0+Nn8ZLoBtDAxJqerJTkFjB80c09DEp73FqsOKHLXdhXghQuZ75XhqSu/AYfWERiv+D04009sPDOTRnCS3agKSdPrBpfwfoEFX00B2FDtK8/Dpg8ieQeGJGknRtJ2XleE8DjxXy6FVk3ZauXA12tLcA/jNcdrpjHbP8IGhZGWnAM6eqQQ0deKkpGyh3dE6WCoTdUfRgpMhxVbFlATt9tAdsxToNyMguuMtKQEVo0juYLpjg8XQ4bPB2CNextXTgpPs2kp6E4e03PEbhSnD4zM4T0f6OvHLBU0+wR3wetcezlnA69QRxkd//xwIDAQAB",
+   "manifest_version": 2,
+   "name": "达达划词翻译",
+   "options_ui": {
+      "chrome_style": true,
+      "open_in_tab": true,
+      "page": "options/options.html"
+   },
+   "permissions": [ "\u003Call_urls>", "storage", "clipboardWrite", "clipboardRead", "activeTab", "webRequest", "storage", "tabs", "cookies", "notifications", "alarms", "webRequestBlocking" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.1.15",
+   "web_accessible_resources": [ "logo.png", "logo-active.png", "content/app.css", "fonts/*", "assets/*" ]
+}

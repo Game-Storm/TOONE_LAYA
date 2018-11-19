@@ -1,0 +1,19 @@
+{
+   "background": "background.html",
+   "browser_action": {
+      "default_icon": "logo.png",
+      "default_popup": "popup.html"
+   },
+   "description": "可以生成当前页面二维码,手机直接扫二维码就可以访问当前页面",
+   "icons": {
+      "128": "logo_128.png",
+      "16": "logo_16.png",
+      "48": "logo_48.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCQLp783aDVZCIPYAsU7vj9DIIy70cEzxz/iwsOrKB2e3raHgSG8NaJoh1kCU4Bqo5Dv2ftYweydNC6K90760sBoNA48cizn5Eq55EQbGvrch5bjlB5vnIoaElfcnTQo2fbFzIxSLgP21Oulef4liCOrkvP4cuv6aHV2ttTC1GxtQIDAQAB",
+   "manifest_version": 2,
+   "name": "二维码(QR码)生成器(QR Code Generator)",
+   "permissions": [ "contextMenus", "tabs", "http://*/*", "http://*/*/*" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "2.2"
+}

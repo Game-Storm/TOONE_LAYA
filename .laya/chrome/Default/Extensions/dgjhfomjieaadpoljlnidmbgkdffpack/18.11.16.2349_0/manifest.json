@@ -1,0 +1,43 @@
+{
+   "background": {
+      "scripts": [ "js/background.bundle.js", "js/link.bundle.js" ]
+   },
+   "browser_action": {
+      "default_icon": {
+         "128": "img/icon-128.png",
+         "16": "img/icon-16.png",
+         "48": "img/icon-48.png"
+      },
+      "default_title": "Sourcegraph"
+   },
+   "content_scripts": [ {
+      "js": [ "js/inject.bundle.js" ],
+      "matches": [ "https://github.com/*", "https://sourcegraph.com/*" ],
+      "run_at": "document_end"
+   } ],
+   "content_security_policy": "script-src 'self' blob:; object-src 'self'",
+   "description": "Code intelligence for your code host and code reviews: hovers, documentation, definitions, and references in files, PRs, and diffs",
+   "icons": {
+      "128": "img/icon-128.png",
+      "16": "img/icon-16.png",
+      "48": "img/icon-48.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCl2X/axNHMbP0K/NCpMzGo/pgBSsHB2xKx6tfohORKtEv2wUMBPmkK3++kirrwYO2f8Ficyq6pjlXV8LjwPSjSw9KZj6bkDn8QNoSdCp6x9i8ZOWPw6UTQ6s54b3rGQNyvrvfD7S6LphxGEx8rNlkjpWKcrvY3+DyoFKHP/hax7wIDAQAB",
+   "manifest_version": 2,
+   "name": "Sourcegraph",
+   "omnibox": {
+      "keyword": "src"
+   },
+   "optional_permissions": [ "tabs", "http://*/*", "https://*/*" ],
+   "options_ui": {
+      "open_in_tab": true,
+      "page": "options.html"
+   },
+   "permissions": [ "cookies", "activeTab", "storage", "contextMenus", "https://github.com/*", "https://sourcegraph.com/*" ],
+   "storage": {
+      "managed_schema": "schema.json"
+   },
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "18.11.16.2349",
+   "web_accessible_resources": [ "img/*", "js/link.bundle.js", "link.html", "css/style.bundle.css" ]
+}

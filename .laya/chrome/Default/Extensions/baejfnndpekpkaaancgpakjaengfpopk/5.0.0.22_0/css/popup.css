@@ -1,0 +1,95 @@
+@font-face {
+    font-family: 'Ubuntu';
+    font-style: normal;
+    font-weight: 500;
+    src: local('Ubuntu'), url(../fonts/ubuntu-medium-webfont.woff) format('woff');
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Open Sans'), url(../fonts/OpenSans-Regular.woff) format('woff');
+}
+
+body {
+    width: 380px;
+    color: #555;
+    font-family: Verdana, Geneva, sans-serif;
+}
+
+#no-video-found {
+    font-size: 14px;
+    padding: 2px;
+    text-align: center;
+}
+
+#video-list {
+    padding-left: 0;
+}
+
+#video-list .video {
+    list-style: none;
+
+}
+
+#video-list .video .play-button {
+    display: inline-block;
+    background: url(../images/play5.svg) no-repeat 3px 7px;
+    height: 32px;
+    float: left;
+    width: 30px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    outline: none;
+}
+
+#video-list .video .title {
+    display: inline-block;
+    font-size: 14px;
+    font-family: "open sans";
+    cursor: default;
+    width: 200px;
+    float: left;
+    font-weight: normal;
+    color: #5d5d5d;
+    line-height: 32px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#video-list .video .download-button {
+    display: inline-block;
+    float: right;
+    font-family: "ubuntu";
+    font-weight: normal;
+    border-radius: 2px;
+    padding: .5625rem .625rem;
+    line-height: 1;
+    color: #ffffff;
+    background-color: #757575;
+    box-shadow: inset 0 0 0 1px #6b6b6b;
+    vertical-align: middle;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 145px;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+#video-list .video .download-button:hover {
+    color: #ffffff;
+    background-color: #696868;
+}
+
+.sep {
+    margin-top: 0px;
+    margin-bottom: 11px;
+    background-color: #dcdcdc;
+    height: 1px;
+    width: 100%;
+    float: left;
+}

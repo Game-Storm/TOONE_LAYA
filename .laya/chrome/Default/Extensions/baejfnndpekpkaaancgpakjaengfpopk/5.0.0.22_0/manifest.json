@@ -1,0 +1,28 @@
+{
+   "background": {
+      "page": "html/background.html"
+   },
+   "browser_action": {
+      "default_icon": "images/download_inactive.png",
+      "default_popup": "html/popup.html",
+      "default_title": "Video Downloader Plus"
+   },
+   "content_scripts": [ {
+      "all_frames": true,
+      "js": [ "js/jquery-3.1.1.min.js", "js/contentscript.js" ],
+      "matches": [ "*://*/*" ],
+      "run_at": "document_idle"
+   } ],
+   "content_security_policy": "script-src 'self' https://www.google-analytics.com https://ssl.google-analytics.com https://apis.google.com https://ajax.googleapis.com; style-src 'self' 'unsafe-inline' 'unsafe-eval' ; connect-src *; object-src 'self' ",
+   "description": "Video Downloader Plus enables you to download SD and HD videos if the extension can download them.",
+   "icons": {
+      "128": "images/logo.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxrQK5gpD8QEfmCiNgBDExePTuySacGAP75Ff9sd1wh9mbqUal5SH00D5sR+m+IEU6bF5j7Vrp72DnQYGE+MvoWcU0OyleRAoi1NN7ExeJTObpzg7Sh07mL3IOIEGguaux0Issy3aJ5ilwBTJdGxDDy9jqzvWIqQaxU8wH5g26F9R2d+SapCjJxRPJkOiAptawil6m8/CsKEGsv2Dseod40bJ1ZWb/2RSl2TMezFZE1PNspIUVzH0RhXTj5cZ2QGKFNWIlGwRwhbArmiTSuSDIDlel9f6R/FW7zEN+2bIhfMfnBB9Iw8F6cOTBFPUmSIjO4DXSZvDsoJolxkbvK39XQIDAQAB",
+   "manifest_version": 2,
+   "name": "Video Downloader Plus",
+   "permissions": [ "alarms", "contextMenus", "privacy", "storage", "cookies", "tabs", "unlimitedStorage", "webNavigation", "webRequest", "webRequestBlocking", "http://*/*", "https://*/*", "notifications" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "5.0.0.22",
+   "web_accessible_resources": [ "*" ]
+}

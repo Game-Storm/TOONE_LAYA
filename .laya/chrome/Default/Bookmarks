@@ -74,10 +74,10 @@
                "date_added": "13175073389175341",
                "id": "119",
                "meta_info": {
-                  "last_visited_desktop": "13186464114261436"
+                  "last_visited_desktop": "13187083684120466"
                },
                "name": "微信公众平台",
-               "sync_transaction_version": "83",
+               "sync_transaction_version": "104",
                "type": "url",
                "url": "https://mp.weixin.qq.com/"
             }, {
@@ -919,10 +919,10 @@
                "date_added": "13185258696842321",
                "id": "48",
                "meta_info": {
-                  "last_visited_desktop": "13186943324800408"
+                  "last_visited_desktop": "13187078902242029"
                },
                "name": "宝塔Linux面板",
-               "sync_transaction_version": "95",
+               "sync_transaction_version": "102",
                "type": "url",
                "url": "http://47.101.165.18:8888/"
             }, {
@@ -1024,7 +1024,7 @@
          "sync_transaction_version": "3",
          "type": "folder"
       },
-      "sync_transaction_version": "99",
+      "sync_transaction_version": "104",
       "synced": {
          "children": [  ],
          "date_added": "13186831843636718",

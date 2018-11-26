@@ -141,7 +141,7 @@ export default class DrawHome {
             // 绘制文字
             this.num = new Text();
             this.num.color = "#f9dfc7";
-            this.num.font = "din";
+            this.num.font = "din1";
             this.num.bold = true;
             this.num.fontSize = 170;
             this.num.width = 590;
@@ -192,7 +192,7 @@ export default class DrawHome {
         // 绘制文字
         if (!this.num_next) {
             this.num_next = new Text();
-            this.num_next.font = "din";
+            this.num_next.font = "din1";
             this.num_next.bold = true;
             this.num_next.fontSize = 170;
             this.num_next.width = 590;
@@ -200,7 +200,7 @@ export default class DrawHome {
             this.num_next.x = 325;
             this.num_next.y = 610;
             this.num_next.align = "center";
-            this.num_next.alpha = 0.8;
+            this.num_next.alpha = 0.6;
             // var glowFilter = new GlowFilter("#e5dac3", 13, 0, 0);
             // //设置滤镜集合为发光滤镜
             // this.num_next.filters = [glowFilter];
@@ -208,7 +208,7 @@ export default class DrawHome {
         }
         this.num_next.text = text;
         this.num_next.color = color;
-        this.num_next.alpha = 1;
+        this.num_next.alpha = 0.8;
         this.num_next.zOrder = 0;
         if (!isUp) {
             this.num_next.x = 325 + 800 * symbol;
